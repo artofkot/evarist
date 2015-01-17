@@ -9,7 +9,7 @@ from flask import Flask, request, session, g, redirect, url_for, \
 from contextlib import closing
 
 # configuration:
-DATABASE = '/tmp/flaskr.db'
+DATABASE = './databases/flaskr.db'
 DEBUG = True
 # !!!! Never leave debug mode activated in a production system
 SECRET_KEY = 'Shatahosik'
