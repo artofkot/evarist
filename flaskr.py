@@ -7,6 +7,7 @@ import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, \
     abort, render_template, flash
 from contextlib import closing
+from flask.ext.pymongo import PyMongo
 
 # configuration:
 DATABASE = './databases/flaskr.db'
@@ -18,6 +19,12 @@ PASSWORD = 'default'
 
 # create our little application :)
 app = Flask(__name__)
+
+mongo = PyMongo(app)
+# PyMongo connects to the MongoDB server running on port 27017 on localhost (or we can specify it here by MONGO_URI,
+# MONGO_PORT or something like this), and assumes a default database name of app.name 
+# (i.e. whatever name you pass to Flask). This database is exposed as the db attribute.
+
 app.config.from_object(__name__)
 # from_object() will look at the given object (if it’s a string it will import it) and 
 # then look for all uppercase variables defined there. In our case, the configuration we 
@@ -38,6 +45,8 @@ def init_db():
         with app.open_resource('schema.sql', mode='r') as f:
             db.cursor().executescript(f.read())
         db.commit()
+
+
 
 @app.before_request
 def before_request():
