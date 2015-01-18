@@ -10,16 +10,23 @@ from contextlib import closing
 from flask.ext.pymongo import PyMongo
 
 # configuration:
-DATABASE = './databases/flaskr.db'
+#DATABASE = './databases/flaskr.db'
 DEBUG = True
-# !!!! Never leave debug mode activated in a production system
+# !!!! Never leave debug=True in a production system
 SECRET_KEY = 'Shatahosik'
 USERNAME = 'admin'
 PASSWORD = 'default'
+MONGO_URI="mongodb://heroku_app33294458:ohleelvsddqissik3r7nn74ge@ds031671.mongolab.com:31671/heroku_app33294458"
+# I generated this URI using service mongolab in heroku, see https://devcenter.heroku.com/articles/mongolab
+# locally on your computer when you install mongodb and then run it with command
+#   $mondod
+#   or even 
+#   $mongod -dbpath ./databases/mongodb/
+# then this the most important config variable MONGO_URI is equal to "mongodb://localhost:27017/"
+
 
 # create our little application :)
 app = Flask(__name__)
-
 mongo = PyMongo(app)
 # PyMongo connects to the MongoDB server running on port 27017 on localhost (or we can specify it here by MONGO_URI,
 # MONGO_PORT or something like this), and assumes a default database name of app.name 
@@ -37,40 +44,42 @@ app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 # to be loaded which will then override the default values. The silent switch just tells 
 # Flask to not complain if no such environment key is set.
 
-def connect_db():
-    return sqlite3.connect(app.config['DATABASE']) #DATABASE folder is set in config file
+# def connect_db():
+#     return sqlite3.connect(app.config['DATABASE']) #DATABASE folder is set in config file
 
-def init_db():
-    with closing(connect_db()) as db:
-        with app.open_resource('schema.sql', mode='r') as f:
-            db.cursor().executescript(f.read())
-        db.commit()
+# def init_db():
+#     with closing(connect_db()) as db:
+#         with app.open_resource('schema.sql', mode='r') as f:
+#             db.cursor().executescript(f.read())
+#         db.commit()
 
 
 
-@app.before_request
-def before_request():
-    g.db = connect_db()
+# @app.before_request
+# def before_request():
+#     g.db = connect_db()
 
-@app.teardown_request
-def teardown_request(exception):
-    db = getattr(g, 'db', None)
-    if db is not None:
-        db.close()
+# @app.teardown_request
+# def teardown_request(exception):
+#     db = getattr(g, 'db', None)
+#     if db is not None:
+#         db.close()
 
 @app.route('/')
 def show_entries():
-    cur = g.db.execute('select title, text from entries order by id desc')
-    entries = [dict(title=row[0], text=row[1]) for row in cur.fetchall()]
+    posts=mongo.db.posts.find()
+    entries = [dict(title=entry["title"], text=entry["text"]) for entry in posts]
     return render_template('show_entries.html', entries=entries)
 
 @app.route('/add', methods=['POST'])
 def add_entry():
     if not session.get('logged_in'):
         abort(401)
-    g.db.execute('insert into entries (title, text) values (?, ?)',
-                 [request.form['title'], request.form['text']])
-    g.db.commit()
+    posts=mongo.db.posts
+    posts.insert({"title":request.form['title'], "text":request.form['text']})
+    # g.db.execute('insert into entries (title, text) values (?, ?)',
+    #              [request.form['title'], request.form['text']])
+    # g.db.commit()
     flash('New entry was successfully posted')
     return redirect(url_for('show_entries'))
 
