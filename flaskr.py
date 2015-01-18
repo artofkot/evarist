@@ -19,7 +19,7 @@ from flask.ext.pymongo import PyMongo
 
 
 # create our little application :)
-app = Flask(__name__)
+app = Flask('listki')
 
 # configuration
 app.config.update(dict(
@@ -27,7 +27,8 @@ app.config.update(dict(
     DEBUG=True, # !!!! Never leave debug=True in a production system
     SECRET_KEY='development key',
     USERNAME='admin',
-    PASSWORD='default'
+    PASSWORD='default',
+    #MONGO_DBNAME='flaskrrr' #The database name to make available as the db attribute. Default: app.name
 ))
 # Usually, it is a good idea to load a configuration from a configurable file. 
 # This is what from_envvar() can do, replacing the from_object() line above:
@@ -58,7 +59,8 @@ app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 #     """Closes the database again at the end of the request."""
 #     mongo.close()
 
-
+# app.config['MONGO_DBNAME'] = 'dbname_two'
+app.config['MONGO_DBNAME']='testik'
 mongo = PyMongo(app)
 # PyMongo connects to the MongoDB server running on MONGO_URI, and assumes a default database name of app.name 
 # (i.e. whatever name you pass to Flask). This database is exposed as the db attribute.
@@ -74,6 +76,12 @@ def indexBitStarter():
 @app.route('/flaskr')
 def show_entries():
     posts=mongo.db.posts.find()
+
+    # print mongo.cx.database_names() DOESN'T work because authentification required
+    # mongo.cx.admin.authenticate(<username>, <password>)
+    print mongo.db.collection_names()
+    for i in mongo.db.posts.find():
+        print i
     entries = [dict(title=entry["title"], text=entry["text"]) for entry in posts]
     return render_template('show_entries.html', entries=entries)
 
