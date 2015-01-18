@@ -10,7 +10,6 @@ from contextlib import closing
 from flask.ext.pymongo import PyMongo
 
 # configuration:
-#DATABASE = './databases/flaskr.db'
 DEBUG = True
 # !!!! Never leave debug=True in a production system
 SECRET_KEY = 'Shatahosik'
@@ -30,18 +29,11 @@ MONGO_URI="mongodb://heroku_app33294458:ohleelvsddqissik3r7nn74ge@ds031671.mongo
 
 # create our little application :)
 app = Flask(__name__)
-app.config.from_object(__name__)
-
-
-mongo = PyMongo(app)
-# PyMongo connects to the MongoDB server running on MONGO_URI, and assumes a default database name of app.name 
-# (i.e. whatever name you pass to Flask). This database is exposed as the db attribute.
-
 
 # from_object() will look at the given object (if it’s a string it will import it) and 
 # then look for all uppercase variables defined there. In our case, the configuration we 
 # just wrote a few lines of code above. You can also move that into a separate file.
-
+app.config.from_object(__name__)
 # Usually, it is a good idea to load a configuration from a configurable file. 
 # This is what from_envvar() can do, replacing the from_object() line above:
 app.config.from_envvar('FLASKR_SETTINGS', silent=True)
@@ -49,46 +41,36 @@ app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 # to be loaded which will then override the default values. The silent switch just tells 
 # Flask to not complain if no such environment key is set.
 
-# def connect_db():
-#     return sqlite3.connect(app.config['DATABASE']) #DATABASE folder is set in config file
-
-# def init_db():
-#     with closing(connect_db()) as db:
-#         with app.open_resource('schema.sql', mode='r') as f:
-#             db.cursor().executescript(f.read())
-#         db.commit()
 
 
-
-# @app.before_request
-# def before_request():
-#     g.db = connect_db()
-
-# @app.teardown_request
-# def teardown_request(exception):
-#     db = getattr(g, 'db', None)
-#     if db is not None:
-#         db.close()
+mongo = PyMongo(app)
+# PyMongo connects to the MongoDB server running on MONGO_URI, and assumes a default database name of app.name 
+# (i.e. whatever name you pass to Flask). This database is exposed as the db attribute.
 
 @app.route('/')
+def home():
+    return render_template('home.html')
+
+@app.route('/indexBitStarter')
+def indexBitStarter():
+    return render_template('indexBitStarter.html')
+
+@app.route('/flaskr')
 def show_entries():
     posts=mongo.db.posts.find()
     entries = [dict(title=entry["title"], text=entry["text"]) for entry in posts]
     return render_template('show_entries.html', entries=entries)
 
-@app.route('/add', methods=['POST'])
+@app.route('/flaskr_add', methods=['POST'])
 def add_entry():
     if not session.get('logged_in'):
         abort(401)
     posts=mongo.db.posts
     posts.insert({"title":request.form['title'], "text":request.form['text']})
-    # g.db.execute('insert into entries (title, text) values (?, ?)',
-    #              [request.form['title'], request.form['text']])
-    # g.db.commit()
     flash('New entry was successfully posted')
     return redirect(url_for('show_entries'))
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/flaskr_login', methods=['GET', 'POST'])
 def login():
     error = None
     if request.method == 'POST':
@@ -102,11 +84,13 @@ def login():
             return redirect(url_for('show_entries'))
     return render_template('login.html', error=error)
 
-@app.route('/logout')
+@app.route('/flaskr_logout')
 def logout():
     session.pop('logged_in', None) # We use a neat trick here: if you use the pop() method of the dict and pass a second parameter to it (the default), the method will delete the key from the dictionary if present or do nothing when that key is not in there. This is helpful because now we don’t have to check if the user was logged in.
     flash('You were logged out')
     return redirect(url_for('show_entries'))
+
+
 
 if __name__ == '__main__':
     app.run()
