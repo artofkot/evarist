@@ -16,6 +16,7 @@ DEBUG = True
 SECRET_KEY = 'Shatahosik'
 USERNAME = 'admin'
 PASSWORD = 'default'
+
 MONGO_URI="mongodb://heroku_app33294458:ohleelvsddqissik3r7nn74ge@ds031671.mongolab.com:31671/heroku_app33294458"
 # I generated this URI using service mongolab in heroku, see https://devcenter.heroku.com/articles/mongolab
 # locally on your computer when you install mongodb and then run it with command
@@ -25,14 +26,18 @@ MONGO_URI="mongodb://heroku_app33294458:ohleelvsddqissik3r7nn74ge@ds031671.mongo
 # then this the most important config variable MONGO_URI is equal to "mongodb://localhost:27017/"
 
 
+
+
 # create our little application :)
 app = Flask(__name__)
+app.config.from_object(__name__)
+
+
 mongo = PyMongo(app)
-# PyMongo connects to the MongoDB server running on port 27017 on localhost (or we can specify it here by MONGO_URI,
-# MONGO_PORT or something like this), and assumes a default database name of app.name 
+# PyMongo connects to the MongoDB server running on MONGO_URI, and assumes a default database name of app.name 
 # (i.e. whatever name you pass to Flask). This database is exposed as the db attribute.
 
-app.config.from_object(__name__)
+
 # from_object() will look at the given object (if it’s a string it will import it) and 
 # then look for all uppercase variables defined there. In our case, the configuration we 
 # just wrote a few lines of code above. You can also move that into a separate file.
