@@ -60,6 +60,7 @@ app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 
 
 mongo = PyMongo(app)
+print app.config['MONGO_DBNAME']
 # PyMongo connects to the MongoDB server running on MONGO_URI, and assumes a default database name of app.name 
 # (i.e. whatever name you pass to Flask). This database is exposed as the db attribute.
 
@@ -102,7 +103,12 @@ def login():
 
 @app.route('/flaskr_logout')
 def logout():
-    session.pop('logged_in', None) # We use a neat trick here: if you use the pop() method of the dict and pass a second parameter to it (the default), the method will delete the key from the dictionary if present or do nothing when that key is not in there. This is helpful because now we don’t have to check if the user was logged in.
+    session.pop('logged_in', None) 
+    # We use a neat trick here:
+    # if you use the pop() method of the dict and pass a second parameter to it (the default),
+    # the method will delete the key from the dictionary if present or
+    # do nothing when that key is not in there.
+    # This is helpful because now we don’t have to check if the user was logged in.
     flash('You were logged out')
     return redirect(url_for('show_entries'))
 
