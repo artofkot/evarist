@@ -30,9 +30,17 @@ app.config.update(dict(
     PASSWORD='default',
     #MONGO_DBNAME='flaskrrr' #The database name to make available as the db attribute. Default: app.name
 ))
+
+# another possibility
+# app.config.from_pyfile('listki.cfg', silent=True)
+
+# this can be used if your app is package (used for larger apps), not object
+# app.config.from_object('yourapplication.default_settings')
+
 # Usually, it is a good idea to load a configuration from a configurable file. 
 # This is what from_envvar() can do, replacing the from_object() line above:
-app.config.from_envvar('FLASKR_SETTINGS', silent=True)
+app.config.from_envvar('FLASKR_SETTINGS', silent=True) # (these should be configuratino defaults)
+# export YOURAPPLICATION_SETTINGS=/path/to/settings.cfg
 # That way someone can set an environment variable called FLASKR_SETTINGS to specify a config file 
 # to be loaded which will then override the default values. The silent switch just tells 
 # Flask to not complain if no such environment key is set.
@@ -59,10 +67,7 @@ app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 #     """Closes the database again at the end of the request."""
 #     mongo.close()
 
-# app.config['MONGO_DBNAME'] = 'dbname_two'
-app.config['MONGO_DBNAME']='testik'
 mongo = PyMongo(app)
-print app.config['MONGO_DBNAME']
 # PyMongo connects to the MongoDB server running on MONGO_URI, and assumes a default database name of app.name 
 # (i.e. whatever name you pass to Flask). This database is exposed as the db attribute.
 
@@ -76,13 +81,10 @@ def indexBitStarter():
 
 @app.route('/flaskr')
 def show_entries():
+    # print mongo.db.collection_names()
+    # for i in mongo.db.posts.find():
+    #     print i
     posts=mongo.db.posts.find()
-
-    # print mongo.cx.database_names() DOESN'T work because authentification required
-    # mongo.cx.admin.authenticate(<username>, <password>)
-    print mongo.db.collection_names()
-    for i in mongo.db.posts.find():
-        print i
     entries = [dict(title=entry["title"], text=entry["text"]) for entry in posts]
     return render_template('show_entries.html', entries=entries)
 
