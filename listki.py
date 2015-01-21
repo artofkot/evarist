@@ -32,7 +32,7 @@ app.config.update(dict(
 ))
 
 # another possibility
-# app.config.from_pyfile('listki.cfg', silent=True)
+# app.config.from_pyfile('config_listki.cfg', silent=True)
 
 # this can be used if your app is package (used for larger apps), not object
 # app.config.from_object('yourapplication.default_settings')
