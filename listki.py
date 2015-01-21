@@ -77,7 +77,6 @@ mongo = PyMongo(app)
 @app.route('/')
 def home():
     return render_template('home.html')
-    print app.config['SECRET_KEY']
 
 @app.route('/indexBitStarter')
 def indexBitStarter():
