@@ -68,6 +68,10 @@ print app.config['MONGO_DBNAME']
 def home():
     return render_template('home.html')
 
+@app.route('/startertry')
+def startertry():
+    return render_template('startertry.html')
+
 @app.route('/indexBitStarter')
 def indexBitStarter():
     return render_template('indexBitStarter.html')
