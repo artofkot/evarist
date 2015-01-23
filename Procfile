@@ -1,1 +1,1 @@
-web: gunicorn flaskr:app --log-file=-
+web: gunicorn listki:app --log-file=-
