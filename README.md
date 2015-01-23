@@ -1,7 +1,7 @@
 i think we should sum up changes we make with each commit somewhere for each other.
 i dunno, how it's supposed to be done, but i added this readme and stored changes and comments here under the header same as the -m in commit
 
-###### add bootstrap
+###### add bootstrap and MERGE
 	- add static/vendor   - a place for all third party plugins, libs and such (such as bootstrap)
 	- add vendor/bootstrap  (note, that this is actually not used in code, instead we use CDN)
 	- add bootstrap-specific headers to <head> of layout.html
@@ -12,3 +12,4 @@ i dunno, how it's supposed to be done, but i added this readme and stored change
 	- add navbar (copypaste from bootstrap example starter-template) to show_entries.html to test bootstrap further
 	- well, now bootstrap works. next thing to do: modify templates so that they are compatible with bootstrap.
 	- add README.md
+	- rename <title> in layout to Listki
