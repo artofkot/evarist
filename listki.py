@@ -16,15 +16,16 @@ app = Flask('listki')
 
 # configuration
 app.config.update(dict(
-    MONGO_URI="mongodb://localhost:27017/",
-    DEBUG=False, # !!!! Never leave debug=True in a production system
+    # MONGO_URI="mongodb://localhost:27017/",
+    DEBUG=True, # !!!! Never leave debug=True in a production system
     SECRET_KEY='development key',
     USERNAME='admin',
     PASSWORD='default'
     #MONGO_DBNAME='flaskrrr' #The database name to make available as the db attribute. Default: app.name
 ))
 app.config["SECRET_KEY"] = os.environ.get("LISTKI_SECRET_KEY")
-app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
+#app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
+
 # I generated this URI using service mongolab in heroku, see https://devcenter.heroku.com/articles/mongolab
 # locally on your computer when you install mongodb and then run it with command
 #   $mondod
@@ -80,7 +81,7 @@ def home():
 
 @app.route('/indexBitStarter')
 def indexBitStarter():
-    return render_template('indexBitStarter.html')
+    return render_template('bitstarter/indexBitStarter.html')
 
 @app.route('/flaskr')
 def show_entries():
@@ -89,14 +90,15 @@ def show_entries():
     #     print i
     posts=mongo.db.posts.find()
     entries = [dict(title=entry["title"], text=entry["text"]) for entry in posts]
-    return render_template('show_entries.html', entries=entries)
+    return render_template('flaskr/show_entries.html', entries=entries)
 
 @app.route('/flaskr_add', methods=['POST'])
 def add_entry():
     if not session.get('logged_in'):
         abort(401)
-    posts=mongo.db.posts
-    posts.insert({"title":request.form['title'], "text":request.form['text']})
+    # posts=mongo.db.posts
+    # posts.insert({"title":request.form['title'], "text":request.form['text']})
+    mongo.db.posts.insert({"title":request.form['title'], "text":request.form['text']})
     flash('New entry was successfully posted')
     return redirect(url_for('show_entries'))
 
@@ -112,7 +114,7 @@ def login():
             session['logged_in'] = True
             flash('You were logged in')
             return redirect(url_for('show_entries'))
-    return render_template('login.html', error=error)
+    return render_template('flaskr/login.html', error=error)
 
 @app.route('/flaskr_logout')
 def logout():
