@@ -94,6 +94,7 @@ def show_entries():
     #     print i
     posts=mongo.db.posts.find()
     entries = [dict(title=entry["title"], text=entry["text"]) for entry in posts]
+    entries.reverse()
     return render_template('flaskr/show_entries.html', entries=entries)
 
 @app.route('/flaskr_add', methods=['POST'])
