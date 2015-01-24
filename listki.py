@@ -3,17 +3,17 @@
 # into the module which we will be doing here. However a cleaner solution would be 
 # to create a separate .ini or .py file and load that or import the values from there.
 import os
-import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, \
     abort, render_template, flash
 from contextlib import closing
 from flask.ext.pymongo import PyMongo
+from flaskr import flaskr 
 
 
 
 # create our little application :)
 app = Flask('listki')
-
+app.register_blueprint(flaskr)
 # configuration
 app.config.update(dict(
     # MONGO_URI="mongodb://localhost:27017/",
