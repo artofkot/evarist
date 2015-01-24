@@ -24,7 +24,7 @@ app.config.update(dict(
     #MONGO_DBNAME='flaskrrr' #The database name to make available as the db attribute. Default: app.name
 ))
 app.config["SECRET_KEY"] = os.environ.get("LISTKI_SECRET_KEY")
-#app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
+app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
 
 # I generated this URI using service mongolab in heroku, see https://devcenter.heroku.com/articles/mongolab
 # locally on your computer when you install mongodb and then run it with command
