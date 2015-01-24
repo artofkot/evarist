@@ -10,7 +10,6 @@ from flask.ext.pymongo import PyMongo
 from flaskr import flaskr 
 
 
-
 # create our little application :)
 app = Flask('listki')
 app.register_blueprint(flaskr)
@@ -87,49 +86,6 @@ def startertry():
 def indexBitStarter():
     return render_template('bitstarter/indexBitStarter.html')
 
-@app.route('/flaskr')
-def show_entries():
-    # print mongo.db.collection_names()
-    # for i in mongo.db.posts.find():
-    #     print i
-    posts=mongo.db.posts.find()
-    entries = [dict(title=entry["title"], text=entry["text"]) for entry in posts]
-    return render_template('flaskr/show_entries.html', entries=entries)
-
-@app.route('/flaskr_add', methods=['POST'])
-def add_entry():
-    if not session.get('logged_in'):
-        abort(401)
-    # posts=mongo.db.posts
-    # posts.insert({"title":request.form['title'], "text":request.form['text']})
-    mongo.db.posts.insert({"title":request.form['title'], "text":request.form['text']})
-    flash('New entry was successfully posted')
-    return redirect(url_for('show_entries'))
-
-@app.route('/flaskr_login', methods=['GET', 'POST'])
-def login():
-    error = None
-    if request.method == 'POST':
-        if request.form['username'] != app.config['USERNAME']:
-            error = 'Invalid username'
-        elif request.form['password'] != app.config['PASSWORD']:
-            error = 'Invalid password'
-        else:
-            session['logged_in'] = True
-            flash('You were logged in')
-            return redirect(url_for('show_entries'))
-    return render_template('flaskr/login.html', error=error)
-
-@app.route('/flaskr_logout')
-def logout():
-    session.pop('logged_in', None) 
-    # We use a neat trick here:
-    # if you use the pop() method of the dict and pass a second parameter to it (the default),
-    # the method will delete the key from the dictionary if present or
-    # do nothing when that key is not in there.
-    # This is helpful because now we don’t have to check if the user was logged in.
-    flash('You were logged out')
-    return redirect(url_for('show_entries'))
 
 
 if __name__ == '__main__':
