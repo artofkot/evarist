@@ -1,6 +1,29 @@
 i think we should sum up changes we make with each commit somewhere for each other.
 i dunno, how it's supposed to be done, but i added this readme and stored changes and comments here under the header same as the -m in commit
 
+
+###### add Blueprints
+	- add to listki.py this stuff
+	app = Flask('listki')
+	app.register_blueprint(flaskr)
+
+	...
+
+	mongo = PyMongo(app)
+	@app.before_request
+	def before_request():
+    	g.mongo = mongo
+
+	- moved all flaskr controllers to flaskr.py, and add this there
+	flaskr = Blueprint('flaskr', __name__,
+                    template_folder='templates')
+
+    - minor changes to controllers and html files so that it all works
+    (such as g.mongo instead of mongo, flakr.show_entries.html instead of show_entries.html)
+
+    - for detailes see the commit
+
+
 ###### add bootstrap and MERGE
 	- add static/vendor   - a place for all third party plugins, libs and such (such as bootstrap)
 	- add vendor/bootstrap  (note, that this is actually not used in code, instead we use CDN)

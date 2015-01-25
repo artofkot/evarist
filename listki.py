@@ -16,7 +16,7 @@ app.register_blueprint(flaskr)
 # configuration
 app.config.update(dict(
     # MONGO_URI="mongodb://localhost:27017/",
-    DEBUG=True, # !!!! Never leave debug=True in a production system
+    DEBUG=False, # !!!! Never leave debug=True in a production system
     SECRET_KEY='development key',
     USERNAME='admin',
     PASSWORD='default'
