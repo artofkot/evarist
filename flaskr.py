@@ -16,12 +16,16 @@ flaskr = Blueprint('flaskr', __name__,
 #     except TemplateNotFound:
 #         abort(404)
 
+# @flaskr.before_request
+# def before_request():
+#     g.mongo = mongo
+
 @flaskr.route('/flaskr')
 def show_entries():
-    # print mongo.db.collection_names()
-    # for i in mongo.db.posts.find():
+    # print g.mongo.db.collection_names()
+    # for i in g.mongo.db.posts.find():
     #     print i
-    posts=mongo.db.posts.find()
+    posts=g.mongo.db.posts.find()
     entries = [dict(title=entry["title"], text=entry["text"]) for entry in posts]
     return render_template('flaskr/show_entries.html', entries=entries)
 
@@ -29,11 +33,11 @@ def show_entries():
 def add_entry():
     if not session.get('logged_in'):
         abort(401)
-    # posts=mongo.db.posts
+    # posts=g.mongo.db.posts
     # posts.insert({"title":request.form['title'], "text":request.form['text']})
-    mongo.db.posts.insert({"title":request.form['title'], "text":request.form['text']})
+    g.mongo.db.posts.insert({"title":request.form['title'], "text":request.form['text']})
     flash('New entry was successfully posted')
-    return redirect(url_for('show_entries'))
+    return redirect(url_for('flaskr.show_entries'))
 
 @flaskr.route('/flaskr_login', methods=['GET', 'POST'])
 def login():
@@ -46,7 +50,7 @@ def login():
         else:
             session['logged_in'] = True
             flash('You were logged in')
-            return redirect(url_for('show_entries'))
+            return redirect(url_for('flaskr.show_entries'))
     return render_template('flaskr/login.html', error=error)
 
 @flaskr.route('/flaskr_logout')
@@ -57,4 +61,4 @@ def logout():
     # the method will delete the key from the dictionary if present or
     # do nothing when that key is not in there.
     flash('You were logged out')
-    return redirect(url_for('show_entries'))
+    return redirect(url_for('flaskr.show_entries'))
