@@ -90,6 +90,5 @@ def indexBitStarter():
     return render_template('bitstarter/indexBitStarter.html')
 
 
-
 if __name__ == '__main__':
     app.run()
