@@ -1,2 +1,5 @@
+.DS_Store
+archive
+tmp
 venv
 *.pyc
