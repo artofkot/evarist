@@ -1,14 +1,25 @@
 {% extends "layout.html" %}
+  {% block head %}
+    <link href="../static/signin.css" rel="stylesheet">
+  {% endblock %}
 {% block body %}
-  <h2>Login</h2>
-  {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
-  <form action="{{ url_for('flaskr.login') }}" method=post>
-    <dl>
-      <dt>Username:
-      <dd><input type=text name=username>
-      <dt>Password:
-      <dd><input type=password name=password>
-      <dd><input type=submit value=Login>
-    </dl>
-  </form>
+  <div class="container">
+    {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
+      <form class="form-signin" action="{{ url_for('flaskr.login') }}" role="form" method=post>
+          <h2 class="form-signin-heading">Please sign in</h2>
+          <label for="inputLogin" class="sr-only">Login</label>
+          <input type=text id="inputLogin" class="form-control" placeholder="Login" autofocus required name=username>
+          <label for="inputPassword" class="sr-only">Password</label>
+          <input id="inputPassword" class="form-control" placeholder="Password" type=password required name=password>
+          <button class="btn btn-lg btn-primary btn-block" type="submit" value=Login>Sign in</button>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" value="remember-me"> Remember me
+            </label>
+          </div>
+      </dl>
+    </form>
+  </div>
+{#    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <!-- // <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>  --> #}
 {% endblock %}

@@ -88,9 +88,50 @@ def index():
 def home():
     return render_template('home.html')
 
-@app.route('/signin')
+
+
+
+@app.route('/signin', methods=['GET', 'POST'])
 def signin():
-    return render_template('signin.html')
+    error = None
+    if request.method == 'POST':
+        if request.form['username'] != current_app.config['USERNAME']:
+            error = 'Invalid username'
+        elif request.form['password'] != current_app.config['PASSWORD']:
+            error = 'Invalid password'
+        else:
+            session['logged_in'] = True
+            flash('You were logged in')
+            return redirect(url_for('flaskr.show_entries'))
+    return render_template('signin.html', error=error)
+
+# @flaskr.route('/flaskr_logout')
+# def logout():
+#     session.pop('logged_in', None) 
+#     # We use a neat trick here:
+#     # if you use the pop() method of the dict and pass a second parameter to it (the default),
+#     # the method will delete the key from the dictionary if present or
+#     # do nothing when that key is not in there.
+#     flash('You were logged out')
+#     return redirect(url_for('flaskr.show_entries'))
+
+# @flaskr.route('/flaskr_login', methods=['GET', 'POST'])
+# def login():
+#     error = None
+#     if request.method == 'POST':
+#         if request.form['username'] != current_app.config['USERNAME']:
+#             error = 'Invalid username'
+#         elif request.form['password'] != current_app.config['PASSWORD']:
+#             error = 'Invalid password'
+#         else:
+#             session['logged_in'] = True
+#             flash('You were logged in')
+#             return redirect(url_for('flaskr.show_entries'))
+#     return render_template('flaskr/login.html', error=error)
+
+
+
+
 
 @app.route('/startertry')
 def startertry():

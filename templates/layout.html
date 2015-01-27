@@ -79,6 +79,8 @@
         </div>
       </nav>
 
+      <!-- <a href="{{ url_for('signin') }}">signin</a> -->
+
       {% for message in get_flashed_messages() %}
         <div class=flash>{{ message }}</div>
       {% endfor %}
