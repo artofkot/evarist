@@ -40,8 +40,8 @@
   </head>
 
   <body> 
+    <div class=page>
 
-    <!-- NAVBAR -->
       <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
           <div class="navbar-header">
@@ -59,7 +59,9 @@
               <li><a href="{{ url_for('indexBitStarter')}}" in_tag="ul" kaspersky_status="skipped">About</a></li>
               <li><a href="#contact" in_tag="ul" kaspersky_status="skipped">Contact</a></li>
             </ul>
-            <form class="navbar-form navbar-right" action="{{ url_for('flaskr.login') }}" method=post>
+            {% if not session.logged_in %}
+            <!-- TODO what is metanav? -->
+            <form class="navbar-form navbar-right" class="metanav" action="{{ url_for('flaskr.login') }}" method=post>
               <div class="form-group">
                 <input type="text" placeholder="Login" class="form-control" name=username>
               </div>
@@ -68,23 +70,20 @@
               </div>
               <button type="submit" class="btn btn-success" value=Login>Sign in</button>
             </form>
-          </div><!--/.navbar-collapse -->
+            {% else %}
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="{{ url_for('flaskr.logout') }}">Log out</a></li>
+            </ul>
+            {% endif%}
+          </div>
         </div>
       </nav>
 
-    <div class=page>
-      <div class=metanav>
-      {% if not session.logged_in %}
-        <a href="{{ url_for('flaskr.login') }}">log in</a>
-      {% else %}
-        <a href="{{ url_for('flaskr.logout') }}">log out</a>
-      {% endif %}
-      </div>
       {% for message in get_flashed_messages() %}
         <div class=flash>{{ message }}</div>
       {% endfor %}
       {% block body %}{% endblock %}
-    </div>
 
+    </div>
   </body>
 </html>
