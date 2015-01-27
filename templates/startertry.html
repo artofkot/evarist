@@ -1,67 +1,61 @@
 {% extends "layout.html" %}
+{% block head %}
+  <title>Bootstrap Playground</title>
+{% endblock %}
 
-  {% block head %}
-    <title>Bootstrap Playground</title>
+{% block body %}
 
-    <!-- Custom styles for this template -->
-    <!-- <link href="../static/starter-template.css" rel="stylesheet"> -->
-
-  {% endblock %}
-
-  {% block body %}
-
-    <div>
-      <div class="container-fluid">
-      <!-- .container has one fixed width for each screen size in bootstrap (xs,sm,md,lg); 
-           .container-fluid expands to fill the available width. 
-           i like things fluid :) -->
-        <div class="jumbotron jumbotron-2 center-x">
-          <h1>BOOM!</h1>
-          <hr>
-          <p class="lead">In publishing and graphic design, lorem ipsum is a filler text commonly used to demonstrate the graphic elements of a document or visual presentation. Replacing meaningful content that could be distracting with placeholder text may allow viewers to focus on graphic aspects such as font, typography, and page layout. It also reduces the need for the designer to come up with meaningful text, as they can instead use hastily generated lorem ipsum text.</p>
-          <hr>
-          <p> The lorem ipsum text is typically a scrambled section of De finibus bonorum et malorum, a 1st-century BC Latin text by Cicero, with words altered, added, and removed to make it nonsensical, improper Latin. </p>
-          <hr>
-        </div>
+  <div>
+    <div class="container-fluid">
+    <!-- .container has one fixed width for each screen size in bootstrap (xs,sm,md,lg); 
+         .container-fluid expands to fill the available width. 
+         i like things fluid :) -->
+      <div class="jumbotron jumbotron-2 center-x">
+        <h1>BOOM!</h1>
+        <hr>
+        <p class="lead">In publishing and graphic design, lorem ipsum is a filler text commonly used to demonstrate the graphic elements of a document or visual presentation. Replacing meaningful content that could be distracting with placeholder text may allow viewers to focus on graphic aspects such as font, typography, and page layout. It also reduces the need for the designer to come up with meaningful text, as they can instead use hastily generated lorem ipsum text.</p>
+        <hr>
+        <p> The lorem ipsum text is typically a scrambled section of De finibus bonorum et malorum, a 1st-century BC Latin text by Cicero, with words altered, added, and removed to make it nonsensical, improper Latin. </p>
+        <hr>
       </div>
     </div>
+  </div>
 
-    <div class="container">
-      <div class="starter-template">
-        <h1>Bootstrap starter template</h1>
-        <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
-        <p>Does the automatics deploy from github master work?</p>
-      </div>
-    </div><!-- /.container -->
-
-
-
-    <div class="row">
-      <div class="col-md-1">.col-md-1</div>
-      <div class="col-md-1">.col-md-1</div>
-      <div class="col-md-1">.col-md-1</div>
-      <div class="col-md-1">.col-md-1</div>
-      <div class="col-md-1">.col-md-1</div>
-      <div class="col-md-1">.col-md-1</div>
-      <div class="col-md-1">.col-md-1</div>
-      <div class="col-md-1">.col-md-1</div>
-      <div class="col-md-1">.col-md-1</div>
-      <div class="col-md-1">.col-md-1</div>
-      <div class="col-md-1">.col-md-1</div>
-      <div class="col-md-1">.col-md-1</div>
+  <div class="container">
+    <div class="starter-template">
+      <h1>Bootstrap starter template</h1>
+      <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
+      <p>Does the automatics deploy from github master work?</p>
     </div>
-    <div class="row">
-      <div class="col-md-8">.col-md-8</div>
-      <div class="col-md-4">.col-md-4</div>
-    </div>
-    <div class="row">
-      <div class="col-md-4">.col-md-4</div>
-      <div class="col-md-4">.col-md-4</div>
-      <div class="col-md-4">.col-md-4</div>
-    </div>
-    <div class="row">
-      <div class="col-md-6">.col-md-6</div>
-      <div class="col-md-6">.col-md-6</div>
-    </div>
+  </div><!-- /.container -->
 
-  {% endblock %}
+
+  <div class="row">
+    <div class="col-md-1">.col-md-1</div>
+    <div class="col-md-1">.col-md-1</div>
+    <div class="col-md-1">.col-md-1</div>
+    <div class="col-md-1">.col-md-1</div>
+    <div class="col-md-1">.col-md-1</div>
+    <div class="col-md-1">.col-md-1</div>
+    <div class="col-md-1">.col-md-1</div>
+    <div class="col-md-1">.col-md-1</div>
+    <div class="col-md-1">.col-md-1</div>
+    <div class="col-md-1">.col-md-1</div>
+    <div class="col-md-1">.col-md-1</div>
+    <div class="col-md-1">.col-md-1</div>
+  </div>
+  <div class="row">
+    <div class="col-md-8">.col-md-8</div>
+    <div class="col-md-4">.col-md-4</div>
+  </div>
+  <div class="row">
+    <div class="col-md-4">.col-md-4</div>
+    <div class="col-md-4">.col-md-4</div>
+    <div class="col-md-4">.col-md-4</div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">.col-md-6</div>
+    <div class="col-md-6">.col-md-6</div>
+  </div>
+
+{% endblock %}

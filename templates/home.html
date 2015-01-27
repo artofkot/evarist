@@ -1,19 +1,11 @@
 {% extends "layout.html" %}
-<!-- 
-<!DOCTYPE html>
-<html> -->
-  <head>
-    <title>listki homepage with links</title>
-  </head>
-  <!-- <body> -->
-
-{% block body %}
-    <ul>
-      <li>  <a href="{{ url_for('flaskr.show_entries')}}"> Flask simple blog tutorial (called flaskr) + mongodb</a>  </li>
-      <li>  <a href="{{ url_for('indexBitStarter')}}"> BitStarter</a>  </li>
-      <li>  <a href="{{ url_for('startertry')}}"> Bootstrap Playground </a>  </li>
-    </ul>
+{% block head %}
+   <title>listki homepage with links</title>
 {% endblock %}
-
-<!--   </body>
-</html> -->
+{% block body %}
+  <ul>
+    <li>  <a href="{{ url_for('flaskr.show_entries')}}"> Flask simple blog tutorial (called flaskr) + mongodb</a>  </li>
+    <li>  <a href="{{ url_for('indexBitStarter')}}"> BitStarter</a>  </li>
+    <li>  <a href="{{ url_for('startertry')}}"> Bootstrap Playground </a>  </li>
+  </ul>
+{% endblock %}

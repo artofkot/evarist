@@ -1,4 +1,7 @@
 {% extends "layout.html" %}
+{% block head %}
+  <title>listki/blog</title>
+{% endblock %}
 {% block body %}
   {% if session.logged_in %}
     <form action="{{ url_for('flaskr.add_entry') }}" method=post class=add-entry>
