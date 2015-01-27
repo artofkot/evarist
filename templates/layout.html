@@ -41,6 +41,10 @@
 
   <body> 
     <div class=page>
+    <div class="container" >
+    <!-- .container has one fixed width for each screen size in bootstrap (xs,sm,md,lg); 
+         .container-fluid expands to fill the available width. 
+         i like things fluid :) . but empirically, looks better without fluid. -->
 
       <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
@@ -83,7 +87,7 @@
         <div class=flash>{{ message }}</div>
       {% endfor %}
       {% block body %}{% endblock %}
-
+    </div>
     </div>
   </body>
 </html>
