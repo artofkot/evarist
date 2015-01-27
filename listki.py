@@ -78,6 +78,11 @@ def before_request():
 # PyMongo connects to the MongoDB server running on MONGO_URI, and assumes a default database name of app.name 
 # (i.e. whatever name you pass to Flask). This database is exposed as the db attribute.
 
+
+@app.route('/')
+def index():
+    return redirect(url_for('home'))
+
 @app.route('/home')
 def home():
     return render_template('home.html')
