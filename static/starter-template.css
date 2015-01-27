@@ -6,7 +6,6 @@ body {
   text-align: center;
 } 
 
-jumbotron-section-1 {
+.jumbotron {
 	text-align:center;
 } 
-/* why doesn't it work??*/

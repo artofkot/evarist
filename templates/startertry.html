@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 
   {% block head %}
+    <title>Bootstrap Playground</title>
 
     <!-- Custom styles for this template -->
     <link href="../static/starter-template.css" rel="stylesheet">
@@ -29,18 +30,14 @@
       </div>
     </nav>
 
-    <div>
-      <div class="container">
-        <div class="jumbotron">
-          <p><center><h1>BOOM!</h1></center></p> <!-- btw imagine, guy's say <center> is deprecated. use css instead... screw that for now... --> 
-        </div>
-      </div>
-    </div>
 
 
     <div>
       <div class="container-fluid">
-        <div class="jumbotron">
+      <!-- .container has one fixed width for each screen size in bootstrap (xs,sm,md,lg); 
+           .container-fluid expands to fill the available width. 
+           i like things fluid :) -->
+        <div class="jumbotron jumbotron-2 center-x">
           <p><h1>BOOM!</h1></p>
         </div>
       </div>
