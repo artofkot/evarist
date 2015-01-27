@@ -71,6 +71,7 @@ app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
 #     mongo.close()
 
 mongo = PyMongo(app)
+print app.name
 
 @app.before_request
 def before_request():
@@ -86,6 +87,14 @@ def index():
 @app.route('/home')
 def home():
     return render_template('home.html')
+
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
+@app.route('/signin')
+def signin():
+    return render_template('signin.html')
 
 @app.route('/startertry')
 def startertry():
