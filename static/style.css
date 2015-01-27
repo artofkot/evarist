@@ -3,6 +3,10 @@ body {
 } /* for the navbar */
 
 
+.jumbotron {
+	text-align:center;
+} 
+
 /*.starter-template {
   padding: 40px 15px;
   text-align: center;
