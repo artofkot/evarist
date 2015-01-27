@@ -1,6 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
+{% extends "layout.html" %}
+
+<!-- <!DOCTYPE html>
+<html lang="en"> -->
+  <!-- <head> -->
+
+
+  {% block head %}
+
+
+
+
+
+
+
+
     <!--     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,25 +24,27 @@
     <title>Starter Template for Bootstrap</title>
 
     <!-- Bootstrap headers from official Get Started -->
-      <meta charset="utf-8">
+      <!-- <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="viewport" content="width=device-width, initial-scale=1">
-    
+-->
     <!-- Bootstrap CDN from official site -->
       <!-- Differs from what we had in index.html. i dunno why. why did u end up using different cdn there?     TOREAD     -->
       <!-- Also, note, this is bootstrap 3 (v3.3.2). Before, we used bootstrap 2. let's go with 3, seems like that's the best practice. -->
 
       <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-
+      <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+-->
       <!-- Latest compiled and minified CSS -->
-      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+      <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"> 
+-->
 
       <!-- Optional theme -->
       <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css"> -->
 
       <!-- Latest compiled and minified JavaScript -->
-      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+      <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+-->
 
       <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
       <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -54,9 +69,12 @@
 
 
 
-  </head>
+  <!-- </head> -->
 
-  <body>
+  {% endblock %}
+
+  {% block body %}
+  <!-- <body> -->
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
@@ -82,7 +100,7 @@
     <div>
       <div class="container">
         <div class="jumbotron">
-          <p><center><h1>BOOM!</h1></center></p>
+          <p><center><h1>BOOM!</h1></center></p> <!-- btw imagine, guy's say <center> is deprecated. use css instead... screw that for now... --> 
         </div>
       </div>
     </div>
@@ -91,7 +109,7 @@
     <div>
       <div class="container-fluid">
         <div class="jumbotron">
-          <p><center><h1>BOOM!</h1></center></p>
+          <p><h1>BOOM!</h1></p>
         </div>
       </div>
     </div>
@@ -103,3 +121,5 @@
         <p>Does the automatics deploy from github master work?</p>
       </div>
     </div><!-- /.container -->
+
+  {% endblock %}
