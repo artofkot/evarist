@@ -7,7 +7,6 @@ from flask import Flask, request, session, g, redirect, url_for, \
     abort, render_template, flash
 from contextlib import closing
 from flask.ext.pymongo import PyMongo
-from flaskr import flaskr
 from login_module import login_module
 
 
