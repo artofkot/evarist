@@ -1,45 +1,76 @@
-{% extends "flaskr/layout.html" %}
+{% extends "layout.html" %}
+{% block head %}
+  <title>listki/blog</title>
+  <link href="../static/show_entries.css" rel="stylesheet">
+{% endblock %}
 {% block body %}
-
-  <!-- add navbar to test bootstrap -->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Project name</a>
-        </div>
-        <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="#" in_tag="ul" kaspersky_status="skipped">Home</a></li>
-            <li><a href="#about" in_tag="ul" kaspersky_status="skipped">About</a></li>
-            <li><a href="#contact" in_tag="ul" kaspersky_status="skipped">Contact</a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
-
-
   {% if session.logged_in %}
     <form action="{{ url_for('flaskr.add_entry') }}" method=post class=add-entry>
       <dl>
-        <dt>Title:
-        <dd><input type=text size=30 name=title>
-        <dt>Text:
-        <dd><textarea name=text rows=5 cols=40></textarea>
+        <div class="form-group">
+          <!-- <dt>Title: -->
+          <!-- <dd><input type=text size=30 name=title> -->
+          <label for="title">Title:</label>
+          <input type="text" class="form-control" id="title" name=title>
+          <!-- <dt>Text: -->
+          <!-- <dd><textarea name=text rows=5 cols=40></textarea> -->
+          <label for="comment">Comment:</label>
+          <textarea class="form-control" rows="5" id="comment" name=text></textarea>
+        </div>
         <dd><input type=submit value=Share>
       </dl>
     </form>
   {% endif %}
-  <ul class=entries>
-  {% for entry in entries %}
-    <li><h2>{{ entry.title }}</h2>{{ entry.text|safe }}
-  {% else %}
-    <li><em>Unbelievable.  No entries here so far</em>
-  {% endfor %}
-  </ul>
+  <div class="row">
+    <div class="col-sm-8 blog-main">
+    {% for entry in entries %}
+      <div class="blog-post">
+        <h2 class="blog-post-title">{{ entry.title }}</h2>
+        <p class="blog-post-meta">January 1, 2014 by <a href="#">Mark</a></p>
+        {{ entry.text|safe }}
+      </div>
+
+      <ul class="media-list">
+        <li class="media">
+          <div class="media-left">
+            <a href="#">
+              <img class="media-object" src="..." alt="...">
+            </a>
+          </div>
+          <div class="media-body">
+            <h4 class="media-heading">Media heading</h4>
+            ...
+            <ul class="media-list">
+              <li class="media">
+                <div class="media-left">
+                  <a href="#">
+                    <img class="media-object" src="..." alt="...">
+                  </a>
+                </div>
+                <div class="media-body">
+                  <h4 class="media-heading">Media heading</h4>
+                  ...
+                </div>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="media">
+          <div class="media-left">
+            <a href="#">
+              <img class="media-object" src="..." alt="...">
+            </a>
+          </div>
+          <div class="media-body">
+            <h4 class="media-heading">Media heading</h4>
+            ...
+          </div>
+        </li>
+      </ul>
+
+    {% else %}
+      <p class=lead> Unbelievable. No entries here so far. </p>
+    {% endfor %}
+    </div>
+  </div>
 {% endblock %}

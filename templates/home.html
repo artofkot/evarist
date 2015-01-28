@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html>
   <head>
@@ -17,3 +18,29 @@
     </ul>
   </body>
 </html>
+||||||| merged common ancestors
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Home page with links</title>
+  </head>
+  <body>
+    <ul>
+      <li>  <a href="{{ url_for('flaskr.show_entries')}}"> Flask simple blog tutorial (called flaskr) + mongodb</a>  </li>
+      <li>  <a href="{{ url_for('indexBitStarter')}}"> BitStarter</a>  </li>
+    </ul>
+  </body>
+</html>
+=======
+{% extends "layout.html" %}
+{% block head %}
+   <title>listki homepage with links</title>
+{% endblock %}
+{% block body %}
+  <ul>
+    <li>  <a href="{{ url_for('flaskr.show_entries')}}"> Flask simple blog tutorial (called flaskr) + mongodb</a>  </li>
+    <li>  <a href="{{ url_for('indexBitStarter')}}"> BitStarter</a>  </li>
+    <li>  <a href="{{ url_for('startertry')}}"> Bootstrap Playground </a>  </li>
+  </ul>
+{% endblock %}
+>>>>>>> a9af6052c53d430ad2f59a2cccd74696737aaac7
