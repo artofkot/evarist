@@ -2,6 +2,7 @@ bcrypt==1.1.0
 cffi==0.8.6
 clang==3.3
 Flask==0.10.1
+Flask-Bcrypt==0.6.0
 Flask-PyMongo==0.3.0
 gnureadline==6.3.3
 gunicorn==19.1.1
@@ -11,6 +12,7 @@ Jinja2==2.7.3
 MarkupSafe==0.23
 mercurial==3.2.4
 Pillow==2.5.3
+py-bcrypt==0.4
 pycparser==2.10
 pygame==1.9.2a0
 pymongo==2.7.2

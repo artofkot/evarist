@@ -9,20 +9,17 @@
 
   <div class="row">
     <div class="col-md-12">
-      <form class="form-signin" action="{{ url_for('login_module.login') }}" role="form" method=post>
+      <form class="form-signin" action="{{ url_for('login_module.signup') }}" role="form" method=post>
         <dl>
           {% if error %}<div class="alert alert-warning error" role="alert"> <strong>Error:</strong> {{ error }} </div> {% endif %}
-            <h2 class="form-signin-heading">Please, log in.</h2>
+            <h2 class="form-signin-heading">Please, sign up.</h2>
             <label for="inputLogin" class="sr-only">Username</label>
             <input id="inputLogin" class="form-control" type=text placeholder="Username" autofocus required name=username>
             <label for="inputPassword" class="sr-only">Password</label>
             <input id="inputPassword" class="form-control" type=password placeholder="Password" required name=password>
-            <button class="btn btn-lg btn-primary btn-block" type="submit" value=Login>Sign in</button>
-            <div class="checkbox">
-              <label>
-                <input type="checkbox" value="remember-me"> Remember me
-              </label>
-            </div>
+            <label for="inputemail" class="sr-only">email</label>
+            <input id="inputemail" class="form-control" type=text placeholder="email" required name=email>
+            <button class="btn btn-lg btn-primary btn-block" type="submit" value=signup>Sign up</button>
         </dl>
       </form>
     </div>

@@ -6,17 +6,20 @@ import os
 from flask import Flask, request, session, g, redirect, url_for, \
     abort, render_template, flash
 from contextlib import closing
+from flask.ext.bcrypt import Bcrypt
 from flask.ext.pymongo import PyMongo
 from login_module import login_module
 
 
 # create our little application :)
 app = Flask('listki')
+bcrypt = Bcrypt(app)
+
 app.register_blueprint(login_module)
 # configuration
 app.config.update(dict(
     # MONGO_URI="mongodb://localhost:27017/",
-    DEBUG=False, # !!!! Never leave debug=True in a production system
+    DEBUG=True, # !!!! Never leave debug=True in a production system
     SECRET_KEY='development key',
     USERNAME='admin',
     PASSWORD='default'
@@ -75,6 +78,7 @@ mongo = PyMongo(app)
 @app.before_request
 def before_request():
     g.mongo = mongo
+    g.bcrypt = bcrypt
 # PyMongo connects to the MongoDB server running on MONGO_URI, and assumes a default database name of app.name 
 # (i.e. whatever name you pass to Flask). This database is exposed as the db attribute.
 
