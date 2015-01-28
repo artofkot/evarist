@@ -92,8 +92,6 @@ def home():
 def set_theory():
     return render_template('problem_sets/set_theory.html')
 
-
-
 @app.route('/comments')
 def show_entries():
     # print g.mongo.db.collection_names()
@@ -113,9 +111,6 @@ def add_entry():
     g.mongo.db.posts.insert({"title":request.form['title'], "text":request.form['text']})
     flash('New entry was successfully posted')
     return redirect(url_for('show_entries'))
-
-
-
 
 @app.route('/startertry')
 def startertry():

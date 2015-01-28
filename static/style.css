@@ -1,3 +1,11 @@
 body {
-  padding-top: 50px;
-} /* for the navbar */
+  padding-top: 70px; /* for the navbar and a lil more */
+  font-family: 'Computer Modern Bright';
+} 
+
+/* Small devices (tablets, 768px and up) */
+@media (max-width: 768px) {
+  body {
+    padding-top: 60px; /* for the navbar and a lil more */
+  }
+}
