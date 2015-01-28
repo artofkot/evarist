@@ -1,46 +1,26 @@
-<<<<<<< HEAD
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Home page with links</title>
-  </head>
-  <body>
-    <ul>
-      <li>  
-        <a href="{{ url_for('flaskr.show_entries')}}"> Flask simple blog tutorial (called flaskr) + mongodb</a>  
-      </li>
-      <li>  
-        <a href="{{ url_for('indexBitStarter')}}"> BitStarter</a>  
-      </li>
-      <li>
-        <a href="{{url_for ('startertry')}}">startertry for playing with bootstrap</a>
-      </li>
-    </ul>
-  </body>
-</html>
-||||||| merged common ancestors
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Home page with links</title>
-  </head>
-  <body>
-    <ul>
-      <li>  <a href="{{ url_for('flaskr.show_entries')}}"> Flask simple blog tutorial (called flaskr) + mongodb</a>  </li>
-      <li>  <a href="{{ url_for('indexBitStarter')}}"> BitStarter</a>  </li>
-    </ul>
-  </body>
-</html>
-=======
 {% extends "layout.html" %}
 {% block head %}
    <title>listki homepage with links</title>
 {% endblock %}
 {% block body %}
-  <ul>
-    <li>  <a href="{{ url_for('flaskr.show_entries')}}"> Flask simple blog tutorial (called flaskr) + mongodb</a>  </li>
-    <li>  <a href="{{ url_for('indexBitStarter')}}"> BitStarter</a>  </li>
-    <li>  <a href="{{ url_for('startertry')}}"> Bootstrap Playground </a>  </li>
-  </ul>
+
+  <div class="row">
+    <div class="col-md-12">
+      <ul>
+        <li>  <a href="{{ url_for('show_entries')}}"> comments </a>  </li>
+        <li>  <a href="{{ url_for('indexBitStarter')}}"> BitStarter</a>  </li>
+        <li>  <a href="{{ url_for('startertry')}}"> Bootstrap Playground </a>  </li>
+      </ul>
+    </div>
+  </div>   
+  <hr>
+  <div class="row">
+    <div class="col-md-4 col-md-offset-2">
+    <h1>Problem sets</h1>
+      <ol>
+        <li>  <a href="{{ url_for('set_theory')}}"> Set Theory </a> </li>
+      </ol>
+    </div>
+  </div>
+
 {% endblock %}
->>>>>>> a9af6052c53d430ad2f59a2cccd74696737aaac7

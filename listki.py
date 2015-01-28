@@ -7,12 +7,13 @@ from flask import Flask, request, session, g, redirect, url_for, \
     abort, render_template, flash
 from contextlib import closing
 from flask.ext.pymongo import PyMongo
-from flaskr import flaskr 
+from flaskr import flaskr
+from login_module import login_module
 
 
 # create our little application :)
 app = Flask('listki')
-app.register_blueprint(flaskr)
+app.register_blueprint(login_module)
 # configuration
 app.config.update(dict(
     # MONGO_URI="mongodb://localhost:27017/",
@@ -71,7 +72,6 @@ app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
 #     mongo.close()
 
 mongo = PyMongo(app)
-print app.name
 
 @app.before_request
 def before_request():
@@ -84,9 +84,38 @@ def before_request():
 def index():
     return redirect(url_for('home'))
 
+
 @app.route('/home')
 def home():
     return render_template('home.html')
+
+@app.route('/set_theory')
+def set_theory():
+    return render_template('problem_sets/set_theory.html')
+
+
+
+@app.route('/comments')
+def show_entries():
+    # print g.mongo.db.collection_names()
+    # for i in g.mongo.db.posts.find():
+    #     print i
+    posts=g.mongo.db.posts.find()
+    entries = [dict(title=entry["title"], text=entry["text"]) for entry in posts]
+    entries.reverse()
+    return render_template('show_entries.html', entries=entries)
+
+@app.route('/comments_add', methods=['POST'])
+def add_entry():
+    if not session.get('logged_in'):
+        abort(401)
+    # posts=g.mongo.db.posts
+    # posts.insert({"title":request.form['title'], "text":request.form['text']})
+    g.mongo.db.posts.insert({"title":request.form['title'], "text":request.form['text']})
+    flash('New entry was successfully posted')
+    return redirect(url_for('show_entries'))
+
+
 
 
 @app.route('/startertry')
@@ -96,7 +125,6 @@ def startertry():
 @app.route('/indexBitStarter')
 def indexBitStarter():
     return render_template('bitstarter/indexBitStarter.html')
-
 
 if __name__ == '__main__':
     app.run()
