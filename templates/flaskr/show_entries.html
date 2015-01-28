@@ -29,6 +29,45 @@
         <p class="blog-post-meta">January 1, 2014 by <a href="#">Mark</a></p>
         {{ entry.text|safe }}
       </div>
+
+      <ul class="media-list">
+        <li class="media">
+          <div class="media-left">
+            <a href="#">
+              <img class="media-object" src="..." alt="...">
+            </a>
+          </div>
+          <div class="media-body">
+            <h4 class="media-heading">Media heading</h4>
+            ...
+            <ul class="media-list">
+              <li class="media">
+                <div class="media-left">
+                  <a href="#">
+                    <img class="media-object" src="..." alt="...">
+                  </a>
+                </div>
+                <div class="media-body">
+                  <h4 class="media-heading">Media heading</h4>
+                  ...
+                </div>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="media">
+          <div class="media-left">
+            <a href="#">
+              <img class="media-object" src="..." alt="...">
+            </a>
+          </div>
+          <div class="media-body">
+            <h4 class="media-heading">Media heading</h4>
+            ...
+          </div>
+        </li>
+      </ul>
+
     {% else %}
       <p class=lead> Unbelievable. No entries here so far. </p>
     {% endfor %}
