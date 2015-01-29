@@ -1,10 +1,13 @@
 import os, re
-import bcrypt
+# import bcrypt - fuck this shit, seriously hate this library
 from flask import current_app, Flask, Blueprint, request, session, g, redirect, url_for, \
     abort, render_template, flash
 from contextlib import closing
 from flask.ext.pymongo import PyMongo
 from jinja2 import TemplateNotFound
+
+import uuid
+import hashlib
 
 login_module = Blueprint('login_module', __name__,
                     template_folder='templates')
@@ -22,11 +25,21 @@ EMAIL_RE  = re.compile(r'^[\S]+@[\S]+\.[\S]+$')
 def valid_email(email):
     return not email or EMAIL_RE.match(email)
 
-def hash_str(s):
-    return bcrypt.hashpw(current_app.config["SECRET_KEY"]+s, bcrypt.gensalt(10))
+def hash_str(password):
+    # uuid is used to generate a random number
+    salt = uuid.uuid4().hex
+    return hashlib.sha256(current_app.config["SECRET_KEY"]+salt.encode() + password.encode()).hexdigest() + ':' + salt
+    
+def check_pwd(user_password, hashed_password):
+    password, salt = hashed_password.split(':')
+    return password == hashlib.sha256(current_app.config["SECRET_KEY"] + salt.encode() + user_password.encode()).hexdigest()
+ 
 
-def check_pwd(password,hashed):
-    return bcrypt.hashpw(current_app.config["SECRET_KEY"]+password,hashed) == hashed
+# def hash_str(s):
+#     return bcrypt.hashpw(current_app.config["SECRET_KEY"]+s, bcrypt.gensalt(10))
+
+# def check_pwd(password,hashed):
+#     return bcrypt.hashpw(current_app.config["SECRET_KEY"]+password,hashed) == hashed
 
 @login_module.route('/login', methods=['GET', 'POST'])
 def login():
