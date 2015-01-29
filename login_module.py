@@ -1,5 +1,5 @@
 import os, re
-from bcrypt import hashpw, gensalt
+#from bcrypt import hashpw, gensalt
 from flask import current_app, Flask, Blueprint, request, session, g, redirect, url_for, \
     abort, render_template, flash
 from contextlib import closing
