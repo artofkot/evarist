@@ -1,4 +1,5 @@
-import os, re, bcrypt
+import os, re
+from bcrypt import hashpw, gensalt
 from flask import current_app, Flask, Blueprint, request, session, g, redirect, url_for, \
     abort, render_template, flash
 from contextlib import closing
@@ -22,10 +23,10 @@ def valid_email(email):
     return not email or EMAIL_RE.match(email)
 
 def hash_str(s):
-    return bcrypt.hashpw(current_app.config["SECRET_KEY"]+s, bcrypt.gensalt(10))
+    return hashpw(current_app.config["SECRET_KEY"]+s, gensalt(10))
 
 def check_pwd(password,hashed):
-    return bcrypt.hashpw(current_app.config["SECRET_KEY"]+password,hashed) == hashed
+    return hashpw(current_app.config["SECRET_KEY"]+password,hashed) == hashed
 
 @login_module.route('/login', methods=['GET', 'POST'])
 def login():
