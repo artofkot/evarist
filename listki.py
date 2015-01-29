@@ -17,13 +17,13 @@ app.register_blueprint(login_module)
 # configuration
 app.config.update(dict(
     # MONGO_URI="mongodb://localhost:27017/",
-    DEBUG=True, # !!!! Never leave debug=True in a production system
+    DEBUG=False, # !!!! Never leave debug=True in a production system
     SECRET_KEY='development key',
     USERNAME='admin',
     PASSWORD='default'
     #MONGO_DBNAME='flaskrrr' #The database name to make available as the db attribute. Default: app.name
 ))
-app.config["SECRET_KEY"] = os.environ.get("LISTKI_SECRET_KEY")
+app.config["SECRET_KEY"] = os.environ.get("LISTKI_SECRET_KEY") #for hashing passwords and sessions
 app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
 
 # I generated this URI using service mongolab in heroku, see https://devcenter.heroku.com/articles/mongolab

@@ -69,20 +69,10 @@ def logout():
 
 @login_module.route('/signup', methods=['GET', 'POST'])
 def signup():
-    # gensalt's log_rounds parameter determines the complexity.
-    # The work factor is 2**log_rounds, and the default is 12
-    # hashed = bcrypt.hashpw("password", bcrypt.gensalt(10))
 
-    # # Check that an unencrypted password matches one that has
-    # # previously been hashed
-    # if bcrypt.hashpw("password", hashed) == hashed:
-    #         print "It matches"
-    # else:
-    #         print "It does not match"
 
-    for i in g.mongo.db.users.find():
-        print i
-
+    # for i in g.mongo.db.users.find():
+    #     print i
 
     error=None
     if request.method == 'POST':
