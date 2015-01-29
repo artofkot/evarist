@@ -1,4 +1,4 @@
-import os, re
+import os, re, bcrypt
 from flask import current_app, Flask, Blueprint, request, session, g, redirect, url_for, \
     abort, render_template, flash
 from contextlib import closing
@@ -21,6 +21,12 @@ EMAIL_RE  = re.compile(r'^[\S]+@[\S]+\.[\S]+$')
 def valid_email(email):
     return not email or EMAIL_RE.match(email)
 
+def hash_str(s):
+    return bcrypt.hashpw(current_app.config["SECRET_KEY"]+s, bcrypt.gensalt(10))
+
+def check_pwd(password,hashed):
+    return bcrypt.hashpw(current_app.config["SECRET_KEY"]+password,hashed) == hashed
+
 @login_module.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
@@ -29,7 +35,7 @@ def login():
         password=request.form['password']
         user=g.mongo.db.users.find_one({"username": username})
         if user:
-            if g.bcrypt.check_password_hash(user["pw_hash"], password): # returns True
+            if check_pwd(password,user["pw_hash"]):
                 session['logged_in'] = True
                 session['username'] = user['username']
                 flash('You were logged in')
@@ -47,14 +53,22 @@ def logout():
     return redirect(url_for('show_entries'))
 
 
-# pw_hash = bcrypt.generate_password_hash('hunter3')
-# print bcrypt.check_password_hash(pw_hash, 'hunter3') # returns True
-
 @login_module.route('/signup', methods=['GET', 'POST'])
 def signup():
+    # gensalt's log_rounds parameter determines the complexity.
+    # The work factor is 2**log_rounds, and the default is 12
+    # hashed = bcrypt.hashpw("password", bcrypt.gensalt(10))
+
+    # # Check that an unencrypted password matches one that has
+    # # previously been hashed
+    # if bcrypt.hashpw("password", hashed) == hashed:
+    #         print "It matches"
+    # else:
+    #         print "It does not match"
 
     for i in g.mongo.db.users.find():
         print i
+
 
     error=None
     if request.method == 'POST':
@@ -67,7 +81,7 @@ def signup():
         elif not valid_password(request.form['email']):
             error = 'Strange email, please change'
         else:
-            pw_hash = g.bcrypt.generate_password_hash(request.form['password'])
+            pw_hash = hash_str(request.form['password'])
             username=request.form['username']
             email=request.form['email']
             g.mongo.db.users.insert({"username":username, "pw_hash":pw_hash, "email":email})
