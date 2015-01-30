@@ -2,6 +2,7 @@
 # all the imports. For small applications it’s a possibility to drop the configuration directly 
 # into the module which we will be doing here. However a cleaner solution would be 
 # to create a separate .ini or .py file and load that or import the values from there.
+from bson.objectid import ObjectId
 import os
 from flask import Flask, request, session, g, redirect, url_for, \
     abort, render_template, flash
@@ -17,7 +18,7 @@ app.register_blueprint(login_module)
 # configuration
 app.config.update(dict(
     # MONGO_URI="mongodb://localhost:27017/",
-    DEBUG=False, # !!!! Never leave debug=True in a production system
+    DEBUG=True, # !!!! Never leave debug=True in a production system
     SECRET_KEY='development key',
     USERNAME='admin',
     PASSWORD='default'
@@ -29,8 +30,6 @@ app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
 # I generated this URI using service mongolab in heroku, see https://devcenter.heroku.com/articles/mongolab
 # locally on your computer when you install mongodb and then run it with command
 #   $mondod
-#   or even 
-#   $mongod -dbpath ./databases/mongodb/
 # then this the most important config variable MONGO_URI is equal to "mongodb://localhost:27017/"
 
 
@@ -76,6 +75,7 @@ mongo = PyMongo(app)
 @app.before_request
 def before_request():
     g.mongo = mongo
+    g.db=mongo.db
 # PyMongo connects to the MongoDB server running on MONGO_URI, and assumes a default database name of app.name 
 # (i.e. whatever name you pass to Flask). This database is exposed as the db attribute.
 

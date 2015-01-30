@@ -1,10 +1,12 @@
 import os, re
+from bson.objectid import ObjectId
 # import bcrypt - fuck this shit, seriously hate this library
 from flask import current_app, Flask, Blueprint, request, session, g, redirect, url_for, \
     abort, render_template, flash
 from contextlib import closing
 from flask.ext.pymongo import PyMongo
 from jinja2 import TemplateNotFound
+
 
 import uuid
 import hashlib
@@ -43,6 +45,10 @@ def check_pwd(user_password, hashed_password):
 
 @login_module.route('/login', methods=['GET', 'POST'])
 def login():
+    if "username" in session:
+        flash('please log out first')
+        return redirect(url_for('home'))
+
     error = None
     if request.method == 'POST':
         username=request.form['username']
@@ -50,7 +56,6 @@ def login():
         user=g.mongo.db.users.find_one({"username": username})
         if user:
             if check_pwd(password,user["pw_hash"]):
-                session['logged_in'] = True
                 session['username'] = user['username']
                 flash('You were logged in')
                 return redirect(url_for('show_entries'))
@@ -58,7 +63,7 @@ def login():
 
 @login_module.route('/logout')
 def logout():
-    session.pop('logged_in', None)
+    session.pop('username', None)
     # We use a neat trick here:
     # if you use the pop() method of the dict and pass a second parameter to it (the default),
     # the method will delete the key from the dictionary if present or
@@ -69,10 +74,18 @@ def logout():
 
 @login_module.route('/signup', methods=['GET', 'POST'])
 def signup():
-
-
-    # for i in g.mongo.db.users.find():
+    # for i in g.db.users.find():
     #     print i
+
+    # print str(  g.mongo.db.users.find_one({"username":"artofkot"})["_id"]  )
+    # artidhex=str(  g.mongo.db.users.find_one({"username":"artofkot"})["_id"]  )
+    # print g.mongo.db.users.find_one({"_id":ObjectId(artidhex)})
+
+
+    if "username" in session:
+        print session["username"]
+        flash('please log out first')
+        return redirect(url_for('home'))
 
     error=None
     if request.method == 'POST':
