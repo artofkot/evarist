@@ -3,7 +3,7 @@
 # into the module which we will be doing here. However a cleaner solution would be 
 # to create a separate .ini or .py file and load that or import the values from there.
 from bson.objectid import ObjectId
-import os
+import os, datetime, urllib, urllib2
 from flask import Flask, request, session, g, redirect, url_for, \
     abort, render_template, flash
 from contextlib import closing
@@ -93,6 +93,60 @@ def home():
 def set_theory():
     return render_template('problem_sets/set_theory.html')
 
+@app.route('/set_theory/<int:problem_number>')
+def problem(problem_number):
+    # problem_set={"title":"Set Theory",'problems':
+    # [   {"title":"Problem 1",
+    #      'text':'How many elements are in the set {1,2,{1,2}}?',
+    #      'posts':[{'date':datetime.datetime.utcnow(),'author':'Artem','text':'nice problem','type':'comment'}] #type could be later also feedback or solution
+    #     }
+    # ]}
+    # g.db.problems_sets.insert(problem_set)
+    
+    # for i in g.db.problems_sets.find():
+    #     print i
+
+    problem_set=g.db.problems_sets.find_one({'title':'Set Theory'})
+
+    posts=problem_set['problems'][problem_number-1]['posts']
+    entries.reverse()
+    # d=datetime.datetime.now()
+    # print d['month']
+    title=problem_set['problems'][problem_number-1]['title']
+    text=problem_set['problems'][problem_number-1]['text']
+
+    return render_template('problem_sets/problem.html', problem_number=str(problem_number), problem_set="Set Theory",title=title,text=text,posts=posts)
+
+@app.route('/add_post', methods=['GET', 'POST'])
+def add_post():
+    if 'username' not in session:
+        abort(401)
+    # posts=g.mongo.db.posts
+    # posts.insert({"title":request.form['title'], "text":request.form['text']})
+    else:
+        problem_set=request.args.get('problem_set')
+        problem_number=request.args.get('problem_number')
+
+
+        # problem_set={"title":"Set Theory",'problems':
+        # [   {"title":"Problem 1",
+        #      'text':'How many elements are in the set {1,2,{1,2}}?',
+        #      'posts':[{'date':datetime.datetime.utcnow(),'author':'Artem','text':'nice problem','type':'comment'}] #type could be later also feedback or solution
+        #     }
+        # ]}
+        psdoc=g.db.problems_sets.find_one({"title":problem_set})
+        psdoc["problems"][int(problem_number)-1]['posts'].append({'date':datetime.datetime.utcnow(), 
+                                                             'author':session['username'],
+                                                             "text":request.form['text'],
+                                                             'type':'comment'
+                                                            })
+        g.db.problems_sets.update({"title":problem_set}, {"$set": psdoc}, upsert=False)
+        
+        flash('New entry was successfully posted')
+        return redirect(url_for('problem',problem_number=problem_number))
+
+
+
 
 
 @app.route('/comments')
@@ -105,7 +159,7 @@ def show_entries():
     entries.reverse()
     return render_template('show_entries.html', entries=entries)
 
-@app.route('/comments_add', methods=['POST'])
+@app.route('/comments_add', methods=['GET','POST'])
 def add_entry():
     if not session.get('logged_in'):
         abort(401)
