@@ -109,7 +109,7 @@ def problem(problem_number):
     problem_set=g.db.problems_sets.find_one({'title':'Set Theory'})
 
     posts=problem_set['problems'][problem_number-1]['posts']
-    entries.reverse()
+    posts.reverse()
     # d=datetime.datetime.now()
     # print d['month']
     title=problem_set['problems'][problem_number-1]['title']
