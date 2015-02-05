@@ -13,10 +13,22 @@
       </ul>
     </div>
   </div>   
+  
   <hr>
+
   <div class="row">
-    <div class="col-md-4 col-md-offset-2">
-    <h1>Problem sets</h1>
+    <div class "col-md-8 col-md-offset-2">
+      <ul>
+        <li>  <a href="{{ url_for('login_module.login')}}"> login </a>  </li>
+        <li>  <a href="{{ url_for('login_module.signup')}}"> signup</a>  </li>
+        <li> <a href="{{ url_for('problem',problem_number='1') }}">Problem 1 in Set Theory</a></li>
+      </ul>
+    </div>
+  </div>
+    
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <h1>Problem sets</h1>
       <ol>
         <li>  <a href="{{ url_for('set_theory')}}"> Set Theory </a> </li>
       </ol>
