@@ -18,7 +18,7 @@ app.register_blueprint(login_module)
 # configuration
 app.config.update(dict(
     # MONGO_URI="mongodb://localhost:27017/",
-    DEBUG=True, # !!!! Never leave debug=True in a production system
+    DEBUG=False, # !!!! Never leave debug=True in a production system
     SECRET_KEY='development key',
     USERNAME='admin',
     PASSWORD='default'
@@ -98,7 +98,8 @@ def problem(problem_number):
     # problem_set={"title":"Set Theory",'problems':
     # [   {"title":"Problem 1",
     #      'text':'How many elements are in the set {1,2,{1,2}}?',
-    #      'posts':[{'date':datetime.datetime.utcnow(),'author':'Artem','text':'nice problem','type':'comment'}] #type could be later also feedback or solution
+    #      'posts':[{'date':datetime.datetime.utcnow(),'author':'Artem','text':'nice problem','type':'comment'}] 
+    #       #type could be later also feedback or solution
     #     }
     # ]}
     # g.db.problems_sets.insert(problem_set)
@@ -115,7 +116,8 @@ def problem(problem_number):
     title=problem_set['problems'][problem_number-1]['title']
     text=problem_set['problems'][problem_number-1]['text']
 
-    return render_template('problem_sets/problem.html', problem_number=str(problem_number), problem_set="Set Theory",title=title,text=text,posts=posts)
+    return render_template('problem_sets/problem.html', problem_number=str(problem_number), 
+                            problem_set="Set Theory",title=title,text=text,posts=posts)
 
 @app.route('/add_post', methods=['GET', 'POST'])
 def add_post():
@@ -131,7 +133,8 @@ def add_post():
         # problem_set={"title":"Set Theory",'problems':
         # [   {"title":"Problem 1",
         #      'text':'How many elements are in the set {1,2,{1,2}}?',
-        #      'posts':[{'date':datetime.datetime.utcnow(),'author':'Artem','text':'nice problem','type':'comment'}] #type could be later also feedback or solution
+        #      'posts':[{'date':datetime.datetime.utcnow(),'author':'Artem','text':'nice problem','type':'comment'}] 
+        #       #type could be later also feedback or solution
         #     }
         # ]}
         psdoc=g.db.problems_sets.find_one({"title":problem_set})
