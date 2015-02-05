@@ -93,10 +93,10 @@ def signup():
             error = 'Change the username please'
         elif g.mongo.db.users.find_one({"username": request.form['username']}):
             error = 'Unfortunately this username is taken'
-        # elif not valid_password(request.form['password']):
-        #     error = 'Change the password please'
-        elif not valid_password(request.form['email']):
-            error = 'Strange email, please change'
+        elif not valid_password(request.form['password']):
+            error = 'Change the password please'
+        # elif not valid_password(request.form['email']):
+        #     error = 'Strange email, please change'
         else:
             pw_hash = hash_str(request.form['password'])
             username=request.form['username']
