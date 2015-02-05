@@ -1,14 +1,15 @@
+# -*- coding: utf-8 -*-
 # TODO: correct e-mail check
 # requirements management
 # dont delete stuff that works:
-    # wrong password error 
-    # admin default
+# wrong password error 
+# admin default
 # how does auth work now?
 # True/False
 
 
 
-# -*- coding: utf-8 -*-
+
 # all the imports. For small applications it’s a possibility to drop the configuration directly 
 # into the module which we will be doing here. However a cleaner solution would be 
 # to create a separate .ini or .py file and load that or import the values from there.

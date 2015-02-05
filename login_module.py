@@ -59,6 +59,10 @@ def login():
                 session['username'] = user['username']
                 flash('You were logged in')
                 return redirect(url_for('show_entries'))
+            else:
+                error = 'Invalid password'
+        else:
+            error = 'Invalid username'
     return render_template('login.html', error=error)
 
 @login_module.route('/logout')
