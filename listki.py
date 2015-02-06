@@ -1,4 +1,18 @@
 # -*- coding: utf-8 -*-
+# TODO:  (TALK TO LESHA BOUT THIS!)
+# correct e-mail check
+# requirements management
+# dont delete stuff that works:
+# wrong password error 
+# admin default
+# how does auth work now?
+# True/False
+# validator in bootstrap
+# labels
+
+
+
+
 # all the imports. For small applications it’s a possibility to drop the configuration directly 
 # into the module which we will be doing here. However a cleaner solution would be 
 # to create a separate .ini or .py file and load that or import the values from there.
@@ -111,7 +125,8 @@ def show_problem(problem_set_title,problem_number):
     # problem_set={"title":"Set Theory",'problems':
     # [   {"title":"Problem 1",
     #      'text':'How many elements are in the set {1,2,{1,2}}?',
-    #      'posts':[{'date':datetime.datetime.utcnow(),'author':'Artem','text':'nice problem','type':'comment'}] #type could be later also feedback or solution
+    #      'posts':[{'date':datetime.datetime.utcnow(),'author':'Artem','text':'nice problem','type':'comment'}] 
+    #       #type could be later also feedback or solution
     #     }
     # ]}
     # g.db.problem_sets.insert(problem_set)
@@ -128,7 +143,8 @@ def show_problem(problem_set_title,problem_number):
     title=problem_set['problems'][problem_number-1]['title']
     text=problem_set['problems'][problem_number-1]['text']
 
-    return render_template('show/problem.html', problem_number=str(problem_number), problem_set_title=problem_set_title,title=title,text=text,posts=posts)
+    return render_template('show/problem.html', problem_number=str(problem_number), 
+                            problem_set_title=problem_set_title,title=title,text=text,posts=posts)
 
 
 @app.route('/add_problem_set', methods=['GET','POST'])
@@ -182,7 +198,8 @@ def add_post():
         # problem_set={"title":"Set Theory",'problems':
         # [   {"title":"Problem 1",
         #      'text':'How many elements are in the set {1,2,{1,2}}?',
-        #      'posts':[{'date':datetime.datetime.utcnow(),'author':'Artem','text':'nice problem','type':'comment'}] #type could be later also feedback or solution
+        #      'posts':[{'date':datetime.datetime.utcnow(),'author':'Artem','text':'nice problem','type':'comment'}] 
+        #       #type could be later also feedback or solution
         #     }
         # ]}
         psdoc=g.db.problem_sets.find_one({"title":problem_set_title})
@@ -195,8 +212,6 @@ def add_post():
         
         flash('New entry was successfully posted')
         return redirect(url_for('show_problem',problem_set_title=problem_set_title,problem_number=problem_number))
-
-
 
 
 

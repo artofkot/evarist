@@ -34,28 +34,20 @@
       <![endif]-->
 
     <!-- Our own custom resources -->
-      <!-- Fonts -->
-      <link href ="https://s3-eu-west-1.amazonaws.com/resources.for.bitstarter/" rel="stylesheet" type="text/css">
-
-      <!-- Our own custom styles -->
-      <link href="../static/style.css" rel="stylesheet">
-
-      <style type="text/css"> 
-        body {
-          font-family: 'Computer Modern Bright';
-        }
-      </style>
+    <!-- Fonts -->
+    <!-- Roman said that it's supposed to be gh-pages... talk to him later. -->
+    <link href="https://cdn.rawgit.com/Aelay/aelay.github.io/master/ComputerModern/Bright/cmun-bright.css" rel="stylesheet" type="text/css">
+    
+    <!-- Our own custom styles -->
+    <link href="../static/style.css" rel="stylesheet" type="text/css">
 
     {% block head %}{% endblock %}
   </head>
 
   <body> 
     <div class=page>
-      <div class="container" >
-      <!-- .container has one fixed width for each screen size in bootstrap (xs,sm,md,lg); 
-           .container-fluid expands to fill the available width. 
-           i like things fluid :) . but empirically, looks better without fluid. -->
 
+      <div class="container" >
         <nav class="navbar navbar-inverse navbar-fixed-top">
           <div class="container">
             <div class="navbar-header">
@@ -113,7 +105,7 @@
     </div>
   </body>
 </html>
-<!-- this is cheetshit for content -->
+<!-- this is cheatshit for content -->
 <!--   <div class="container">
     <div class="row">
       <div class="col-md-12">

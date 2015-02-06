@@ -59,6 +59,10 @@ def login():
                 session['username'] = user['username']
                 flash('You were logged in')
                 return redirect(url_for('show_problem_sets'))
+            else:
+                error = 'Invalid password'
+        else:
+            error = 'Invalid username'
     return render_template('login.html', error=error)
 
 @login_module.route('/logout')
@@ -95,8 +99,8 @@ def signup():
             error = 'Unfortunately this username is taken'
         elif not valid_password(request.form['password']):
             error = 'Change the password please'
-        elif not valid_password(request.form['email']):
-            error = 'Strange email, please change'
+        # elif not valid_password(request.form['email']):
+        #     error = 'Strange email, please change'
         else:
             pw_hash = hash_str(request.form['password'])
             username=request.form['username']
