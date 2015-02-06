@@ -18,7 +18,7 @@ app.register_blueprint(login_module)
 # configuration
 app.config.update(dict(
     # MONGO_URI="mongodb://localhost:27017/",
-    DEBUG=True, # !!!! Never leave debug=True in a production system
+    DEBUG=False, # !!!! Never leave debug=True in a production system
     SECRET_KEY='development key',
     USERNAME='admin',
     PASSWORD='default'
@@ -71,6 +71,7 @@ app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
 #     mongo.close()
 
 mongo = PyMongo(app)
+# print app.config['MONGO_DBNAME']
 
 @app.before_request
 def before_request():
@@ -89,25 +90,37 @@ def index():
 def home():
     return render_template('home.html')
 
-@app.route('/set_theory')
-def set_theory():
-    return render_template('problem_sets/set_theory.html')
+@app.route('/show/problem_sets')
+def show_problem_sets():
+    problem_sets=g.db.problem_sets.find()
+    prlist=[]
+    for i in problem_sets:
+        prlist.append(i)
+    prlist.reverse()
+    return render_template('show/problem_sets.html',problem_sets=prlist)
 
-@app.route('/set_theory/<int:problem_number>')
-def problem(problem_number):
+
+@app.route('/show/problems/<problem_set_title>')
+def show_problems(problem_set_title):
+    problem_set=g.db.problem_sets.find_one({"title":problem_set_title})
+    problems=problem_set['problems']
+    return render_template('show/problems.html',problems=problems,problem_set_title=problem_set_title)
+
+@app.route('/show/problem/<problem_set_title>/<int:problem_number>')
+def show_problem(problem_set_title,problem_number):
     # problem_set={"title":"Set Theory",'problems':
     # [   {"title":"Problem 1",
     #      'text':'How many elements are in the set {1,2,{1,2}}?',
     #      'posts':[{'date':datetime.datetime.utcnow(),'author':'Artem','text':'nice problem','type':'comment'}] #type could be later also feedback or solution
     #     }
     # ]}
-    # g.db.problems_sets.insert(problem_set)
+    # g.db.problem_sets.insert(problem_set)
     
-    # for i in g.db.problems_sets.find():
+    # for i in g.db.problem_sets.find():
     #     print i
 
-    problem_set=g.db.problems_sets.find_one({'title':'Set Theory'})
-
+    problem_set=g.db.problem_sets.find_one({'title':problem_set_title})
+    print problem_number-1
     posts=problem_set['problems'][problem_number-1]['posts']
     posts.reverse()
     # d=datetime.datetime.now()
@@ -115,7 +128,45 @@ def problem(problem_number):
     title=problem_set['problems'][problem_number-1]['title']
     text=problem_set['problems'][problem_number-1]['text']
 
-    return render_template('problem_sets/problem.html', problem_number=str(problem_number), problem_set="Set Theory",title=title,text=text,posts=posts)
+    return render_template('show/problem.html', problem_number=str(problem_number), problem_set_title=problem_set_title,title=title,text=text,posts=posts)
+
+
+@app.route('/add_problem_set', methods=['GET','POST'])
+def add_problem_set():
+    # posts=g.mongo.db.posts
+    # posts.insert({"title":request.form['title'], "text":request.form['text']})
+    if g.db.problem_sets.find_one({"title": request.form['text']}):
+        flash('Sorry, such problem set already exists')
+    elif session.get('username') != 'entreri':
+        flash('you are not authorized to do such things')
+    else:
+        g.db.problem_sets.insert({"title":request.form['text'],"problems":[]})
+        flash('Problem set added, sir')
+    return redirect(url_for('show_problem_sets'))
+
+
+@app.route('/add_problem/<problem_set_title>', methods=['GET','POST'])
+def add_problem(problem_set_title):
+    # posts=g.mongo.db.posts
+    # posts.insert({"title":request.form['title'], "text":request.form['text']})
+    psdoc=g.db.problem_sets.find_one({"title":problem_set_title})
+    a=False
+    for prob in psdoc["problems"]:
+        a= (prob['title']==request.form['title'])
+    if a:
+        flash('Sorry, such title already exists')
+        print 'GA'
+    elif session.get('username') != 'entreri':
+        flash('you are not authorized to do such things')
+    else:
+        psdoc["problems"].append({'title':request.form['title'],
+                                    "text":request.form['text'],
+                                     "posts":[]})
+        g.db.problem_sets.update({"title":problem_set_title}, {"$set": psdoc}, upsert=False)
+        psdoc=g.db.problem_sets.find_one({"title":problem_set_title})
+        flash('Problem added, sir')
+    return redirect(url_for('show_problems',problem_set_title=problem_set_title))
+
 
 @app.route('/add_post', methods=['GET', 'POST'])
 def add_post():
@@ -124,7 +175,7 @@ def add_post():
     # posts=g.mongo.db.posts
     # posts.insert({"title":request.form['title'], "text":request.form['text']})
     else:
-        problem_set=request.args.get('problem_set')
+        problem_set_title=request.args.get('problem_set_title')
         problem_number=request.args.get('problem_number')
 
 
@@ -134,16 +185,20 @@ def add_post():
         #      'posts':[{'date':datetime.datetime.utcnow(),'author':'Artem','text':'nice problem','type':'comment'}] #type could be later also feedback or solution
         #     }
         # ]}
-        psdoc=g.db.problems_sets.find_one({"title":problem_set})
+        psdoc=g.db.problem_sets.find_one({"title":problem_set_title})
         psdoc["problems"][int(problem_number)-1]['posts'].append({'date':datetime.datetime.utcnow(), 
                                                              'author':session['username'],
                                                              "text":request.form['text'],
                                                              'type':'comment'
                                                             })
-        g.db.problems_sets.update({"title":problem_set}, {"$set": psdoc}, upsert=False)
+        g.db.problem_sets.update({"title":problem_set_title}, {"$set": psdoc}, upsert=False)
         
         flash('New entry was successfully posted')
-        return redirect(url_for('problem',problem_number=problem_number))
+        return redirect(url_for('show_problem',problem_set_title=problem_set_title,problem_number=problem_number))
+
+
+
+
 
 
 
@@ -161,16 +216,13 @@ def show_entries():
 
 @app.route('/comments_add', methods=['GET','POST'])
 def add_entry():
-    if not session.get('logged_in'):
+    if not 'username' in session:
         abort(401)
     # posts=g.mongo.db.posts
     # posts.insert({"title":request.form['title'], "text":request.form['text']})
-    g.mongo.db.posts.insert({"title":request.form['title'], "text":request.form['text']})
+    g.db.posts.insert({"title":request.form['title'], "text":request.form['text']})
     flash('New entry was successfully posted')
     return redirect(url_for('show_entries'))
-
-
-
 
 @app.route('/startertry')
 def startertry():

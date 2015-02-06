@@ -58,7 +58,7 @@ def login():
             if check_pwd(password,user["pw_hash"]):
                 session['username'] = user['username']
                 flash('You were logged in')
-                return redirect(url_for('show_entries'))
+                return redirect(url_for('show_problem_sets'))
     return render_template('login.html', error=error)
 
 @login_module.route('/logout')
@@ -69,7 +69,7 @@ def logout():
     # the method will delete the key from the dictionary if present or
     # do nothing when that key is not in there.
     flash('You were logged out')
-    return redirect(url_for('show_entries'))
+    return redirect(url_for('home'))
 
 
 @login_module.route('/signup', methods=['GET', 'POST'])

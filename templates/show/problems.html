@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+{% block head %}
+   <title>add problem set</title>
+{% endblock %}
+{% block body %}
+  
+
+  <div style="height:200px">
+  </div>
+
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <h2><a href="{{url_for('show_problem_sets')}}">Back to list of problem sets</a></h2>
+      <h1>{{problem_set_title}}</h1>
+      <h4>Problems:</h4>
+      <ol>
+        {%for problem in problems%}
+          <li>
+            <a href="{{url_for('show_problem',problem_set_title=problem_set_title, problem_number=(loop.index))}}">{{problem['title']}}</a>
+            <p>{{problem['text']}}</p>
+          </li>
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
+
+  {%if session.get('username')=='entreri'%}
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        <form action=" {{url_for('add_problem',problem_set_title=problem_set_title)}}" method=post class=add-entry>
+          <dl>
+            <div class="form-group">
+              <!-- <dt>Text: -->
+              <!-- <dd><textarea name=text rows=5 cols=40></textarea> -->
+              <label for="title">Want to add some problems? Put here the title of the next problem.</label>
+              <input type="text" class="form-control" id="title" name=title>
+              <!-- <dt>Text: -->
+              <!-- <dd><textarea name=text rows=5 cols=40></textarea> -->
+              <label for="comment">What's your problem?</label>
+              <textarea class="form-control" rows="5" id="comment" name=text></textarea>
+
+              <!-- <label for="title">to create a problem write here the title:
+              <textarea class="form-control" rows="5" id="comment" name=title></textarea>
+              <label for="comment">and here the text:</label>
+              <textarea class="form-control" rows="5" id="comment" name=text></textarea> -->
+            </div>
+            <dd><input type=submit value=Submit>
+          </dl>
+        </form>
+      </div>
+    </div> 
+  {%endif%}
+
+{% endblock %}
