@@ -48,7 +48,7 @@
     <div class=page>
 
       <div class="container" >
-        <nav class="navbar navbar-inverse navbar-fixed-top">
+        <nav class="navbar navbar-default navbar-fixed-top">
           <div class="container">
             <div class="navbar-header">
               <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -63,7 +63,7 @@
               <ul class="nav navbar-nav">
                 <li ><a href="{{ url_for('home')}}" in_tag="ul" kaspersky_status="skipped">Home</a></li>
                 <li><a href="{{ url_for('indexBitStarter')}}" in_tag="ul" kaspersky_status="skipped">About</a></li>
-                <li><a href="{{ url_for('home')}}" in_tag="ul" kaspersky_status="skipped">Contact</a></li>
+                <!-- <li><a href="{{ url_for('home')}}" in_tag="ul" kaspersky_status="skipped">Contact</a></li> -->
               </ul>
               {% if "username" not in session%}
               <!-- TODO what is metanav? -->
@@ -74,8 +74,8 @@
                 <div class="form-group">
                   <input type="password" placeholder="Password" class="form-control" name=password>
                 </div>
-                <button type="submit" class="btn btn-success" value=Login>Sign in</button>
-                <a href="{{ url_for('login_module.signup') }}" class="btn btn-default btn-warning active" role="button">Sign up</a>
+                <button type="submit" class="btn btn-default" value=Login>Sign in</button>
+                <a href="{{ url_for('login_module.signup') }}" class="btn btn-default" role="button">Sign up</a>
               </form>
               {% else %}
               <ul class="nav navbar-nav navbar-right">
@@ -87,16 +87,13 @@
           </div>
         </nav>
 
-        <div style="height:50px">
-        </div>
         {% for message in get_flashed_messages() %}
           <div class='row'>
-            <div class="col-md-10 col-md-offset-2">
+            <div class="col-md-8 col-md-offset-2">
               <div class=flash> <h3 style="color:red">{{ message }}</h1></div>
               </div>
             </div>
-          </div>
-          
+          </div>          
         {% endfor %}
       </div>
       <div class="container">
