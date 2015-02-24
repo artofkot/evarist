@@ -5,24 +5,31 @@ from flask import current_app, Flask, Blueprint, request, session, g, redirect, 
 from contextlib import closing
 from flask.ext.pymongo import PyMongo
 from login_module import login_module
+from functools import wraps
 
 admin = Blueprint('admin', __name__,
                         template_folder='templates')
 
-@admin.route('/admin')
-def admin_home():
-    if session.get('username')!='admin':
-        flash('You need to log in as "admin" to do that.')
-        return redirect(url_for('workflow.home'))
 
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get('username')!='admin':
+            flash('You are not allowed to do that.')
+            return redirect(url_for('workflow.home'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+@admin.route('/admin')
+@admin_required
+def admin_home():
     return render_template("admin/admin_home.html")
 
 
 @admin.route('/admin/problem/<problem_set_title>/<int:problem_number>')
+@admin_required
 def show_problem(problem_set_title,problem_number):
-    if session.get('username')!='admin':
-        flash('You need to log in as "admin" to do that.')
-        return redirect(url_for('workflow.home'))
 
 
     # problem_set={"title":"Set Theory",'problems':
@@ -50,10 +57,8 @@ def show_problem(problem_set_title,problem_number):
                             problem_set_title=problem_set_title,title=title,text=text,posts=posts)
 
 @admin.route('/admin/problem_sets')
+@admin_required
 def show_problem_sets():
-    if session.get('username')!='admin':
-        flash('You need to log in as "admin" to do that.')
-        return redirect(url_for('workflow.home'))
 
     problem_sets=g.db.problem_sets.find()
     prlist=[]
@@ -63,10 +68,8 @@ def show_problem_sets():
     return render_template('admin/problem_sets.html',problem_sets=prlist)
 
 @admin.route('/admin/problems/<problem_set_title>')
+@admin_required
 def show_problems(problem_set_title):
-    if session.get('username')!='admin':
-        flash('You need to log in as "admin" to do that.')
-        return redirect(url_for('workflow.home'))
 
     problem_set=g.db.problem_sets.find_one({"title":problem_set_title})
     problems=problem_set['problems']
@@ -75,12 +78,10 @@ def show_problems(problem_set_title):
 
 
 @admin.route('/add_problem_set', methods=['GET','POST'])
+@admin_required
 def add_problem_set():
     # posts=g.mongo.db.posts
     # posts.insert({"title":request.form['title'], "text":request.form['text']})
-    if session.get('username')!='admin':
-        flash('You need to log in as "admin" to do that.')
-        return redirect(url_for('workflow.home'))
 
 
     if g.db.problem_sets.find_one({"title": request.form['text']}):
@@ -94,12 +95,10 @@ def add_problem_set():
 
 
 @admin.route('/add_problem/<problem_set_title>', methods=['GET','POST'])
+@admin_required
 def add_problem(problem_set_title):
     # posts=g.mongo.db.posts
     # posts.insert({"title":request.form['title'], "text":request.form['text']})
-    if session.get('username')!='admin':
-        flash('You need to log in as "admin" to do that.')
-        return redirect(url_for('workflow.home'))
 
     psdoc=g.db.problem_sets.find_one({"title":problem_set_title})
     a=False

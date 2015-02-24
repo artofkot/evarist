@@ -1,4 +1,4 @@
-import os, re
+import os, re, datetime
 from bson.objectid import ObjectId
 # import bcrypt - fuck this shit, seriously hate this library
 from flask import current_app, Flask, Blueprint, request, session, g, redirect, url_for, \
@@ -81,9 +81,7 @@ def signup():
     # for i in g.db.users.find():
     #     print i
 
-    # print str(  g.mongo.db.users.find_one({"username":"artofkot"})["_id"]  )
-    # artidhex=str(  g.mongo.db.users.find_one({"username":"artofkot"})["_id"]  )
-    # print g.mongo.db.users.find_one({"_id":ObjectId(artidhex)})
+
 
 
     if "username" in session:
@@ -105,7 +103,7 @@ def signup():
             pw_hash = hash_str(request.form['password'])
             username=request.form['username']
             email=request.form['email']
-            g.mongo.db.users.insert({"username":username, "pw_hash":pw_hash, "email":email})
+            g.mongo.db.users.insert({"username":username, "pw_hash":pw_hash, "email":email, "date_created":datetime.datetime.utcnow()})
 
             return redirect(url_for('login_module.login'))
 
