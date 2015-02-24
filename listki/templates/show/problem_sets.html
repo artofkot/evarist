@@ -10,7 +10,7 @@
       <ul>
         {%for problem_set in problem_sets%}
           <li>
-            <a href="{{url_for('show_problems',problem_set_title=problem_set['title'])}}">{{problem_set['title']}}</a>
+            <a href="{{url_for('.show_problems',problem_set_title=problem_set['title'])}}">{{problem_set['title']}}</a>
           </li>
         {% endfor %}
       </ul>
@@ -20,7 +20,7 @@
   {%if session.get('username')=='entreri'%}
     <div class="row">
       <div class="col-md-8 col-md-offset-2">
-        <form action=" {{url_for('add_problem_set')}}" method=post class=add-entry>
+        <form action=" {{url_for('.add_problem_set')}}" method=post class=add-entry>
           <dl>
             <div class="form-group">
               <!-- <dt>Text: -->

@@ -12,7 +12,7 @@ import uuid
 import hashlib
 
 login_module = Blueprint('login_module', __name__,
-                    template_folder='templates')
+                        template_folder='templates')
 
 #regexs for usernames and passwords and emails
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
@@ -47,7 +47,7 @@ def check_pwd(user_password, hashed_password):
 def login():
     if "username" in session:
         flash('please log out first')
-        return redirect(url_for('home'))
+        return redirect(url_for('workflow.home'))
 
     error = None
     if request.method == 'POST':
@@ -58,7 +58,7 @@ def login():
             if check_pwd(password,user["pw_hash"]):
                 session['username'] = user['username']
                 flash('You were logged in')
-                return redirect(url_for('show_problem_sets'))
+                return redirect(url_for('workflow.show_problem_sets'))
             else:
                 error = 'Invalid password'
         else:
@@ -73,7 +73,7 @@ def logout():
     # the method will delete the key from the dictionary if present or
     # do nothing when that key is not in there.
     flash('You were logged out')
-    return redirect(url_for('home'))
+    return redirect(url_for('workflow.home'))
 
 
 @login_module.route('/signup', methods=['GET', 'POST'])
@@ -89,7 +89,7 @@ def signup():
     if "username" in session:
         print session["username"]
         flash('please log out first')
-        return redirect(url_for('home'))
+        return redirect(url_for('workflow.home'))
 
     error=None
     if request.method == 'POST':

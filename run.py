@@ -1,4 +1,4 @@
-#!/usr/local/bin python
+#!/usr/local/env python
 
 from listki import app
 

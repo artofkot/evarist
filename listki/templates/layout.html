@@ -57,13 +57,13 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="{{ url_for('home')}}"> Listki </a>
+              <a class="navbar-brand" href="{{ url_for('.home')}}"> Listki </a>
             </div>
             <div id="navbar" class="collapse navbar-collapse">
               <ul class="nav navbar-nav">
-                <li ><a href="{{ url_for('home')}}" in_tag="ul" kaspersky_status="skipped">Home</a></li>
-                <li><a href="{{ url_for('indexBitStarter')}}" in_tag="ul" kaspersky_status="skipped">About</a></li>
-                <!-- <li><a href="{{ url_for('home')}}" in_tag="ul" kaspersky_status="skipped">Contact</a></li> -->
+                <li ><a href="{{ url_for('.home')}}" in_tag="ul" kaspersky_status="skipped">Home</a></li>
+                <li><a href="{{ url_for('.indexBitStarter')}}" in_tag="ul" kaspersky_status="skipped">About</a></li>
+                <!-- <li><a href="{{ url_for('.home')}}" in_tag="ul" kaspersky_status="skipped">Contact</a></li> -->
               </ul>
               {% if "username" not in session%}
               <!-- TODO what is metanav? -->
@@ -75,11 +75,11 @@
                   <input type="password" placeholder="Password" class="form-control" name=password>
                 </div>
                 <button type="submit" class="btn btn-default" value=Login>Sign in</button>
-                <a href="{{ url_for('login_module.signup') }}" class="btn btn-default" role="button">Sign up</a>
+                <a href="{{ url_for('.login_module.signup') }}" class="btn btn-default" role="button">Sign up</a>
               </form>
               {% else %}
               <ul class="nav navbar-nav navbar-right">
-                <li> <a href="{{ url_for('home') }}">{{session.username}} </a></li>
+                <li> <a href="{{ url_for('.home') }}">{{session.username}} </a></li>
                 <li><a href="{{ url_for('login_module.logout') }}">Log out</a></li>
               </ul>
               {% endif%}
