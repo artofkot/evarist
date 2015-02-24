@@ -140,7 +140,7 @@ def show_entries():
     posts=g.mongo.db.posts.find()
     entries = [dict(title=entry["title"], text=entry["text"]) for entry in posts]
     entries.reverse()
-    return render_template('show_entries.html', entries=entries)
+    return render_template('examples/show_entries.html', entries=entries)
 
 @workflow.route('/comments_add', methods=['GET','POST'])
 def add_entry():
@@ -154,8 +154,8 @@ def add_entry():
 
 @workflow.route('/startertry')
 def startertry():
-    return render_template('startertry.html')
+    return render_template('examples/startertry.html')
 
 @workflow.route('/indexBitStarter')
 def indexBitStarter():
-    return render_template('bitstarter/indexBitStarter.html')
+    return render_template('examples/indexBitStarter.html')

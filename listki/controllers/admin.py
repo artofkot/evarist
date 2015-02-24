@@ -12,7 +12,7 @@ admin = Blueprint('admin', __name__,
 @admin.route('/admin')
 def admin_home():
     if session.get('username')!='admin':
-        flash('You need to log as admin to do that.')
+        flash('You need to log in as "admin" to do that.')
         return redirect(url_for('workflow.home'))
 
     return render_template("admin/admin_home.html")
@@ -21,7 +21,7 @@ def admin_home():
 @admin.route('/admin/problem/<problem_set_title>/<int:problem_number>')
 def show_problem(problem_set_title,problem_number):
     if session.get('username')!='admin':
-        flash('You need to log as admin to do that.')
+        flash('You need to log in as "admin" to do that.')
         return redirect(url_for('workflow.home'))
 
 
@@ -52,7 +52,7 @@ def show_problem(problem_set_title,problem_number):
 @admin.route('/admin/problem_sets')
 def show_problem_sets():
     if session.get('username')!='admin':
-        flash('You need to log as admin to do that.')
+        flash('You need to log in as "admin" to do that.')
         return redirect(url_for('workflow.home'))
 
     problem_sets=g.db.problem_sets.find()
@@ -65,7 +65,7 @@ def show_problem_sets():
 @admin.route('/admin/problems/<problem_set_title>')
 def show_problems(problem_set_title):
     if session.get('username')!='admin':
-        flash('You need to log as admin to do that.')
+        flash('You need to log in as "admin" to do that.')
         return redirect(url_for('workflow.home'))
 
     problem_set=g.db.problem_sets.find_one({"title":problem_set_title})
@@ -79,7 +79,7 @@ def add_problem_set():
     # posts=g.mongo.db.posts
     # posts.insert({"title":request.form['title'], "text":request.form['text']})
     if session.get('username')!='admin':
-        flash('You need to log as admin to do that.')
+        flash('You need to log in as "admin" to do that.')
         return redirect(url_for('workflow.home'))
 
 
@@ -98,7 +98,7 @@ def add_problem(problem_set_title):
     # posts=g.mongo.db.posts
     # posts.insert({"title":request.form['title'], "text":request.form['text']})
     if session.get('username')!='admin':
-        flash('You need to log as admin to do that.')
+        flash('You need to log in as "admin" to do that.')
         return redirect(url_for('workflow.home'))
 
     psdoc=g.db.problem_sets.find_one({"title":problem_set_title})

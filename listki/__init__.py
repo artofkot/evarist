@@ -45,6 +45,20 @@ def before_request():
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # @app.route('/')
 # def index():
 #     return redirect(url_for('home'))
