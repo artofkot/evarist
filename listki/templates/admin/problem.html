@@ -1,0 +1,70 @@
+{% extends "layout.html" %}
+{% block head %}
+   <title>Set Theory</title>
+{% endblock %}
+{% block body %}
+
+
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+    <h1><a href="{{url_for('.show_problems',problem_set_title=problem_set_title)}}">Back to problems set {{problem_set_title}}</a></h1>
+    <h3>Problem:</h3>
+    <h3>{{title}}</h3>
+    <p>{{text}}</p>
+    </div>
+  </div>
+  <div style="height:20px">
+  </div>
+
+  <div class="row">
+    <div class="col-sm-8 col-md-offset-2 blog-main">
+    {% for post in posts %}
+      <div class="blog-post">
+        <p class="blog-post-meta">{{post['date'].day}}/{{post['date'].month}}/{{post['date'].year}} by {{post['author']}}</p>
+        {{ post['text']|safe }}
+      </div>
+      <div style="height:20px">
+      </div>
+      <!-- <ul class="media-list">
+        <li class="media">
+          <div class="media-left">
+            <a href="#">  <img class="media-object" src="http://placehold.it/80x80" alt="...">  </a>
+          </div>  
+          <div class="media-body">
+            <h4 class="media-heading">Media heading</h4>
+            ...
+            <ul class="media-list">
+              <li class="media">
+                <div class="media-left">
+                  <a href="#">
+                    <img class="media-object" src="..." alt="...">
+                  </a>
+                </div>
+                <div class="media-body">
+                  <h4 class="media-heading">Media heading</h4>
+                  ...
+                </div>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="media">
+          <div class="media-left">
+            <a href="#">
+              <img class="media-object" src="..." alt="...">
+            </a>
+          </div>
+          <div class="media-body">
+            <h4 class="media-heading">Media heading</h4>
+            ...
+          </div>
+        </li>
+      </ul> -->
+
+    {% else %}
+      <p class=lead> Unbelievable. No comments here so far. </p>
+    {% endfor %}
+    </div>
+  </div>
+
+{% endblock %}

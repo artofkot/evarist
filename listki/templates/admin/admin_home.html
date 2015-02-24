@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block head %}
+   <title>listki homepage with links</title>
+{% endblock %}
+{% block body %}
+    
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <a href="{{ url_for('.show_problem_sets') }}"><h1>Problem sets</h1></a>
+    </div>
+  </div>
+
+{% endblock %}

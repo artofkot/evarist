@@ -18,11 +18,13 @@ from contextlib import closing
 from flask.ext.pymongo import PyMongo
 from controllers.login_module import login_module
 from controllers.workflow import workflow
+from controllers.admin import admin
 
 app = Flask('listki')
 app.config.from_object('config')
 app.register_blueprint(login_module)
 app.register_blueprint(workflow)
+app.register_blueprint(admin)
 
 # Usually, it is a good idea to load a configuration from a configurable file. 
 # This is what from_envvar() can do, replacing the from_object() line above:
