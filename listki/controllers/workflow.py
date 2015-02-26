@@ -4,7 +4,6 @@ from flask import current_app, Flask, Blueprint, request, session, g, redirect, 
     abort, render_template, flash
 from contextlib import closing
 from flask.ext.pymongo import PyMongo
-from login_module import login_module
 
 workflow = Blueprint('workflow', __name__,
                         template_folder='templates')

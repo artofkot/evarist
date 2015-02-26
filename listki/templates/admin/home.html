@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block head %}
+   <title>admin.home</title>
+{% endblock %}
+{% block body %}
+    
+
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <dl>
+        <dt>Problem sets:</dt>
+        {%for problem_set in problem_sets%}
+          <dd>
+            <a href="{{url_for('.problem_set_edit',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a> 
+          </dd>
+        {% endfor %}
+      </dl>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <form action=" {{url_for('admin.home')}}" method="post">
+        <div class="form-group" style='width: 350px'>
+
+          {{ form.hidden_tag() }}
+          <label for="title">To create a new problem set write here the title: </label>
+          <input type="text" class="form-control" name="title">
+          
+          <label for="slug">And put the slug here: </label>
+          <input type="text" class="form-control" name='slug'>
+
+        </div>
+        <button type="submit" class="btn btn-default">Submit</button>
+      </form>
+    </div>
+  </div> 
+
+{% endblock %}

@@ -82,8 +82,6 @@ def signup():
     #     print i
 
 
-
-
     if "username" in session:
         print session["username"]
         flash('please log out first')

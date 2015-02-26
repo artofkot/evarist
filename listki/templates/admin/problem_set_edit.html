@@ -1,0 +1,117 @@
+{% extends "layout.html" %}
+{% block head %}
+   <title>admin.problem_set</title>
+{% endblock %}
+{% block body %}
+  
+
+<!--   <div style="height:200px">
+  </div> -->
+
+  <div class="row">
+    <div class="col-md-4 col-md-offset-2">
+      
+      <a href="{{url_for('.home')}}">Back to the list of problem sets</a>
+      <div style='height:20px'></div>
+      
+
+      <h4>{{problem_set['title']}}</h4>
+        
+
+
+        <div>
+          <button class="btn btn-xs btn-primary" type="button" data-toggle="collapse" data-target="#collapsIdUnique" aria-expanded="false" aria-controls="collapsIdUnique">
+            Edit title and slug
+          </button>
+          <div class="collapse" id="collapsIdUnique">
+            <form action="{{url_for('.problem_set_edit',problem_set_slug=problem_set['slug'])}}" method="post">
+              <div class="form-group" style='width: 350px'>
+
+                {{ edit_problem_set_form.hidden_tag() }}
+                <label for="title">Edit the title: </label>
+                <input type="text" class="form-control" name="title" value="{{problem_set['title']}}">
+                
+                <label for="slug">Edit the slug: </label>
+                <input type="text" class="form-control" name='slug' value="{{problem_set['slug']}}">
+
+              </div>
+              <button type="submit" class="btn btn-default">Submit</button>
+            </form> 
+          </div>
+        </div>
+        <div style='height:5px'></div>
+        
+        <form class="form-inline" action="{{url_for('.problem_set_edit',problem_set_slug=problem_set['slug'])}}" method="post">  
+          {{ delete_problem_set_form.hidden_tag() }}
+          <button type="submit" class="btn btn-xs btn-danger">Delete the whole problem set</button>
+          <div class="radio">
+            <label><input type="radio" name='delete'> I am sure about that</label>
+          </div>
+        </form>
+
+      
+      <div style='height:20px'></div>
+      <p>Entries:</p>
+      <ol>
+        {%for entry in problem_set['entries']%}
+          <li>
+            <p>{{entry['text']}}</p>
+
+
+            <button class="btn btn-xs btn-primary" type="button" data-toggle="collapse" data-target="#collapsId{{(loop.index)}}" aria-expanded="false" aria-controls="collapsId{{(loop.index)}}">
+              Edit entry
+            </button>
+            <div class="collapse" id="collapsId{{(loop.index)}}">
+              <form action=" {{url_for('.problem_set_edit', problem_set_slug=problem_set['slug'], entry_id=entry['_id'])}}" method="post">
+                <div class="form-group" style='width: 500px'>
+                  {{ edit_entry_form.hidden_tag() }}
+                  
+                  <p>{{entry['_id']}}</p>
+                  <label for="edit_text">Edit the entry: </label>
+                  <textarea class="form-control" rows="5"  name='edit_text'>{{entry['text']}}</textarea>
+
+                  <label for="edit_title">Edit the title of entry (optional and not important): </label>
+                  <input type="text" class="form-control" name="edit_title" value='{{entry["title"]}}'>
+                  
+                  <div class="radio" style='background-color:red'>
+                    <label >
+                      <input type="radio" name='delete_entry'>just want to delete this entry, forever
+                    </label>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-default">Submit</button>
+              </form>
+            </div>
+
+
+
+
+          </li>
+        {% endfor %}
+      </ol>
+
+
+      
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <form action=" {{url_for('.problem_set_edit', problem_set_slug=problem_set['slug'])}}" method="post">
+        <div class="form-group" style='width: 500px'>
+
+          {{ entryform.hidden_tag() }}
+          <label for="text">And here put the content of entry: </label>
+          <textarea class="form-control" rows="5"  name='text'></textarea>
+
+          <label for="title">To create a new entry write here its title (optional and not important): </label>
+          <input type="text" class="form-control" name="title">
+          
+
+        </div>
+        <button type="submit" class="btn btn-default">Submit</button>
+      </form>
+    </div>
+  </div> 
+
+{% endblock %}
