@@ -4,7 +4,8 @@ from flask import current_app, Flask, Blueprint, request, session, g, redirect, 
     abort, render_template, flash
 from contextlib import closing
 from flask.ext.pymongo import PyMongo
-from listki.models import model_problem_set, model_entry
+from listki.models import model_problem_set, model_entry, model_post
+from listki.forms import CommentForm
 
 workflow = Blueprint('workflow', __name__,
                         template_folder='templates')
@@ -19,7 +20,7 @@ def index():
     return redirect(url_for('.home'))
 
 
-@workflow.route('/ps/<problem_set_slug>/', methods=["GET", "POST"])
+@workflow.route('/<problem_set_slug>/', methods=["GET", "POST"])
 def problem_set(problem_set_slug):
 
 
@@ -27,30 +28,58 @@ def problem_set(problem_set_slug):
     if problem_set==False: 
         flash('No such problem set.')
         return redirect(url_for('.home'))
-    problem_set['entries']=[]
-    n=0
-    if problem_set.get('entries_ids'):
-        for ob_id in problem_set['entries_ids']:
-            entry=g.db.entries.find_one({'_id':ob_id})
-            if entry:
-                problem_set['entries'].append(entry)
 
-                if entry['entry_type']=='problem': #then set the number of this problem
-                    n=n+1
-                    print " Problem %d" % n 
-                    problem_set['entries'][-1]['problem_prefix']="Problem %d. " % n 
 
+    model_problem_set.load_entries(problem_set,g.db)
 
     return render_template('problem_set.html', 
                             problem_set=problem_set)
 
 
+@workflow.route('/<problem_set_slug>/problem/<int:problem_number>', methods=["GET", "POST"])
+def problem(problem_set_slug,problem_number):
+    problem_set=model_problem_set.get_by_slug(problem_set_slug, g.db)
+    if problem_set==False: 
+        flash('No such problem set.')
+        return redirect(url_for('.home'))
 
+    #get the problem_set
+    model_problem_set.load_entries(problem_set,g.db)
 
+    #get the problem out of problem_set
+    try:
+        problem=next(entry for entry in problem_set['entries'] if entry.get('problem_number')==problem_number)
+    except StopIteration:
+        flash('No such problem.')
+        return redirect(url_for('workflow.problem',problem_set_slug=problem_set_slug))
 
+    #load general discussion
+    model_entry.load_posts(problem,g.db) #RIGHT NOW ONLY LOADS GENERAL DISCUSSION
+    #TODO load solutions
+    #TODO and this should be done iteratively via tree structure of comments
 
+    problem['general_discussion'].reverse()
 
+    general_comment_form=CommentForm()
+    if general_comment_form.validate_on_submit():
+        model_post.add(text=general_comment_form.text.data,
+                       db=g.db,
+                       author=session['username'],
+                       post_type='comment',
+                       parent_type='problem',
+                       parent_id=problem['_id'],
+                       problem_id=problem['_id'],
+                       problem_set_id=problem_set['_id'])
+        
+        return redirect(url_for('.problem', 
+                                problem_set_slug=problem_set_slug,
+                                problem_number=problem_number))
 
+    # return redirect(url_for('.home'))
+    return render_template('problem.html', 
+                            problem_set_slug=problem_set_slug, 
+                            problem=problem,
+                            general_comment_form=general_comment_form)
 
 
 

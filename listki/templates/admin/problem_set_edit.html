@@ -49,10 +49,15 @@
       
       <div style='height:20px'></div>
       <p>Entries:</p>
-      <ol>
+      <ul class="list-unstyled">
         {%for entry in problem_set['entries']%}
           <li>
-            <p>{{entry.get('problem_prefix')}}{{entry['text']|safe}}</p>
+            <p>
+              {% if entry.get('problem_number') %}
+                Problem {{entry.get('problem_number')}}.
+              {%endif%}
+              {{entry['text']|safe}}
+            </p>
 
 
             <button class="btn btn-xs btn-primary" type="button" data-toggle="collapse" data-target="#collapsId{{(loop.index)}}" aria-expanded="false" aria-controls="collapsId{{(loop.index)}}">

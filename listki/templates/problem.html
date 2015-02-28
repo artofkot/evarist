@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+{% block head %}
+   <title>Set Theory</title>
+{% endblock %}
+{% block body %}
+
+
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <a href="{{url_for('workflow.problem_set',problem_set_slug=problem_set_slug)}}">Back to the problem set</a>
+    </div>
+  </div>
+  <div style='height:20px'></div>
+
+  <hr>
+
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <p>
+        Problem {{problem.get('problem_number')}}.
+        {{problem['text']|safe}}
+      </p>
+    </div>
+  </div>  
+
+
+  <div class="row">
+    
+
+
+    <div class="col-md-4 col-md-offset-1">
+
+
+
+      {% if "username" in session %}
+      <p>
+        <form action=" {{url_for('.problem', problem_set_slug=problem_set_slug, problem_number=problem['problem_number'])}}" method="post">
+          <div class="form-group" >
+
+            {{ general_comment_form.hidden_tag() }}
+            <label for="text">  <strong>Any comments? </strong> </label>
+            <textarea class="form-control" rows="5"  name='text'></textarea>
+
+          </div>
+          <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+      </p>
+      {% endif %}
+
+      
+      {% for post in problem.get('general_discussion') %}
+        <div class="blog-post">
+          <p class="blog-post-meta">{{post['date'].day}}/{{post['date'].month}}/{{post['date'].year}} by {{post['author']}}</p>
+          {{ post['text'] }}
+        </div>
+      {% else %}
+        <p class=lead> Unbelievable. No comments here so far. </p>
+      {% endfor %}
+      
+    </div>
+
+    
+    <div class="col-md-4 col-md-offset-2">
+      
+    </div>
+
+  </div>  
+
+
+
+{% endblock %}

@@ -53,3 +53,15 @@ def delete(ob_id, db):
     db.problem_sets.remove({"_id":ob_id})
     return True
 
+def load_entries(problem_set,db):
+    problem_set['entries']=[]
+    n=0
+    if problem_set.get('entries_ids'):
+        for ob_id in problem_set['entries_ids']:
+            entry=db.entries.find_one({'_id':ob_id})
+            if entry:
+                problem_set['entries'].append(entry)
+
+                if entry['entry_type']=='problem': #then set the number of this problem
+                    n=n+1
+                    problem_set['entries'][-1]['problem_number']= n

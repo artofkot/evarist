@@ -1,3 +1,5 @@
+import os, datetime
+
 # g.db.posts
 # {
 #     _id: ObjectId(...),
@@ -12,3 +14,36 @@
 #     'author':"entreri",
 #     'text': 'This is so bogus ... '
 # }
+
+def add(text,db,author,post_type,parent_type,parent_id,problem_id,problem_set_id):
+    ob_id=db.posts.insert({'text':text,
+                            'author':author, 
+                            'post_type':post_type,
+                            'parent_type':parent_type,
+                            'parent_id':parent_id,
+                            'problem_id':problem_id,
+                            'problem_set_id':problem_set_id,
+                            'children_ids':[],
+                            'date':datetime.datetime.utcnow(),
+                            'general_discussion_ids':[], 
+                            'solutions_ids':[]})
+
+    # UPDATE OTHER DATABASES
+    
+    entry=db.entries.find_one({"_id":problem_id})
+    print entry
+    if post_type=='solution':
+        pass
+
+    if parent_type=='problem':
+        entry['general_discussion_ids'].append(ob_id)
+
+    if parent_type=='solution':
+        pass
+
+    if parent_type=='comment':
+        pass
+    
+    db.entries.update({"_id":problem_id}, {"$set": entry}, upsert=False)
+
+    return True

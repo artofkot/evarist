@@ -5,6 +5,9 @@ from wtforms.validators import Required, Email
 
 
 
+class CommentForm(Form):
+    text = TextField('text', validators=[Required()])
+
 class ProblemSetForm(Form):
     title = TextField('title', validators=[Required()])
     slug = TextField('slug', validators=[Required()]) # validators=[Required()]
