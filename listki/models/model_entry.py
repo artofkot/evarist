@@ -64,6 +64,3 @@ def load_posts(problem,db):
                 problem['general_discussion'].append(post)
 
     problem['solutions']=[]
-
-
-
