@@ -30,11 +30,13 @@ def home():
 
         if model_problem_set.add(author=session['username'], slug=form.slug.data, title=form.title.data, db=g.db ):
             flash('Probem set added, sir.')
+        else: 
+            flash('Need different title or slug.')
         return redirect(url_for('admin.home'))
 
     return render_template("admin/home.html", form=form, problem_sets=model_problem_set.get_all(g.db))
 
-@admin.route('/admin/<problem_set_slug>/', methods=["GET", "POST"])
+@admin.route('/admin/ps/<problem_set_slug>/', methods=["GET", "POST"])
 @admin_required
 def problem_set_edit(problem_set_slug):
 
@@ -43,14 +45,17 @@ def problem_set_edit(problem_set_slug):
     if problem_set==False: 
         flash('No such slug.')
         return redirect(url_for('admin.home'))
-    
-    print problem_set.get('entries_id')
-
     problem_set['entries']=[]
-    if problem_set.get('entries_id'):
-        for ob_id in problem_set['entries_id']:
+    n=0
+    if problem_set.get('entries_ids'):
+        for ob_id in problem_set['entries_ids']:
             entry=g.db.entries.find_one({'_id':ob_id})
-            problem_set['entries'].append(entry)
+            if entry:
+                problem_set['entries'].append(entry)
+                if entry['entry_type']=='problem': #then set the number of this problem
+                    n=n+1
+                    print " Problem %d" % n 
+                    problem_set['entries'][-1]['problem_prefix']="Problem %d. " % n
 
 
     edit_problem_set_form=ProblemSetForm()
@@ -68,7 +73,6 @@ def problem_set_edit(problem_set_slug):
     edit_entry_form=EditEntryForm()
     if edit_entry_form.validate_on_submit():
         if edit_entry_form.delete_entry.data:
-            print request.args['entry_id']+'YAYAY'
             model_entry.delete_forever(entry_id=request.args['entry_id'],problem_set_id=problem_set['_id'],db=g.db)
         else:
             model_entry.edit(ob_id=ObjectId(request.args['entry_id']),db=g.db, 
@@ -94,110 +98,3 @@ def problem_set_edit(problem_set_slug):
                             edit_problem_set_form=edit_problem_set_form,
                             delete_problem_set_form=delete_problem_set_form,
                             edit_entry_form=edit_entry_form)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@admin.route('/admin/problem/<problem_set_title>/<int:problem_number>')
-@admin_required
-def show_problem(problem_set_title,problem_number):
-
-
-    # problem_set={"title":"Set Theory",'problems':
-    # [   {"title":"Problem 1",
-    #      'text':'How many elements are in the set {1,2,{1,2}}?',
-    #      'posts':[{'date':datetime.datetime.utcnow(),'author':'Artem','text':'nice problem','type':'comment'}] 
-    #       #type could be later also feedback or solution
-    #     }
-    # ]}
-    # g.db.problem_sets.insert(problem_set)
-    
-    # for i in g.db.problem_sets.find():
-    #     print i
-
-    problem_set=g.db.problem_sets.find_one({'title':problem_set_title})
-    print problem_number-1
-    posts=problem_set['problems'][problem_number-1]['posts']
-    posts.reverse()
-    # d=datetime.datetime.now()
-    # print d['month']
-    title=problem_set['problems'][problem_number-1]['title']
-    text=problem_set['problems'][problem_number-1]['text']
-
-    return render_template('admin/problem.html', problem_number=str(problem_number), 
-                            problem_set_title=problem_set_title,title=title,text=text,posts=posts)
-
-@admin.route('/admin/problem_sets')
-@admin_required
-def show_problem_sets():
-
-    problem_sets=g.db.problem_sets.find()
-    prlist=[]
-    for i in problem_sets:
-        prlist.append(i)
-    prlist.reverse()
-    return render_template('admin/problem_sets.html',problem_sets=prlist)
-
-@admin.route('/admin/problems/<problem_set_title>')
-@admin_required
-def show_problems(problem_set_title):
-
-    problem_set=g.db.problem_sets.find_one({"title":problem_set_title})
-    problems=problem_set['problems']
-    return render_template('admin/problems.html',problems=problems,problem_set_title=problem_set_title)
-
-
-
-# @admin.route('/add_problem_set', methods=['GET','POST'])
-# @admin_required
-# def add_problem_set():
-#     # posts=g.mongo.db.posts
-#     # posts.insert({"title":request.form['title'], "text":request.form['text']})
-
-
-#     if g.db.problem_sets.find_one({"title": request.form['text']}):
-#         flash('Sorry, such problem set already exists')
-#     elif session.get('username') != 'entreri':
-#         flash('you are not authorized to do such things')
-#     else:
-#         g.db.problem_sets.insert({"title":request.form['text'],"problems":[]})
-#         flash('Problem set added, sir')
-#     return redirect(url_for('.show_problem_sets'))
-
-
-@admin.route('/add_problem/<problem_set_title>', methods=['GET','POST'])
-@admin_required
-def add_problem(problem_set_title):
-    # posts=g.mongo.db.posts
-    # posts.insert({"title":request.form['title'], "text":request.form['text']})
-
-    psdoc=g.db.problem_sets.find_one({"title":problem_set_title})
-    a=False
-    for prob in psdoc["problems"]:
-        a= (prob['title']==request.form['title'])
-    if a:
-        flash('Sorry, such title already exists')
-        print 'GA'
-    elif session.get('username') != 'entreri':
-        flash('you are not authorized to do such things')
-    else:
-        psdoc["problems"].append({'title':request.form['title'],
-                                    "text":request.form['text'],
-                                     "posts":[]})
-        g.db.problem_sets.update({"title":problem_set_title}, {"$set": psdoc}, upsert=False)
-        psdoc=g.db.problem_sets.find_one({"title":problem_set_title})
-        flash('Problem added, sir')
-    return redirect(url_for('.show_problems',problem_set_title=problem_set_title))

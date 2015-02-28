@@ -1,25 +1,39 @@
 {% extends "layout.html" %}
 {% block head %}
-   <title>listki homepage with links</title>
+   <title>Home</title>
 {% endblock %}
 {% block body %}
 
   <div class="row">
-    <div class="col-md-8 col-md-offset-2">
-      <ul>
-        <li>  <a href="{{ url_for('.show_entries')}}"> comments </a>  </li>
-        <li>  <a href="{{ url_for('.indexBitStarter')}}"> BitStarter</a>  </li>
-        <li>  <a href="{{ url_for('.startertry')}}"> Bootstrap Playground </a>  </li>
-      </ul>
+    <div class="col-md-6 col-md-offset-3">
+      <dl>
+        <dd>  <a href="{{ url_for('.show_entries')}}"> comments </a>  </dd>
+        <dd>  <a href="{{ url_for('.indexBitStarter')}}"> BitStarter</a>  </dd>
+        <dd>  <a href="{{ url_for('.startertry')}}"> Bootstrap Playground </a>  </dd>
+      </dl>
     </div>
   </div>   
   
   <hr>
     
   <div class="row">
-    <div class="col-md-8 col-md-offset-2">
-      <a href="{{ url_for('.show_problem_sets') }}"><h1>Problem sets</h1></a>
+    <div class="col-md-6 col-md-offset-3">
+      {% if session.get("username")=='admin' %}
+      <a class='pull-right' href="{{url_for('admin.home')}}">(go to admin's page)</a>
+      {%endif%}
+      <dl>
+
+        <dt>Problem sets:</dt>
+        {%for problem_set in problem_sets%}
+          <dd>
+            <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a>
+          </dd>
+        {% endfor %}
+      </dl>
+
     </div>
   </div>
+
+
 
 {% endblock %}

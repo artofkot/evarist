@@ -1,15 +1,12 @@
 {% extends "layout.html" %}
 {% block head %}
-   <title>admin.problem_set</title>
+   <title>edit {{problem_set['title']}}</title>
 {% endblock %}
 {% block body %}
   
 
-<!--   <div style="height:200px">
-  </div> -->
-
   <div class="row">
-    <div class="col-md-4 col-md-offset-2">
+    <div class="col-md-8 col-md-offset-2">
       
       <a href="{{url_for('.home')}}">Back to the list of problem sets</a>
       <div style='height:20px'></div>
@@ -55,7 +52,7 @@
       <ol>
         {%for entry in problem_set['entries']%}
           <li>
-            <p>{{entry['text']}}</p>
+            <p>{{entry.get('problem_prefix')}}{{entry['text']|safe}}</p>
 
 
             <button class="btn btn-xs btn-primary" type="button" data-toggle="collapse" data-target="#collapsId{{(loop.index)}}" aria-expanded="false" aria-controls="collapsId{{(loop.index)}}">

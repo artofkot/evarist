@@ -4,17 +4,61 @@ from flask import current_app, Flask, Blueprint, request, session, g, redirect, 
     abort, render_template, flash
 from contextlib import closing
 from flask.ext.pymongo import PyMongo
+from listki.models import model_problem_set, model_entry
 
 workflow = Blueprint('workflow', __name__,
                         template_folder='templates')
 
 @workflow.route('/')
+def home():
+    return render_template('home.html',problem_sets=model_problem_set.get_all(g.db))
+    
+
+@workflow.route('/home')
 def index():
     return redirect(url_for('.home'))
 
-@workflow.route('/home')
-def home():
-    return render_template('home.html')
+
+@workflow.route('/ps/<problem_set_slug>/', methods=["GET", "POST"])
+def problem_set(problem_set_slug):
+
+
+    problem_set=model_problem_set.get_by_slug(problem_set_slug, g.db)
+    if problem_set==False: 
+        flash('No such problem set.')
+        return redirect(url_for('.home'))
+    problem_set['entries']=[]
+    n=0
+    if problem_set.get('entries_ids'):
+        for ob_id in problem_set['entries_ids']:
+            entry=g.db.entries.find_one({'_id':ob_id})
+            if entry:
+                problem_set['entries'].append(entry)
+
+                if entry['entry_type']=='problem': #then set the number of this problem
+                    n=n+1
+                    print " Problem %d" % n 
+                    problem_set['entries'][-1]['problem_prefix']="Problem %d. " % n 
+
+
+    return render_template('problem_set.html', 
+                            problem_set=problem_set)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @workflow.route('/show/problem_sets')
 def show_problem_sets():

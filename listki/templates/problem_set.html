@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block head %}
+   <title>{{problem_set['title']}}</title>
+{% endblock %}
+{% block body %}
+
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      
+      <a href="{{url_for('.home')}}">Back to the list of problem sets</a>
+      <div style='height:20px'></div>
+    </div>
+  </div>
+  <hr>
+
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <h2 class="text-center"> {{problem_set['title']}}</h2>
+      {%for entry in problem_set['entries']%}
+        <p>{{entry.get('problem_prefix')}}{{entry['text']|safe}}</p>
+      {% endfor %}
+    </div>
+  </div>
+
+{% endblock %}
