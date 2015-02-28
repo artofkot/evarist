@@ -47,11 +47,11 @@
       </p>
       {% endif %}
 
-      
+
       {% for post in problem.get('general_discussion') %}
         <div class="blog-post">
           <p class="blog-post-meta">{{post['date'].day}}/{{post['date'].month}}/{{post['date'].year}} by {{post['author']}}</p>
-          {{ post['text'] }}
+          <pre>{{ post['text'] }}</pre>
         </div>
       {% else %}
         <p class=lead> Unbelievable. No comments here so far. </p>

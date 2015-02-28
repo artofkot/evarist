@@ -1,9 +1,30 @@
+import re
 from flask.ext.wtf import Form
 from wtforms.fields import TextField, PasswordField, BooleanField
-from wtforms.validators import Required, Email
+from wtforms.validators import Required, Email, Regexp
+
+#regexs for usernames and passwords and emails
+USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
+def valid_username(username):
+    return username and USER_RE.match(username)
+
+# PASS_RE = re.compile(r"^.{3,20}$")
+# def valid_password(password):
+#     return password and PASS_RE.match(password)
+
+# EMAIL_RE  = re.compile(r'^[\S]+@[\S]+\.[\S]+$')
+# def valid_email(email):
+#     return not email or EMAIL_RE.match(email)
 
 
+class SignUpForm(Form):
+    email = TextField('email', validators=[Required(), Email()])
+    username = TextField('username', validators=[Required(), Regexp(USER_RE,message=u'Invalid username.')])
+    password = PasswordField('password', validators=[Required()])
 
+class SignInForm(Form):
+    username = TextField('username', validators=[Required(message=u'Whats the username?')])
+    password = PasswordField('password', validators=[Required(message=u'Whats the password?')])
 
 class CommentForm(Form):
     text = TextField('text', validators=[Required()])

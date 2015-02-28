@@ -20,6 +20,7 @@ from flask.ext.pymongo import PyMongo
 from controllers.login_module import login_module
 from controllers.workflow import workflow
 from controllers.admin import admin
+from forms import SignInForm
 
 app = Flask('listki')
 app.config.from_object('config')
@@ -42,6 +43,7 @@ mongo = PyMongo(app)
 def before_request():
     g.mongo = mongo
     g.db=mongo.db
+    g.signin_form=SignInForm()
 # mongo.cx  is connection object
 
 

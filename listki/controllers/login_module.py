@@ -6,6 +6,8 @@ from flask import current_app, Flask, Blueprint, request, session, g, redirect, 
 from contextlib import closing
 from flask.ext.pymongo import PyMongo
 from jinja2 import TemplateNotFound
+from listki.models import model_user
+from listki.forms import SignUpForm, SignInForm
 
 
 import uuid
@@ -14,34 +16,6 @@ import hashlib
 login_module = Blueprint('login_module', __name__,
                         template_folder='templates')
 
-#regexs for usernames and passwords and emails
-USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
-def valid_username(username):
-    return username and USER_RE.match(username)
-
-PASS_RE = re.compile(r"^.{3,20}$")
-def valid_password(password):
-    return password and PASS_RE.match(password)
-
-EMAIL_RE  = re.compile(r'^[\S]+@[\S]+\.[\S]+$')
-def valid_email(email):
-    return not email or EMAIL_RE.match(email)
-
-def hash_str(password):
-    # uuid is used to generate a random number
-    salt = uuid.uuid4().hex
-    return hashlib.sha256(current_app.config["SECRET_KEY"]+salt.encode() + password.encode()).hexdigest() + ':' + salt
-    
-def check_pwd(user_password, hashed_password):
-    password, salt = hashed_password.split(':')
-    return password == hashlib.sha256(current_app.config["SECRET_KEY"] + salt.encode() + user_password.encode()).hexdigest()
- 
-
-# def hash_str(s):
-#     return bcrypt.hashpw(current_app.config["SECRET_KEY"]+s, bcrypt.gensalt(10))
-
-# def check_pwd(password,hashed):
-#     return bcrypt.hashpw(current_app.config["SECRET_KEY"]+password,hashed) == hashed
 
 @login_module.route('/login', methods=['GET', 'POST'])
 def login():
@@ -49,21 +23,32 @@ def login():
         flash('please log out first')
         return redirect(url_for('workflow.home'))
 
-    error = None
-    if request.method == 'POST':
-        username=request.form['username']
-        password=request.form['password']
-        user=g.mongo.db.users.find_one({"username": username})
+    error = ''
+
+    signin_form=SignInForm()
+
+    if request.method == 'POST' and signin_form.validate_on_submit():
+
+        username=signin_form.username.data
+        password=signin_form.password.data
+
+        user=g.db.users.find_one({"username": username})
         if user:
-            if check_pwd(password,user["pw_hash"]):
+            if model_user.check_pwd(password,user["pw_hash"],secret_key=current_app.config["SECRET_KEY"]):
                 session['username'] = user['username']
                 flash('You were logged in')
-                return redirect(url_for('workflow.show_problem_sets'))
+                return redirect(url_for('workflow.home'))
             else:
                 error = 'Invalid password'
         else:
             error = 'Invalid username'
-    return render_template('login.html', error=error)
+
+    if request.method == 'POST' and not signin_form.validate_on_submit():
+        for err in signin_form.errors:
+            error=error+signin_form.errors[err][0]+' '
+        return render_template("login.html", error=error, signin_form=SignInForm())
+        
+    return render_template('login.html', error=error, signin_form=signin_form)
 
 @login_module.route('/logout')
 def logout():
@@ -81,35 +66,26 @@ def signup():
     # for i in g.db.users.find():
     #     print i
 
-
     if "username" in session:
-        print session["username"]
         flash('please log out first')
         return redirect(url_for('workflow.home'))
 
-    error=None
-    if request.method == 'POST':
-        if not valid_username(request.form['username']):
-            error = 'Change the username please'
-        elif g.mongo.db.users.find_one({"username": request.form['username']}):
-            error = 'Unfortunately this username is taken'
-        elif not valid_password(request.form['password']):
-            error = 'Change the password please'
-        elif not valid_email(request.form['email']):
-            error = 'Strange email, please change'
-        else:
-            pw_hash = hash_str(request.form['password'])
-            username=request.form['username']
-            email=request.form['email']
-            g.mongo.db.users.insert({"username":username, "pw_hash":pw_hash, "email":email, "date_created":datetime.datetime.utcnow()})
+    signup_form=SignUpForm()
 
-            return redirect(url_for('login_module.login'))
+    if request.method == 'POST' and signup_form.validate_on_submit():
+        model_user.add(email=signup_form.email.data,
+                        password=signup_form.password.data,
+                        username=signup_form.username.data,
+                        db=g.db,
+                        secret_key=current_app.config["SECRET_KEY"])
+        return redirect(url_for('login_module.login'))
 
+    error=''
+    if request.method == 'POST' and not signup_form.validate_on_submit():
+        for err in signup_form.errors:
+            error=error+signup_form.errors[err][0]+' '
+        return render_template("signup.html", error=error, signup_form=SignUpForm())
 
-    return render_template("signup.html", error=error)
-
-
-
-
+    return render_template("signup.html", error=error, signup_form=signup_form)
 
 
