@@ -17,7 +17,7 @@ def valid_username(username):
 #     return not email or EMAIL_RE.match(email)
 
 class SolutionForm(Form):
-    solution = TextField('solution', validators=[Required()])
+    text = TextField('text', validators=[Required()])
 
 
 class SignUpForm(Form):
@@ -31,6 +31,9 @@ class SignInForm(Form):
 
 class CommentForm(Form):
     text = TextField('text', validators=[Required()])
+
+class FeedbackToSolutionForm(Form):
+    feedback_to_solution = TextField('feedback_to_solution', validators=[Required()])
 
 class ProblemSetForm(Form):
     title = TextField('title', validators=[Required()])

@@ -5,7 +5,6 @@ def add(text,db,author,problem_id,problem_set_id):
                                'author':author,
                                'problem_id':problem_id,
                                'problem_set_id':problem_set_id,
-                               'children_ids':[],
                                'date':datetime.datetime.utcnow(),
                                'solution_discussion_ids':[]})
 
@@ -28,3 +27,11 @@ def add(text,db,author,problem_id,problem_set_id):
     db.users.update({"_id":user['_id']}, {"$set": user}, upsert=False)
 
     return True
+
+def load_discussion(db,solution):
+    solution['discussion']=[]
+
+    for ob_id in solution['solution_discussion_ids']:
+        post=db.posts.find_one({'_id':ob_id})
+        if post:
+            solution['discussion'].append(post)

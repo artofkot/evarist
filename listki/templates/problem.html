@@ -16,10 +16,10 @@
 
   <div class="row">
     <div class="col-md-6 col-md-offset-3">
-      <p>
+      <pre>
         Problem {{problem.get('problem_number')}}.
         {{problem['text']|safe}}
-      </p>
+      </pre>
     </div>
   </div>  
 
@@ -28,39 +28,65 @@
     
     {% if "username" in session %}
       <div class="col-md-4 col-md-offset-1">
+        
+
+        <strong class="text-center"> Your solution.</strong>
         {% if not g.solution_written %}
-          <p>
-            <form action=" {{url_for('.problem', problem_set_slug=problem_set_slug, problem_number=problem['problem_number'])}}" method="post">
-              <div class="form-group" >
+          <form action=" {{url_for('.problem', problem_set_slug=problem_set_slug, problem_number=problem['problem_number'])}}" method="post">
+            <div class="form-group" >
 
-                {{ solution_form.hidden_tag() }}
-                <label for="solution">  <strong> Solution: </strong> </label>
-                <textarea class="form-control" rows="5"  name='solution'></textarea>
+              {{ solution_form.hidden_tag() }}
+              <label for="solution"> </label>
+              <textarea class="form-control" rows="5"  name='solution'></textarea>
 
-              </div>
-              <button type="submit" class="btn btn-default">Submit</button>
-            </form>
-          </p>
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+          </form>
         {% elif g.solution_written%}
-          <strong class="text-center"> Your solution:</strong>
-          <p>
+          
+          <pre>
             {{problem['solution']['text']}}
-          </p>
+          </pre>
+
+          <form action=" {{url_for('.problem', problem_set_slug=problem_set_slug, problem_number=problem['problem_number'])}}" method="post">
+            <div class="form-group" >
+
+              {{ solution_comment_form.hidden_tag() }}
+              <label for="feedback_to_solution">  <strong> Want to add something? </strong> </label>
+              <textarea class="form-control" rows="5"  name='feedback_to_solution'></textarea>
+
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+          </form>
+
+          {% for post in problem['solution']['discussion'] %}
+            <div class="blog-post">
+              <p class="blog-post-meta">{{post['date'].day}}/{{post['date'].month}}/{{post['date'].year}} by {{post['author']}}</p>
+              <pre>{{ post['text'] }}</pre>
+            </div>
+          {% else %}
+            <p > No comments here so far. </p>
+          {% endfor %}
         {%endif%}
+        
+
+
+
+
       </div>
     {% endif %}
     
 
 
     <div class="col-md-4 col-md-offset-2">
-
+      <strong> General discussion of the problem. </strong>
       {% if "username" in session %}
       <p>
         <form action=" {{url_for('.problem', problem_set_slug=problem_set_slug, problem_number=problem['problem_number'])}}" method="post">
           <div class="form-group" >
 
             {{ general_comment_form.hidden_tag() }}
-            <label for="text">  <strong>Any comments? </strong> </label>
+            <label for="text"> </label> Any comments, questions? 
             <textarea class="form-control" rows="5"  name='text'></textarea>
 
           </div>

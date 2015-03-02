@@ -28,17 +28,20 @@ def add(text,db,author,post_type,parent_type,parent_id,problem_id,problem_set_id
 
     # UPDATE OTHER DATABASES
     
-    entry=db.entries.find_one({"_id":problem_id})
-
+    
     if parent_type=='problem':
-        entry['general_discussion_ids'].append(ob_id)
+        problem=db.entries.find_one({"_id":problem_id})
+        problem['general_discussion_ids'].append(ob_id)
+        db.entries.update({"_id":problem_id}, {"$set": problem}, upsert=False)
 
     if parent_type=='solution':
-        pass
+        solution=db.solutions.find_one({"_id":parent_id})
+        solution['solution_discussion_ids'].append(ob_id)
+        db.solutions.update({"_id":solution['_id']}, {"$set": solution}, upsert=False)
 
     if parent_type=='comment':
         pass
     
-    db.entries.update({"_id":problem_id}, {"$set": entry}, upsert=False)
+    
 
     return True

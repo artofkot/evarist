@@ -5,7 +5,7 @@ from flask import current_app, Flask, Blueprint, request, session, g, redirect, 
 from contextlib import closing
 from flask.ext.pymongo import PyMongo
 from listki.models import model_problem_set, model_entry, model_post, model_solution
-from listki.forms import CommentForm, SolutionForm
+from listki.forms import CommentForm, SolutionForm, FeedbackToSolutionForm
 
 workflow = Blueprint('workflow', __name__,
                         template_folder='templates')
@@ -63,6 +63,7 @@ def problem(problem_set_slug,problem_number):
 
     general_comment_form=CommentForm()
     if general_comment_form.validate_on_submit():
+        print "SDFSDFSD"
         model_post.add(text=general_comment_form.text.data,
                        db=g.db,
                        author=session['username'],
@@ -76,11 +77,27 @@ def problem(problem_set_slug,problem_number):
                                 problem_set_slug=problem_set_slug,
                                 problem_number=problem_number))
 
+    solution_comment_form=FeedbackToSolutionForm()
+    if solution_comment_form.validate_on_submit():
+        model_post.add(text=solution_comment_form.feedback_to_solution.data,
+                       db=g.db,
+                       author=session['username'],
+                       post_type='comment',
+                       parent_type='solution',
+                       parent_id=problem['solution']['_id'],
+                       problem_id=problem['_id'],
+                       problem_set_id=problem_set['_id'])
+        
+        return redirect(url_for('.problem', 
+                                problem_set_slug=problem_set_slug,
+                                problem_number=problem_number))
+
 
     if not problem.get('solution'):
         g.solution_written=False
     else:
         g.solution_written=True
+        model_solution.load_discussion(g.db,problem['solution'])
 
     solution_form=SolutionForm()
     if solution_form.validate_on_submit():
@@ -99,6 +116,7 @@ def problem(problem_set_slug,problem_number):
                             problem_set_slug=problem_set_slug, 
                             problem=problem,
                             general_comment_form=general_comment_form,
+                            solution_comment_form=solution_comment_form,
                             solution_form=solution_form)
 
 
