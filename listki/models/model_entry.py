@@ -72,5 +72,3 @@ def load_solution(problem,db,username):
         problem['solution']=solution
 
     
-
-
