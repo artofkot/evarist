@@ -16,6 +16,9 @@ def valid_username(username):
 # def valid_email(email):
 #     return not email or EMAIL_RE.match(email)
 
+class SolutionForm(Form):
+    solution = TextField('solution', validators=[Required()])
+
 
 class SignUpForm(Form):
     email = TextField('email', validators=[Required(), Email()])

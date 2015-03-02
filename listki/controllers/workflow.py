@@ -4,8 +4,8 @@ from flask import current_app, Flask, Blueprint, request, session, g, redirect, 
     abort, render_template, flash
 from contextlib import closing
 from flask.ext.pymongo import PyMongo
-from listki.models import model_problem_set, model_entry, model_post
-from listki.forms import CommentForm
+from listki.models import model_problem_set, model_entry, model_post, model_solution
+from listki.forms import CommentForm, SolutionForm
 
 workflow = Blueprint('workflow', __name__,
                         template_folder='templates')
@@ -54,9 +54,10 @@ def problem(problem_set_slug,problem_number):
         return redirect(url_for('workflow.problem',problem_set_slug=problem_set_slug))
 
     #load general discussion
-    model_entry.load_posts(problem,g.db) #RIGHT NOW ONLY LOADS GENERAL DISCUSSION
-    #TODO load solutions
-    #TODO and this should be done iteratively via tree structure of comments
+    model_entry.load_posts(problem,g.db)
+    # load solutions
+    model_entry.load_solution(problem,g.db,session.get('username'))
+    #TODO load comments to solutions
 
     problem['general_discussion'].reverse()
 
@@ -75,11 +76,30 @@ def problem(problem_set_slug,problem_number):
                                 problem_set_slug=problem_set_slug,
                                 problem_number=problem_number))
 
+
+    if not problem.get('solution'):
+        g.solution_written=False
+    else:
+        g.solution_written=True
+
+    solution_form=SolutionForm()
+    if solution_form.validate_on_submit():
+        model_solution.add(text=solution_form.solution.data,
+                       db=g.db,
+                       author=session['username'],
+                       problem_id=problem['_id'],
+                       problem_set_id=problem_set['_id'])
+
+        return redirect(url_for('.problem', 
+                                problem_set_slug=problem_set_slug,
+                                problem_number=problem_number))
+
     # return redirect(url_for('.home'))
     return render_template('problem.html', 
                             problem_set_slug=problem_set_slug, 
                             problem=problem,
-                            general_comment_form=general_comment_form)
+                            general_comment_form=general_comment_form,
+                            solution_form=solution_form)
 
 
 

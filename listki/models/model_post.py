@@ -24,16 +24,11 @@ def add(text,db,author,post_type,parent_type,parent_id,problem_id,problem_set_id
                             'problem_id':problem_id,
                             'problem_set_id':problem_set_id,
                             'children_ids':[],
-                            'date':datetime.datetime.utcnow(),
-                            'general_discussion_ids':[], 
-                            'solutions_ids':[]})
+                            'date':datetime.datetime.utcnow()})
 
     # UPDATE OTHER DATABASES
     
     entry=db.entries.find_one({"_id":problem_id})
-    print entry
-    if post_type=='solution':
-        pass
 
     if parent_type=='problem':
         entry['general_discussion_ids'].append(ob_id)

@@ -36,7 +36,6 @@ def login():
         if user:
             if model_user.check_pwd(password,user["pw_hash"],secret_key=current_app.config["SECRET_KEY"]):
                 session['username'] = user['username']
-                flash('You were logged in')
                 return redirect(url_for('workflow.home'))
             else:
                 error = 'Invalid password'
@@ -57,7 +56,6 @@ def logout():
     # if you use the pop() method of the dict and pass a second parameter to it (the default),
     # the method will delete the key from the dictionary if present or
     # do nothing when that key is not in there.
-    flash('You were logged out')
     return redirect(url_for('workflow.home'))
 
 

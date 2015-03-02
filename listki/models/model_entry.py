@@ -63,7 +63,14 @@ def load_posts(problem,db):
             if post:
                 problem['general_discussion'].append(post)
 
-    problem['solutions']=[]
 
+def load_solution(problem,db,username):
+    # user=db.users.find_one({'username':username})
+    solution=db.solutions.find_one({'author':username,
+                            'problem_id':problem['_id']})
+    if solution:
+        problem['solution']=solution
+
+    
 
 
