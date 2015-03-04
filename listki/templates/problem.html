@@ -33,9 +33,10 @@
         <strong class="text-center"> Your solution.</strong>
         {% if not g.solution_written %}
           <form action=" {{url_for('.problem', problem_set_slug=problem_set_slug, problem_number=problem['problem_number'])}}" method="post">
+            
+            {{ solution_form.hidden_tag() }}
             <div class="form-group" >
 
-              {{ solution_form.hidden_tag() }}
               <label for="solution"> </label>
               <textarea class="form-control" rows="5"  name='solution'></textarea>
 
