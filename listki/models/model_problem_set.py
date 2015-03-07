@@ -14,7 +14,6 @@ import os, datetime
 # True
 
 
-
 def add(title,slug,db,author):
     if db.problem_sets.find_one({"title": title}):
         return False
@@ -24,7 +23,8 @@ def add(title,slug,db,author):
         db.problem_sets.insert({"title":title,
                                 'slug':slug,
                                 'author':author, 
-                                'entries_ids':[]})
+                                'entries_ids':[],
+                                'entries':[]})
         return True
 
 def get_all(db):

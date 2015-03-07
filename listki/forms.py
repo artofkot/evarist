@@ -19,7 +19,6 @@ def valid_username(username):
 class SolutionForm(Form):
     solution = TextField('solution', validators=[Required()])
 
-
 class SignUpForm(Form):
     email = TextField('email', validators=[Required(), Email()])
     username = TextField('username', validators=[Required(), Regexp(USER_RE,message=u'Invalid username.')])

@@ -13,11 +13,11 @@ from listki.forms import SignUpForm, SignInForm
 import uuid
 import hashlib
 
-login_module = Blueprint('login_module', __name__,
+user = Blueprint('user', __name__,
                         template_folder='templates')
 
 
-@login_module.route('/login', methods=['GET', 'POST'])
+@user.route('/user/login', methods=['GET', 'POST'])
 def login():
     if "username" in session:
         flash('please log out first')
@@ -45,11 +45,11 @@ def login():
     if request.method == 'POST' and not signin_form.validate_on_submit():
         for err in signin_form.errors:
             error=error+signin_form.errors[err][0]+' '
-        return render_template("login.html", error=error, signin_form=SignInForm())
+        return render_template("user/login.html", error=error, signin_form=SignInForm())
         
-    return render_template('login.html', error=error, signin_form=signin_form)
+    return render_template('user/login.html', error=error, signin_form=signin_form)
 
-@login_module.route('/logout')
+@user.route('/user/logout')
 def logout():
     session.pop('username', None)
     # We use a neat trick here:
@@ -59,7 +59,7 @@ def logout():
     return redirect(url_for('workflow.home'))
 
 
-@login_module.route('/signup', methods=['GET', 'POST'])
+@user.route('/user/signup', methods=['GET', 'POST'])
 def signup():
     # for i in g.db.users.find():
     #     print i
@@ -76,14 +76,14 @@ def signup():
                         username=signup_form.username.data,
                         db=g.db,
                         secret_key=current_app.config["SECRET_KEY"])
-        return redirect(url_for('login_module.login'))
+        return redirect(url_for('user.login'))
 
     error=''
     if request.method == 'POST' and not signup_form.validate_on_submit():
         for err in signup_form.errors:
             error=error+signup_form.errors[err][0]+' '
-        return render_template("signup.html", error=error, signup_form=SignUpForm())
+        return render_template("user/signup.html", error=error, signup_form=SignUpForm())
 
-    return render_template("signup.html", error=error, signup_form=signup_form)
+    return render_template("user/signup.html", error=error, signup_form=signup_form)
 
 

@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
   {% block head %}
-    <link href="../static/login.css" rel="stylesheet">
+    <link href="/static/login.css" rel="stylesheet">
   {% endblock %}
 {% block body %}
   <!-- {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %} -->
@@ -9,7 +9,7 @@
 
   <div class="row">
     <div class="col-md-12">
-      <form class="form-signin" action="{{ url_for('login_module.signup') }}" role="form" method=post>
+      <form class="form-signin" action="{{ url_for('user.signup') }}" role="form" method=post>
         {{ signup_form.hidden_tag() }}
         <dl>
           {% if error %}

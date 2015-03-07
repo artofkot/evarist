@@ -57,7 +57,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="{{ url_for('workflow.home')}}"> Listki </a>
+              <!-- <a class="navbar-brand" href="{{ url_for('workflow.home')}}"> Listki </a> -->
             </div>
             <div id="navbar" class="collapse navbar-collapse">
               <ul class="nav navbar-nav">
@@ -67,7 +67,7 @@
               </ul>
               {% if "username" not in session%}
               <!-- TODO what is metanav? -->
-              <form class="navbar-form navbar-right" class="metanav" action="{{ url_for('login_module.login') }}" method=post>
+              <form class="navbar-form navbar-right" class="metanav" action="{{ url_for('user.login') }}" method=post>
                 {{g.signin_form.hidden_tag()}}
                 <div class="form-group">
                   <input type="text" placeholder="Login" class="form-control" name='username'>
@@ -77,12 +77,12 @@
                 </div>
                 <button type="submit" class="btn btn-default" value=Login>Sign in</button>
                 
-                <a href="{{ url_for('login_module.signup') }}" class="btn btn-default" role="button">Sign up</a>
+                <a href="{{ url_for('user.signup') }}" class="btn btn-default" role="button">Sign up</a>
               </form>
               {% else %}
               <ul class="nav navbar-nav navbar-right">
                 <li> <a href="{{ url_for('workflow.home') }}">{{session.username}} </a></li>
-                <li><a href="{{ url_for('login_module.logout') }}">Log out</a></li>
+                <li><a href="{{ url_for('user.logout') }}">Log out</a></li>
               </ul>
               {% endif%}
             </div>

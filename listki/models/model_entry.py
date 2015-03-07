@@ -17,17 +17,21 @@ def add(text,db,author,entry_type,problem_set_id,title=None):
                                     'author':author, 
                                     'entry_type':entry_type, 
                                     'general_discussion_ids':[], 
-                                    'solutions_ids':[]})
+                                    'solutions_ids':[],
+                                    'general_discussion':[],
+                                    'solution':None})
         else:
             ob_id=db.entries.insert({'text':text, "title":title,'author':author, 'entry_type':entry_type, 
-                                'general_discussion_ids':[]}) 
+                                'general_discussion_ids':[],'general_discussion':[],
+                                    'solution':None}) 
     else:
         if entry_type=='problem':
             ob_id=db.entries.insert({'text':text,'author':author, 'entry_type':entry_type, 
-                                'general_discussion_ids':[], 'solutions_ids':[]})
+                                'general_discussion_ids':[], 'solutions_ids':[],'general_discussion':[],
+                                    'solution':None})
         else:
             ob_id=db.entries.insert({'text':text,'author':author, 'entry_type':entry_type, 
-                                'general_discussion_ids':[]})
+                                'general_discussion_ids':[],'general_discussion':[]})
 
     problem_set=db.problem_sets.find_one({"_id":problem_set_id})
     if not problem_set.get('entries_ids'):
@@ -56,7 +60,6 @@ def delete_forever(entry_id,problem_set_id,db):
 
 def load_posts(problem,db):
     problem['general_discussion']=[]
-    
     if problem.get('general_discussion_ids'):
         for ob_id in problem['general_discussion_ids']:
             post=db.posts.find_one({'_id':ob_id})

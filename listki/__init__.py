@@ -17,14 +17,14 @@ from flask import Flask, request, session, g, redirect, url_for, \
     abort, render_template, flash
 from contextlib import closing
 from flask.ext.pymongo import PyMongo
-from controllers.login_module import login_module
+from controllers.user import user
 from controllers.workflow import workflow
 from controllers.admin import admin
 from forms import SignInForm
 
 app = Flask('listki')
 app.config.from_object('config')
-app.register_blueprint(login_module)
+app.register_blueprint(user)
 app.register_blueprint(workflow)
 app.register_blueprint(admin)
 

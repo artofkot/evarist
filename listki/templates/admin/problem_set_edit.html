@@ -52,12 +52,13 @@
       <ul class="list-unstyled">
         {%for entry in problem_set['entries']%}
           <li>
-            <p>
+            
+            <div>
               {% if entry.get('problem_number') %}
                 Problem {{entry.get('problem_number')}}.
               {%endif%}
-              {{entry['text']|safe}}
-            </p>
+              <p>{{entry['text']|safe}}</p>
+            </div>
 
 
             <button class="btn btn-xs btn-primary" type="button" data-toggle="collapse" data-target="#collapsId{{(loop.index)}}" aria-expanded="false" aria-controls="collapsId{{(loop.index)}}">
