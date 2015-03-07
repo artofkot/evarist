@@ -12,9 +12,9 @@ workflow = Blueprint('workflow', __name__,
 
 @workflow.route('/')
 def home():
-    mongo.update(collection=g.db.users,doc_key='username',doc_value='admin',
-                update_key='rights',update_value={'is_checker':True,
-                                                  'is_moderator':True})
+    # mongo.update(collection=g.db.users,doc_key='username',doc_value='admin',
+    #             update_key='rights',update_value={'is_checker':True,
+    #                                               'is_moderator':True})
     return render_template('home.html',problem_sets=model_problem_set.get_all(g.db))
     
 
@@ -23,7 +23,7 @@ def index():
     return redirect(url_for('.home'))
 
 
-@workflow.route('/<problem_set_slug>/', methods=["GET", "POST"])
+@workflow.route('/problem_sets/<problem_set_slug>/', methods=["GET", "POST"])
 def problem_set(problem_set_slug):
 
 
@@ -39,7 +39,7 @@ def problem_set(problem_set_slug):
                             problem_set=problem_set)
 
 
-@workflow.route('/<problem_set_slug>/problem/<int:problem_number>', methods=["GET", "POST"])
+@workflow.route('/problem_sets/<problem_set_slug>/problem/<int:problem_number>/', methods=["GET", "POST"])
 def problem(problem_set_slug,problem_number):
     problem_set=model_problem_set.get_by_slug(problem_set_slug, g.db)
     if problem_set==False: 
