@@ -36,6 +36,7 @@ def login():
         if user:
             if model_user.check_pwd(password,user["pw_hash"],secret_key=current_app.config["SECRET_KEY"]):
                 session['username'] = user['username']
+                session['is_moderator']=user['rights']['is_moderator']
                 return redirect(url_for('workflow.home'))
             else:
                 error = 'Invalid password'
@@ -52,6 +53,7 @@ def login():
 @user.route('/user/logout')
 def logout():
     session.pop('username', None)
+    session.pop('rights', None)
     # We use a neat trick here:
     # if you use the pop() method of the dict and pass a second parameter to it (the default),
     # the method will delete the key from the dictionary if present or

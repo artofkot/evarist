@@ -14,9 +14,12 @@ admin = Blueprint('admin', __name__,
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if session.get('username')!='admin':
+        
+        if not session.get('is_moderator'):
             flash('You are not allowed to do that.')
             return redirect(url_for('workflow.home'))
+
+
         return f(*args, **kwargs)
     return decorated_function
 

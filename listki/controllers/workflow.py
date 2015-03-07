@@ -4,7 +4,7 @@ from flask import current_app, Flask, Blueprint, request, session, g, redirect, 
     abort, render_template, flash
 from contextlib import closing
 from flask.ext.pymongo import PyMongo
-from listki.models import model_problem_set, model_entry, model_post, model_solution
+from listki.models import model_problem_set, model_entry, model_post, model_solution, mongo
 from listki.forms import CommentForm, SolutionForm, FeedbackToSolutionForm
 
 workflow = Blueprint('workflow', __name__,
@@ -12,6 +12,9 @@ workflow = Blueprint('workflow', __name__,
 
 @workflow.route('/')
 def home():
+    mongo.update(collection=g.db.users,doc_key='username',doc_value='admin',
+                update_key='rights',update_value={'is_checker':True,
+                                                  'is_moderator':True})
     return render_template('home.html',problem_sets=model_problem_set.get_all(g.db))
     
 
