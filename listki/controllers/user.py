@@ -53,7 +53,7 @@ def login():
 @user.route('/user/logout')
 def logout():
     session.pop('username', None)
-    session.pop('rights', None)
+    session.pop('is_moderator', None)
     # We use a neat trick here:
     # if you use the pop() method of the dict and pass a second parameter to it (the default),
     # the method will delete the key from the dictionary if present or

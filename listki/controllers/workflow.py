@@ -12,7 +12,7 @@ workflow = Blueprint('workflow', __name__,
 
 @workflow.route('/')
 def home():
-    # mongo.update(collection=g.db.users,doc_key='username',doc_value='admin',
+    # mongo.update(collection=g.db.users,doc_key='username',doc_value='artofkot',
     #             update_key='rights',update_value={'is_checker':True,
     #                                               'is_moderator':True})
     return render_template('home.html',problem_sets=model_problem_set.get_all(g.db))
