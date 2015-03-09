@@ -74,6 +74,10 @@ def problem_set_edit(problem_set_slug):
 
     edit_entry_form=EditEntryForm()
     if edit_entry_form.validate_on_submit():
+        entry_type='problem'
+        if edit_entry_form.general_entry.data: 
+            entry_type='general_entry'
+            
         if edit_entry_form.delete_entry.data:
             model_entry.delete_forever(entry_id=request.args['entry_id'],
                                        problem_set_id=problem_set['_id'],
@@ -82,7 +86,8 @@ def problem_set_edit(problem_set_slug):
             model_entry.edit(ob_id=ObjectId(request.args['entry_id']),
                              db=g.db, 
                              title=edit_entry_form.edit_title.data,
-                             text=edit_entry_form.edit_text.data)
+                             text=edit_entry_form.edit_text.data,
+                             entry_type=entry_type)
 
         return redirect(url_for('admin.problem_set_edit',
                                 problem_set_slug=problem_set['slug']))
@@ -90,7 +95,7 @@ def problem_set_edit(problem_set_slug):
     entryform = EntryForm()
     if entryform.validate_on_submit():
         entry_type='problem'
-        if entryform.text.data: 
+        if entryform.general_entry.data: 
             entry_type='general_entry'
         if model_entry.add(entry_type=entry_type, 
                             author=session['username'], 

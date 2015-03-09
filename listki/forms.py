@@ -36,7 +36,9 @@ class CommentForm(Form):
     text = TextField('text', validators=[Required()])
 
 class FeedbackToSolutionForm(Form):
-    feedback_to_solution = TextField('feedback_to_solution', validators=[Required()])
+    feedback_to_solution = TextField('feedback_to_solution')
+    upvote=BooleanField('upvote')
+    downvote=BooleanField('downvote')
 
 class ProblemSetForm(Form):
     title = TextField('title', validators=[Required()])
@@ -51,6 +53,7 @@ class EntryForm(Form):
     general_entry=BooleanField('general_entry')
 
 class EditEntryForm(Form):
+    general_entry=BooleanField('general_entry')
     edit_title= TextField('edit_title')
-    edit_text= TextField('edit_text', validators=[Required()])
+    edit_text= TextField('edit_text')
     delete_entry=BooleanField('delete_entry')

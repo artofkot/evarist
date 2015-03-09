@@ -9,7 +9,8 @@ def add(text,db,author,problem_id,problem_set_id):
                                'solution_discussion_ids':[],
                                'discussion':[],
                                'upvotes':0,
-                               'downvotes':0})
+                               'downvotes':0,
+                               'usernames_voted':[]})
 
     # UPDATE OTHER DATABASES
     

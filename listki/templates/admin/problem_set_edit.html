@@ -41,8 +41,8 @@
         <form class="form-inline" action="{{url_for('.problem_set_edit',problem_set_slug=problem_set['slug'])}}" method="post">  
           {{ delete_problem_set_form.hidden_tag() }}
           <button type="submit" class="btn btn-xs btn-danger">Delete the whole problem set</button>
-          <div class="radio">
-            <label><input type="radio" name='delete'> I am sure about that</label>
+          <div class="checkbox">
+            <label><input type="checkbox" name='delete'> I am sure about that</label>
           </div>
         </form>
 
@@ -70,15 +70,18 @@
                   {{ edit_entry_form.hidden_tag() }}
                   
                   <p>{{entry['_id']}}</p>
+                  <div class="checkbox">
+                    <label><input type="checkbox" name='general_entry'> Check this, if this entry is not a problem. </label>
+                  </div>
                   <label for="edit_text">Edit the entry: </label>
                   <textarea class="form-control" rows="5"  name='edit_text'>{{entry['text']}}</textarea>
 
                   <label for="edit_title">Edit the title of entry (optional and not important): </label>
                   <input type="text" class="form-control" name="edit_title" value='{{entry["title"]}}'>
                   
-                  <div class="radio" style='background-color:red'>
+                  <div class="checkbox" style='background-color:red'>
                     <label >
-                      <input type="radio" name='delete_entry'>just want to delete this entry, forever
+                      <input type="checkbox" name='delete_entry'>just want to delete this entry, forever
                     </label>
                   </div>
                 </div>
@@ -107,8 +110,8 @@
         <div class="form-group" style='width: 500px'>
 
           {{ entryform.hidden_tag() }}
-          <div class="radio">
-            <label><input type="radio" name='general_entry'> Check this, if this entry is not a problem. </label>
+          <div class="checkbox">
+            <label><input type="checkbox" name='general_entry'> Check this, if this entry is not a problem. </label>
           </div>
           <label for="text">Here put the content of entry: </label>
           <textarea class="form-control" rows="5"  name='text'></textarea>

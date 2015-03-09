@@ -41,10 +41,11 @@ def add(text,db,author,entry_type,problem_set_id,title=None):
 
     return True
 
-def edit(ob_id, title, text, db):
+def edit(ob_id, title, text, db, entry_type):
     entry=db.entries.find_one({"_id": ob_id})
     entry['text']=text
     entry['title']=title
+    entry['entry_type']=entry_type
     db.entries.update({"_id":ob_id}, {"$set": entry}, upsert=False)
     return True
 
