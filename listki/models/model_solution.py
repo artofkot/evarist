@@ -30,8 +30,10 @@ def add(text,db,author,problem_id,problem_set_id):
     return True
 
 def load_discussion(db,solution):
-    solution['discussion']=[]
-    for ob_id in solution['solution_discussion_ids']:
-        post=db.posts.find_one({'_id':ob_id})
-        if post:
-            solution['discussion'].append(post)
+    if solution.get('discussion'):
+        solution['discussion']=[]
+    if solution['solution_discussion_ids']:
+        for ob_id in solution['solution_discussion_ids']:
+            post=db.posts.find_one({'_id':ob_id})
+            if post:
+                solution['discussion'].append(post)

@@ -5,7 +5,7 @@ from flask import current_app, Flask, Blueprint, request, session, g, redirect, 
 from contextlib import closing
 from flask.ext.pymongo import PyMongo
 from listki.models import model_problem_set, model_entry, model_post, model_solution, mongo
-from listki.forms import CommentForm, SolutionForm, FeedbackToSolutionForm
+from listki.forms import CommentForm, SolutionForm, FeedbackToSolutionForm, EditSolutionForm
 
 workflow = Blueprint('workflow', __name__,
                         template_folder='templates')
@@ -87,7 +87,7 @@ def problem(problem_set_slug,problem_number):
                        author=session['username'],
                        post_type='comment',
                        parent_type='solution',
-                       parent_id=problem['solution']['_id'],
+                       parent_id=ObjectId(request.args['sol_id']),
                        problem_id=problem['_id'],
                        problem_set_id=problem_set['_id'])
         
@@ -95,12 +95,13 @@ def problem(problem_set_slug,problem_number):
                                 problem_set_slug=problem_set_slug,
                                 problem_number=problem_number))
 
-
+    currentuser_solution_id=None
     if not problem.get('solution'):
         g.solution_written=False
     else:
         g.solution_written=True
         model_solution.load_discussion(g.db,problem['solution'])
+        currentuser_solution_id=problem['solution']['_id']
 
     solution_form=SolutionForm()
     if solution_form.validate_on_submit():
@@ -114,13 +115,45 @@ def problem(problem_set_slug,problem_number):
                                 problem_set_slug=problem_set_slug,
                                 problem_number=problem_number))
 
+    edit_solution_form=EditSolutionForm()
+    if edit_solution_form.validate_on_submit():
+        if edit_solution_form.delete_solution.data:
+            g.db.solutions.remove({'_id':problem['solution']['_id']})
+        else:
+            mongo.update(collection=g.db.solutions,
+                            doc_key='_id',
+                            doc_value=problem['solution']['_id'],
+                            update_key='text',
+                            update_value=edit_solution_form.edited_solution.data)
+
+        return redirect(url_for('.problem', 
+                                problem_set_slug=problem_set_slug,
+                                problem_number=problem_number))
+
+    user=g.db.users.find_one({'username':session.get('username')})
+
+    g.other_solutions=[]
+    if 'username' in session:
+        if problem['_id'] in user['problems_ids']['can_see_other_solutions'] or session.get("is_moderator") or session.get("is_checker"):
+            for sol_id in problem['solutions_ids']:
+                if not currentuser_solution_id==sol_id:
+                    solut=g.db.solutions.find_one({'_id':sol_id})
+                    model_solution.load_discussion(g.db,solut)
+                    g.other_solutions.append(solut)
+                    if g.other_solutions:
+                        print g.other_solutions[0]
+
+
+
+
     # return redirect(url_for('.home'))
     return render_template('problem.html', 
                             problem_set_slug=problem_set_slug, 
                             problem=problem,
                             general_comment_form=general_comment_form,
                             solution_comment_form=solution_comment_form,
-                            solution_form=solution_form)
+                            solution_form=solution_form,
+                            edit_solution_form=edit_solution_form)
 
 
 
