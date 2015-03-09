@@ -98,17 +98,24 @@
     </div>
   </div>
 
+  <hr>
+
   <div class="row">
     <div class="col-md-8 col-md-offset-2">
       <form action=" {{url_for('.problem_set_edit', problem_set_slug=problem_set['slug'])}}" method="post">
+        Create a new entry.
         <div class="form-group" style='width: 500px'>
 
           {{ entryform.hidden_tag() }}
-          <label for="text">And here put the content of entry: </label>
+          <div class="radio">
+            <label><input type="radio" name='general_entry'> Check this, if this entry is not a problem. </label>
+          </div>
+          <label for="text">Here put the content of entry: </label>
           <textarea class="form-control" rows="5"  name='text'></textarea>
 
-          <label for="title">To create a new entry write here its title (optional and not important): </label>
+          <label for="title">Write here its title (optional and not important): </label>
           <input type="text" class="form-control" name="title">
+
           
 
         </div>

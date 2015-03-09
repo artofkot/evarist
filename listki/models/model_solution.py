@@ -7,7 +7,9 @@ def add(text,db,author,problem_id,problem_set_id):
                                'problem_set_id':problem_set_id,
                                'date':datetime.datetime.utcnow(),
                                'solution_discussion_ids':[],
-                               'discussion':[]})
+                               'discussion':[],
+                               'upvotes':0,
+                               'downvotes':0})
 
     # UPDATE OTHER DATABASES
     

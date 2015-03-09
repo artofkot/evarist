@@ -48,6 +48,7 @@ class ProblemSetDelete(Form):
 class EntryForm(Form):
     title= TextField('title')
     text= TextField('text', validators=[Required()])
+    general_entry=BooleanField('general_entry')
 
 class EditEntryForm(Form):
     edit_title= TextField('edit_title')

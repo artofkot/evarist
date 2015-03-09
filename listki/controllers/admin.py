@@ -89,7 +89,10 @@ def problem_set_edit(problem_set_slug):
 
     entryform = EntryForm()
     if entryform.validate_on_submit():
-        if model_entry.add(entry_type='problem', 
+        entry_type='problem'
+        if entryform.text.data: 
+            entry_type='general_entry'
+        if model_entry.add(entry_type=entry_type, 
                             author=session['username'], 
                             title=entryform.title.data, 
                             db=g.db, 
