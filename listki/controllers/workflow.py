@@ -12,8 +12,8 @@ workflow = Blueprint('workflow', __name__,
 
 @workflow.route('/')
 def home():
-    # mongo.update(collection=g.db.solutions,doc_key='all',doc_value='notimportant',
-    #             update_key='usernames_voted',update_value=[])
+    mongo.update(collection=g.db.solutions,doc_key='all',doc_value='notimportant',
+                update_key='usernames_voted',update_value=[])
     
     return render_template('home.html',problem_sets=model_problem_set.get_all(g.db))
     
@@ -83,18 +83,18 @@ def problem(problem_set_slug,problem_number):
     solution_comment_form=FeedbackToSolutionForm()
     if solution_comment_form.validate_on_submit():
         commented_solution=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
-        print solution_comment_form.upvote.data
         if solution_comment_form.upvote.data:
             mongo.update(collection=g.db.solutions,
                         doc_key='_id',
                         doc_value=ObjectId(request.args['sol_id']),
                         update_key='upvotes',
                         update_value=commented_solution['upvotes']+1)
+            commented_solution['usernames_voted'].append(session['username'])
             mongo.update(collection=g.db.solutions,
                         doc_key='_id',
                         doc_value=ObjectId(request.args['sol_id']),
                         update_key='usernames_voted',
-                        update_value=commented_solution['usernames_voted'].append(session['username']) )
+                        update_value=commented_solution['usernames_voted'])
             
         if solution_comment_form.downvote.data:
             mongo.update(collection=g.db.solutions,
@@ -102,11 +102,12 @@ def problem(problem_set_slug,problem_number):
                         doc_value=ObjectId(request.args['sol_id']),
                         update_key='downvotes',
                         update_value=commented_solution['downvotes']+1)
+            commented_solution['usernames_voted'].append(session['username'])
             mongo.update(collection=g.db.solutions,
                         doc_key='_id',
                         doc_value=ObjectId(request.args['sol_id']),
                         update_key='usernames_voted',
-                        update_value=commented_solution['usernames_voted'].append(session['username']) )
+                        update_value=commented_solution['usernames_voted'])
 
         if solution_comment_form.feedback_to_solution.data:
             model_post.add(text=solution_comment_form.feedback_to_solution.data,
@@ -167,6 +168,7 @@ def problem(problem_set_slug,problem_number):
                     solut=g.db.solutions.find_one({'_id':sol_id})
                     model_solution.load_discussion(g.db,solut)
                     g.other_solutions.append(solut)
+
 
 
 

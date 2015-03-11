@@ -111,7 +111,8 @@
                 <label for="feedback_to_solution">  <strong> Comment: </strong> </label>
                 <textarea class="form-control" rows="5"  name='feedback_to_solution'></textarea>
                 
-                  {%if not session['username'] in solution.get('usernames_voted')%} 
+                  {%if session['username'] not in solution.get('usernames_voted')%}
+                    {{solution.get('usernames_voted')}}
                     <div class="checkbox" >
                       <label ><input type="checkbox" name='upvote'>upvote it, right solution</label>
                     </div>
