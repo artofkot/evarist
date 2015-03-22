@@ -106,10 +106,22 @@
             <div style='height:50px'>
             </div>
 
-            <div class="blog-post">
-              <p class="blog-post-meta"><strong>Solution of {{solution['author']}} </strong>
-              <pre>{{ solution['text'] }}</pre>
-            </div>
+
+            {% if solution['is_right'] %}
+              <div class="blog-post">
+                <p class="blog-post-meta"><strong>Solution of {{solution['author']}}.</strong> 
+                <strong style='color:green'> Checked and correct.</strong> </p>
+                <pre>{{ solution['text'] }}</pre>
+              </div>
+            {%else%}
+              <div class="blog-post">
+                <p class="blog-post-meta"><strong>Solution of {{solution['author']}}.</strong> 
+                </p>
+                <pre>{{ solution['text'] }}</pre>
+              </div>
+            {%endif%}
+            
+
             <p>{{solution.get('upvotes')}} upvotes</p>
             <p>{{solution.get('downvotes')}} downvotes</p>
             
@@ -145,7 +157,7 @@
                 
               </form>
             {%else%}
-              <h3><strong style='color:green'> You voted.</strong></h3>
+              <p><strong style='color:green'> You voted.</strong></p>
             {%endif%}
 
 
