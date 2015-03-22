@@ -186,8 +186,9 @@ def problem(problem_set_slug,problem_number):
                     if not solut:
                         print 'HERE' + problem['text']
                         print 'SOMETHING WRONG!!!!'
-                    model_solution.load_discussion(g.db,solut)
-                    g.other_solutions.append(solut)
+                    if solut:
+                        model_solution.load_discussion(g.db,solut)
+                        g.other_solutions.append(solut)
 
 
 
