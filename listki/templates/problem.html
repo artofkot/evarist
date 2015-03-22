@@ -45,9 +45,19 @@
             <button type="submit" class="btn btn-default">Submit</button>
           </form>
         {% elif g.solution_written%}
-          <div class="blog-post">
-            <pre>{{ problem['solution']['text'] }}</pre>
-          </div>
+          
+          {% if problem['solution']['is_right'] %}
+            <h3><strong> Correct!</strong></h3>
+            <div class="blog-post" >
+              <pre style="background-color:lightgreen">{{ problem['solution']['text'] }}</pre>
+            </div>
+          {%else %}
+            <div class="blog-post">
+              <pre>{{ problem['solution']['text'] }}</pre>
+            </div>
+          {%endif%}
+          <p>{{problem['solution'].get('upvotes')}} upvotes</p>
+          <p>{{problem['solution'].get('downvotes')}} downvotes</p>
           
           <button class="btn btn-default" type="button" data-toggle="collapse" data-target="#collapsId" aria-expanded="false" aria-controls="collapsId">
             Edit solution
@@ -82,7 +92,7 @@
             <button type="submit" class="btn btn-default">Submit</button>
           </form>
 
-          {% for post in problem['solution']['discussion'] %}
+          {% for post in problem['solution']['discussion'] | reverse %}
             <div class="blog-post">
               <p class="blog-post-meta">{{post['date'].day}}/{{post['date'].month}}/{{post['date'].year}} by {{post['author']}}</p>
               <pre>{{ post['text'] }}</pre>
@@ -103,28 +113,53 @@
             <p>{{solution.get('upvotes')}} upvotes</p>
             <p>{{solution.get('downvotes')}} downvotes</p>
             
+            {%if session['username'] not in solution.get('usernames_voted')%}
+              <form action=" {{url_for('workflow.problem', problem_set_slug=problem_set_slug, problem_number=problem['problem_number'], sol_id=solution['_id'])}}" method="post">
+                
+                {{ vote_form.hidden_tag() }}
+                
+                  <div class="form-group" >
+                    <div class="radio">
+                      <label>
+                        <input type="radio" name="vote" id="optionsRadios1" value="upvote" >
+                        upvote
+                      </label>
+                    </div>
+                    <div class="radio">
+                      <label>
+                        <input type="radio" name="vote" id="optionsRadios2" value="downvote">
+                        downvote
+                      </label>
+                    </div>
+                  </div>
+                  <button type="submit" class="btn btn-default ">Vote</button>
+                
+                <!--  Template for disabled and chacke radio button
+
+                <div class="radio disabled">
+                  <label>
+                    <input type="radio" name="test" id="optionsRadios3" value="option3" disabled checked>
+                    Option three is disabled
+                  </label>
+                </div> -->
+                
+              </form>
+            {%else%}
+              <h3><strong style='color:green'> You voted.</strong></h3>
+            {%endif%}
+
 
             <form action=" {{url_for('workflow.problem', problem_set_slug=problem_set_slug, problem_number=problem['problem_number'], sol_id=solution['_id'])}}" method="post">
               <div class="form-group" >
-
                 {{ solution_comment_form.hidden_tag() }}
                 <label for="feedback_to_solution">  <strong> Comment: </strong> </label>
                 <textarea class="form-control" rows="5"  name='feedback_to_solution'></textarea>
-                
-                  {%if session['username'] not in solution.get('usernames_voted')%}
-                    {{solution.get('usernames_voted')}}
-                    <div class="checkbox" >
-                      <label ><input type="checkbox" name='upvote'>upvote it, right solution</label>
-                    </div>
-                    <div class="checkbox" >
-                      <label ><input type="checkbox" name='downvote'>downvote it, there is a mistake</label>
-                    </div>
-                  {%endif%}
               </div>
               <button type="submit" class="btn btn-default">Submit</button>
             </form>
 
-            {% for post in solution['discussion'] %}
+
+            {% for post in solution['discussion'] | reverse %}
               <div class="blog-post">
                 <p class="blog-post-meta">{{post['date'].day}}/{{post['date'].month}}/{{post['date'].year}} by {{post['author']}}</p>
                 <pre>{{ post['text'] }}</pre>
@@ -157,7 +192,7 @@
       {% endif %}
 
 
-      {% for post in problem.get('general_discussion') %}
+      {% for post in problem.get('general_discussion') | reverse %}
         <div class="blog-post">
           <p class="blog-post-meta">{{post['date'].day}}/{{post['date'].month}}/{{post['date'].year}} by {{post['author']}}</p>
           <pre>{{ post['text'] }}</pre>

@@ -37,8 +37,10 @@ class CommentForm(Form):
 
 class FeedbackToSolutionForm(Form):
     feedback_to_solution = TextField('feedback_to_solution', validators=[Required()])
-    upvote=BooleanField('upvote')
-    downvote=BooleanField('downvote')
+
+
+class VoteForm(Form):
+    vote = TextField('vote', validators=[Required()])
 
 class ProblemSetForm(Form):
     title = TextField('title', validators=[Required()])
