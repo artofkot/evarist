@@ -82,45 +82,48 @@ def problem(problem_set_slug,problem_number):
     vote_form=VoteForm()
     if vote_form.validate_on_submit():
         voted_solution=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
-        if vote_form.vote.data == 'upvote': 
-            print 'UPVOTEUPVOTE'
-            voted_solution['upvotes']=voted_solution['upvotes']+1
-            mongo.update(collection=g.db.solutions,
-                        doc_key='_id',
-                        doc_value=ObjectId(request.args['sol_id']),
-                        update_key='upvotes',
-                        update_value=voted_solution['upvotes'])
-            voted_solution['usernames_voted'].append(session['username'])
-            mongo.update(collection=g.db.solutions,
-                        doc_key='_id',
-                        doc_value=ObjectId(request.args['sol_id']),
-                        update_key='usernames_voted',
-                        update_value=voted_solution['usernames_voted'])
-            print voted_solution['upvotes']
-            if voted_solution['upvotes']>=2:
-                mongo.update(collection=g.db.solutions,doc_key='_id',doc_value=ObjectId(request.args['sol_id']),
-                        update_key='is_right',
-                        update_value=True)
-                print 'I TRIED TO MAKE SOLUTION RIGHT!!!!!!! \n \n'
-                user=g.db.users.find_one({'username':voted_solution['author']})
-                user['problems_ids']['can_see_other_solutions'].append(voted_solution['problem_id'])
-                mongo.update(collection=g.db.users,doc_key='username',doc_value=user['username'],
-                        update_key='problems_ids',
-                        update_value=user['problems_ids'])
+        if not session['username'] in voted_solution['usernames_voted']:
+            if vote_form.vote.data == 'upvote': 
+                voted_solution['upvotes']=voted_solution['upvotes']+1
+                mongo.update(collection=g.db.solutions,
+                            doc_key='_id',
+                            doc_value=ObjectId(request.args['sol_id']),
+                            update_key='upvotes',
+                            update_value=voted_solution['upvotes'])
+                voted_solution['usernames_voted'].append(session['username'])
+                mongo.update(collection=g.db.solutions,
+                            doc_key='_id',
+                            doc_value=ObjectId(request.args['sol_id']),
+                            update_key='usernames_voted',
+                            update_value=voted_solution['usernames_voted'])
+                print voted_solution['upvotes']
+                if voted_solution['upvotes']>=2:
+                    mongo.update(collection=g.db.solutions,doc_key='_id',doc_value=ObjectId(request.args['sol_id']),
+                            update_key='is_right',
+                            update_value=True)
+                    print 'I TRIED TO MAKE SOLUTION RIGHT!!!!!!! \n \n'
+                    user=g.db.users.find_one({'username':voted_solution['author']})
+                    user['problems_ids']['can_see_other_solutions'].append(voted_solution['problem_id'])
+                    mongo.update(collection=g.db.users,doc_key='username',doc_value=user['username'],
+                            update_key='problems_ids',
+                            update_value=user['problems_ids'])
 
-        if vote_form.vote.data == 'downvote':
-            voted_solution['downvotes']=voted_solution['downvotes']+1
-            mongo.update(collection=g.db.solutions,
-                        doc_key='_id',
-                        doc_value=ObjectId(request.args['sol_id']),
-                        update_key='downvotes',
-                        update_value=voted_solution['downvotes'])
-            voted_solution['usernames_voted'].append(session['username'])
-            mongo.update(collection=g.db.solutions,
-                        doc_key='_id',
-                        doc_value=ObjectId(request.args['sol_id']),
-                        update_key='usernames_voted',
-                        update_value=voted_solution['usernames_voted'])
+            if vote_form.vote.data == 'downvote':
+                voted_solution['downvotes']=voted_solution['downvotes']+1
+                mongo.update(collection=g.db.solutions,
+                            doc_key='_id',
+                            doc_value=ObjectId(request.args['sol_id']),
+                            update_key='downvotes',
+                            update_value=voted_solution['downvotes'])
+                voted_solution['usernames_voted'].append(session['username'])
+                mongo.update(collection=g.db.solutions,
+                            doc_key='_id',
+                            doc_value=ObjectId(request.args['sol_id']),
+                            update_key='usernames_voted',
+                            update_value=voted_solution['usernames_voted'])
+        return redirect(url_for('.problem', 
+                                problem_set_slug=problem_set_slug,
+                                problem_number=problem_number))
 
 
     solution_comment_form=FeedbackToSolutionForm()

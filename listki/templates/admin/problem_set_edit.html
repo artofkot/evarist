@@ -62,14 +62,12 @@
 
 
             <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#collapsId{{(loop.index)}}" aria-expanded="false" aria-controls="collapsId{{(loop.index)}}">
-              Edit entry
+              Edit upper entry
             </button>
             <div class="collapse" id="collapsId{{(loop.index)}}">
               <form action=" {{url_for('.problem_set_edit', problem_set_slug=problem_set['slug'], entry_id=entry['_id'])}}" method="post">
                 <div class="form-group" style='width: 500px'>
                   {{ edit_entry_form.hidden_tag() }}
-                  
-                  <p>{{entry['_id']}}</p>
                   <div class="checkbox">
                     <label><input type="checkbox" name='general_entry'> Check this, if this entry is not a problem. </label>
                   </div>
@@ -93,6 +91,8 @@
 
 
           </li>
+
+        <div style='height:30px'></div>
         {% endfor %}
       </ol>
 
