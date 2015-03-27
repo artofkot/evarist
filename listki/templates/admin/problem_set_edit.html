@@ -69,7 +69,14 @@
                 <div class="form-group" style='width: 500px'>
                   {{ edit_entry_form.hidden_tag() }}
                   <div class="checkbox">
+                    
+                    {% if entry['entry_type']=='problem' %}
                     <label><input type="checkbox" name='general_entry'> Check this, if this entry is not a problem. </label>
+                    {% else %}
+                    <label><input type="checkbox" name='general_entry' checked> Check this, if this entry is not a problem. </label>
+                    {% endif %}
+
+
                   </div>
                   <label for="edit_text">Edit the entry: </label>
                   <textarea class="form-control" rows="5"  name='edit_text'>{{entry['text']}}</textarea>
