@@ -3,11 +3,6 @@
 # TODO:  (TALK TO LESHA BOUT THIS!)
 # correct e-mail check
 # requirements management
-# dont delete stuff that works:
-# wrong password error
-# admin default
-# how does auth work now?
-# True/False
 # validator in bootstrap
 # labels
 
@@ -45,18 +40,3 @@ def before_request():
     g.db=mongo.db
     g.signin_form=SignInForm()
 # mongo.cx  is connection object
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
