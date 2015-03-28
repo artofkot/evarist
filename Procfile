@@ -1,1 +1,1 @@
-web: gunicorn listki:app --log-file=-
+web: gunicorn evarist:app --log-file=-
