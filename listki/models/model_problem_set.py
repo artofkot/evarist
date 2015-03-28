@@ -1,4 +1,5 @@
 import os, datetime
+import model_entry
 
 # working with ObjectId
 #
@@ -50,6 +51,11 @@ def edit(ob_id, title, slug, db):
     return True
 
 def delete(ob_id, db):
+    problem_set=db.problem_sets.find_one({"_id":ob_id})
+
+    for entry_id in problem_set['entries_ids']:
+        model_entry.delete_forever(entry_id=entry_id,problem_set_id=ob_id,db=db)
+
     db.problem_sets.remove({"_id":ob_id})
     return True
 

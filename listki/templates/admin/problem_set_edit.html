@@ -40,7 +40,7 @@
         
         <form class="form-inline" action="{{url_for('.problem_set_edit',problem_set_slug=problem_set['slug'])}}" method="post">  
           {{ delete_problem_set_form.hidden_tag() }}
-          <button type="submit" class="btn btn-xs btn-danger">Delete the whole problem set</button>
+          <button type="submit" class="btn btn-xs btn-danger">Delete the whole problem set, and all its entries.</button>
           <div class="checkbox">
             <label><input type="checkbox" name='delete'> I am sure about that</label>
           </div>
