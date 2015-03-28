@@ -5,8 +5,8 @@ from flask import current_app, Flask, Blueprint, request, session, g, redirect, 
 from contextlib import closing
 from flask.ext.pymongo import PyMongo
 from functools import wraps
-from listki.forms import ProblemSetForm, EntryForm, EditEntryForm, ProblemSetDelete
-from listki.models import model_problem_set, model_entry
+from evarist.forms import ProblemSetForm, EntryForm, EditEntryForm, ProblemSetDelete
+from evarist.models import model_problem_set, model_entry
 
 admin = Blueprint('admin', __name__,
                         template_folder='templates')

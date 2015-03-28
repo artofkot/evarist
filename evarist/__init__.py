@@ -17,7 +17,7 @@ from controllers.workflow import workflow
 from controllers.admin import admin
 from forms import SignInForm
 
-app = Flask('listki')
+app = Flask('evarist')
 app.config.from_object('config')
 app.register_blueprint(user)
 app.register_blueprint(workflow)

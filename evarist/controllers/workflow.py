@@ -4,8 +4,8 @@ from flask import current_app, Flask, Blueprint, request, session, g, redirect, 
     abort, render_template, flash
 from contextlib import closing
 from flask.ext.pymongo import PyMongo
-from listki.models import model_problem_set, model_entry, model_post, model_solution, mongo
-from listki.forms import CommentForm, SolutionForm, FeedbackToSolutionForm, EditSolutionForm, VoteForm
+from evarist.models import model_problem_set, model_entry, model_post, model_solution, mongo
+from evarist.forms import CommentForm, SolutionForm, FeedbackToSolutionForm, EditSolutionForm, VoteForm
 
 workflow = Blueprint('workflow', __name__,
                         template_folder='templates')

@@ -1,3 +1,3 @@
 #!/usr/local/bin/python
-from listki import app
+from evarist import app
 app.run(debug=True)

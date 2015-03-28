@@ -6,8 +6,8 @@ from flask import current_app, Flask, Blueprint, request, session, g, redirect, 
 from contextlib import closing
 from flask.ext.pymongo import PyMongo
 from jinja2 import TemplateNotFound
-from listki.models import model_user
-from listki.forms import SignUpForm, SignInForm
+from evarist.models import model_user
+from evarist.forms import SignUpForm, SignInForm
 
 
 import uuid
