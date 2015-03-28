@@ -53,9 +53,11 @@ class EntryForm(Form):
     title= TextField('title')
     text= TextField('text', validators=[Required()])
     general_entry=BooleanField('general_entry')
+    entry_number=TextField('entry_number')
 
 class EditEntryForm(Form):
     general_entry=BooleanField('general_entry')
+    entry_number=TextField('entry_number')
     edit_title= TextField('edit_title')
     edit_text= TextField('edit_text', validators=[Required()])
     delete_entry=BooleanField('delete_entry')

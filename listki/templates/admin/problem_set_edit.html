@@ -49,7 +49,7 @@
       
       <div style='height:20px'></div>
       <p>Entries:</p>
-      <ul class="list-unstyled">
+      <ol>
         {%for entry in problem_set['entries']%}
           <li>
             
@@ -80,6 +80,9 @@
                   </div>
                   <label for="edit_text">Edit the entry: </label>
                   <textarea class="form-control" rows="5"  name='edit_text'>{{entry['text']}}</textarea>
+
+                  <label for="title">Write here the number of entry after which you want this entry to pop up: </label>
+                  <input type="text" class="form-control" name="entry_number" value='{{loop.index-1}}'>
 
                   <label for="edit_title">Edit the title of entry (optional and not important): </label>
                   <input type="text" class="form-control" name="edit_title" value='{{entry["title"]}}'>
@@ -122,6 +125,9 @@
           </div>
           <label for="text">Here put the content of entry: </label>
           <textarea class="form-control" rows="5"  name='text'></textarea>
+
+          <label for="title">Write here the number of entry after which you want this entry to pop up: </label>
+          <input type="text" class="form-control" name="entry_number" value='{{problem_set["entries"] | length}}'>
 
           <label for="title">Write here its title (optional and not important): </label>
           <input type="text" class="form-control" name="title">

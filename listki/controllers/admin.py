@@ -87,7 +87,9 @@ def problem_set_edit(problem_set_slug):
                              db=g.db, 
                              title=edit_entry_form.edit_title.data,
                              text=edit_entry_form.edit_text.data,
-                             entry_type=entry_type)
+                             entry_type=entry_type,
+                             entry_number= int(edit_entry_form.entry_number.data),
+                             problem_set_id=problem_set['_id'])
 
         return redirect(url_for('admin.problem_set_edit',
                                 problem_set_slug=problem_set['slug']))
@@ -102,7 +104,8 @@ def problem_set_edit(problem_set_slug):
                             title=entryform.title.data, 
                             db=g.db, 
                             text=entryform.text.data, 
-                            problem_set_id=problem_set['_id'] ):
+                            problem_set_id=problem_set['_id'],
+                            entry_number= int(entryform.entry_number.data)):
             print flash('Entry added, sir.')
 
         return redirect(url_for('admin.problem_set_edit',
