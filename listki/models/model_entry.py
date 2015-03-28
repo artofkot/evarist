@@ -1,7 +1,7 @@
 import os, datetime
 from bson.objectid import ObjectId
 
-# working with ObjectId
+# How to work with ObjectId:
 #
 # from bson.objectid import ObjectId
 # print str(  g.mongo.db.users.find_one({"username":"artofkot"})["_id"]  )

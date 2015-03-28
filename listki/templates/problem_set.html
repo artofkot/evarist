@@ -6,12 +6,12 @@
 
   <div class="row">
     <div class="col-md-6 col-md-offset-3">
-      
       <a href="{{url_for('workflow.home')}}">Back to the list of problem sets</a>
-      
     </div>
   </div>
+
   <div style='height:20px'></div>
+
   <hr>
 
   <div class="row">
@@ -20,7 +20,7 @@
       {%for entry in problem_set['entries']%}
         <div>
           {% if entry.get('problem_number') %}
-          <a href="{{url_for('workflow.problem', problem_set_slug=problem_set['slug'], problem_number=entry.get('problem_number')     ) }}">
+          <a href="{{ url_for('workflow.problem', problem_set_slug=problem_set['slug'], problem_number=entry.get('problem_number')) }}">
             Problem {{entry.get('problem_number')}}.
           </a>
           {%endif%}

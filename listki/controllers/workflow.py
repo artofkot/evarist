@@ -56,7 +56,7 @@ def problem(problem_set_slug,problem_number):
         problem=next(entry for entry in problem_set['entries'] if entry.get('problem_number')==problem_number)
     except StopIteration:
         flash('No such problem.')
-        return redirect(url_for('workflow.problem',problem_set_slug=problem_set_slug))
+        return redirect(url_for('workflow.problem_set',problem_set_slug=problem_set_slug))
 
     #load general discussion
     model_entry.load_posts(problem,g.db)
@@ -211,32 +211,6 @@ def problem(problem_set_slug,problem_number):
 
 
 
-
-
-
-
-
-
-
-@workflow.route('/comments')
-def show_entries():
-    # print g.mongo.db.collection_names()
-    # for i in g.mongo.db.posts.find():
-    #     print i
-    posts=g.mongo.db.posts.find()
-    entries = [dict(title='title', text=entry["text"]) for entry in posts]
-    entries.reverse()
-    return render_template('examples/show_entries.html', entries=entries)
-
-@workflow.route('/comments_add', methods=['GET','POST'])
-def add_entry():
-    if not 'username' in session:
-        abort(401)
-    # posts=g.mongo.db.posts
-    # posts.insert({"title":request.form['title'], "text":request.form['text']})
-    g.db.posts.insert({"title":request.form['title'], "text":request.form['text']})
-    flash('New entry was successfully posted')
-    return redirect(url_for('.show_entries'))
 
 @workflow.route('/startertry')
 def startertry():
