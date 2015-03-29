@@ -8,7 +8,12 @@
     <div class="col-md-6 col-md-offset-3">
       <a href="{{url_for('admin.feedbacks')}}">Feedbacks</a>
       <br>
+      <a href="{{url_for('admin.users')}}">Users</a>
       <br>
+      <a href="{{url_for('admin.not_checked_solutions')}}">Not checked solutions</a>
+      <br>
+      <br>
+
       <dl>
         <dt>Problem sets:</dt>
         {%for problem_set in problem_sets%}

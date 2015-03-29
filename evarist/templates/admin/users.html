@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block head %}
+{% endblock %}
+{% block body %}
+
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <h1>These are our users:</h1>
+      {% for user in users | reverse %}
+        <div>
+          <p>username: {{user['username']}}</p>
+          <p>email: {{user['email']}}</p>
+          <p>rights: {{user['rights']}}</p>
+        </div>
+        <br>
+        <br>
+      {% endfor %}
+    </div>
+  </div>
+
+{% endblock %}

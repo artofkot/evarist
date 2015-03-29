@@ -115,12 +115,13 @@ def problem(problem_set_slug,problem_number):
                             doc_value=ObjectId(request.args['sol_id']),
                             update_key='usernames_voted',
                             update_value=voted_solution['usernames_voted'])
-                print voted_solution['upvotes']
                 if voted_solution['upvotes']>=2:
                     mongo.update(collection=g.db.solutions,doc_key='_id',doc_value=ObjectId(request.args['sol_id']),
                             update_key='is_right',
                             update_value=True)
-                    print 'I TRIED TO MAKE SOLUTION RIGHT!!!!!!! \n \n'
+                    mongo.update(collection=g.db.solutions,doc_key='_id',doc_value=ObjectId(request.args['sol_id']),
+                            update_key='checked',
+                            update_value=True)
                     user=g.db.users.find_one({'username':voted_solution['author']})
                     user['problems_ids']['can_see_other_solutions'].append(voted_solution['problem_id'])
                     mongo.update(collection=g.db.users,doc_key='username',doc_value=user['username'],
@@ -205,9 +206,6 @@ def problem(problem_set_slug,problem_number):
             for sol_id in problem['solutions_ids']:
                 if not currentuser_solution_id==sol_id:
                     solut=g.db.solutions.find_one({'_id':sol_id})
-                    if not solut:
-                        print 'HERE' + problem['text']
-                        print 'SOMETHING WRONG!!!!'
                     if solut:
                         model_solution.load_discussion(g.db,solut)
                         g.other_solutions.append(solut)
