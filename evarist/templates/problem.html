@@ -6,7 +6,7 @@
 
 
   <div class="row">
-    <div class="col-md-6 col-md-offset-3">
+    <div class="col-md-6 col-md-offset-2">
       <a href="{{url_for('workflow.problem_set',problem_set_slug=problem_set_slug)}}">Back to the problem set</a>
     </div>
   </div>
@@ -15,7 +15,7 @@
   <hr>
 
   <div class="row">
-    <div class="col-md-6 col-md-offset-3">
+    <div class="col-md-6 col-md-offset-2">
       <div>
         Problem {{problem.get('problem_number')}}.
         
@@ -28,7 +28,7 @@
   <div class="row">
     
     {% if "username" in session %}
-      <div class="col-md-4 col-md-offset-1">
+      <div class="col-md-5 col-md-offset-2">
         
 
         <strong class="text-center"> Your solution</strong>
@@ -198,8 +198,9 @@
     
 
 
-    <div class="col-md-4 col-md-offset-2">
-      <strong> General discussion of the problem. </strong>
+    <div class="col-md-3 col-md-offset-2">
+      <strong> General discussion of the problem, questions about the condidtions, ets. </strong>
+      
       {% if "username" in session %}
       <p>
         <form action=" {{url_for('workflow.problem', problem_set_slug=problem_set_slug, problem_number=problem['problem_number'])}}" method="post">

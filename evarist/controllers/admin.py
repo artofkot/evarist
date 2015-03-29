@@ -51,6 +51,21 @@ def feedbacks():
     return render_template("admin/feedbacks.html", 
                             posts=posts)
 
+@admin.route('/admin/problem_questions', methods=["GET", "POST"])
+@admin_required
+def problem_questions():
+    ps=g.db.posts.find({'parent_type':'problem'})
+    posts=[]
+    for p in ps:
+        p['problem_set']=g.db.problem_sets.find_one({'_id':p['problem_set_id']})
+        p['problem']=g.db.entries.find_one({'_id':p['problem_id']})
+        posts.append(p)
+
+    print posts
+
+    return render_template("admin/problem_questions.html", 
+                            posts=posts)
+
 @admin.route('/admin/users', methods=["GET", "POST"])
 @admin_required
 def users():

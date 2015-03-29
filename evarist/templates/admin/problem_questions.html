@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block head %}
+{% endblock %}
+{% block body %}
+
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <h1>These are the questions from discussions of the problems:</h1>
+      {% for post in posts | reverse %}
+        <p>Problem set : {{post['problem_set']['title']}}</p>
+        <p>Problem : </p>
+        <p>{{post['problem']['text']}}</p>
+
+        <div class="blog-post">
+          
+          <p class="blog-post-meta">{{post.get('date').day}}/{{post.get('date').month}}/{{post.get('date').year}} by {{post['author']}}</p>
+          
+
+          <pre>{{ post['text'] }}</pre>
+        </div>
+        <br>
+        <br>
+      {% endfor %}
+    </div>
+  </div>
+
+{% endblock %}
