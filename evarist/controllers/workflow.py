@@ -1,3 +1,6 @@
+#!/usr/local/bin/python
+# -*- coding: utf-8 -*-
+
 from bson.objectid import ObjectId
 import os, datetime, urllib, urllib2
 from flask import current_app, Flask, Blueprint, request, session, g, redirect, url_for, \
@@ -33,9 +36,14 @@ def home():
         flash('Thank you for your feedback!')
         return redirect(url_for('.home'))
 
-    
+    psets=model_problem_set.get_all(g.db)
+    problem_sets=[]
+    for pset in psets:
+        if pset['title'] in ['Sets',u'Множества']:
+            problem_sets.append(pset)
+
     return render_template('home.html',
-                        problem_sets=model_problem_set.get_all(g.db),
+                        problem_sets=problem_sets,
                         website_feedback_form=website_feedback_form)
     
 
