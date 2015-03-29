@@ -5,19 +5,38 @@ from flask import current_app, Flask, Blueprint, request, session, g, redirect, 
 from contextlib import closing
 from flask.ext.pymongo import PyMongo
 from evarist.models import model_problem_set, model_entry, model_post, model_solution, mongo
-from evarist.forms import CommentForm, SolutionForm, FeedbackToSolutionForm, EditSolutionForm, VoteForm
+from evarist.forms import WebsiteFeedbackForm, CommentForm, SolutionForm, FeedbackToSolutionForm, EditSolutionForm, VoteForm
 
 workflow = Blueprint('workflow', __name__,
                         template_folder='templates')
 
-@workflow.route('/')
+@workflow.route('/', methods=["GET", "POST"])
 def home():
     # USE THIS CAREFULLY! This is template for updating some keys in all documents.
     #
     # mongo.update(collection=g.db.solutions,doc_key='all',doc_value='notimportant',
     #             update_key='GOGGO',update_value=False)
+
+    website_feedback_form=WebsiteFeedbackForm()
+    if website_feedback_form.validate_on_submit():
+        author=session.get('username')
+        if not author:
+            author=website_feedback_form.email.data
+        model_post.add(text=website_feedback_form.feedback.data,
+                        db=g.db,
+                        author=author,
+                        post_type='feedback',
+                        parent_type='evarist_feedback',
+                        parent_id=None,
+                        problem_id=None,
+                        problem_set_id=None)
+        flash('Thank you for your feedback!')
+        return redirect(url_for('.home'))
+
     
-    return render_template('home.html',problem_sets=model_problem_set.get_all(g.db))
+    return render_template('home.html',
+                        problem_sets=model_problem_set.get_all(g.db),
+                        website_feedback_form=website_feedback_form)
     
 
 @workflow.route('/home')

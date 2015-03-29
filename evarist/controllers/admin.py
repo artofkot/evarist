@@ -44,6 +44,13 @@ def home():
                             form=form, 
                             problem_sets=model_problem_set.get_all(g.db))
 
+@admin.route('/admin/feedbacks', methods=["GET", "POST"])
+@admin_required
+def feedbacks():
+    posts=g.db.posts.find({'parent_type':'evarist_feedback'})
+    return render_template("admin/feedbacks.html", 
+                            posts=posts)
+
 @admin.route('/admin/<problem_set_slug>/', methods=["GET", "POST"])
 @admin_required
 def problem_set_edit(problem_set_slug):

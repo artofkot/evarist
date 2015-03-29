@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block head %}
+{% endblock %}
+{% block body %}
+
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <h1>These are our feedbacks:</h1>
+      {% for post in posts | reverse %}
+        <div class="blog-post">
+          <p class="blog-post-meta">{{post['date'].day}}/{{post['date'].month}}/{{post['date'].year}} by {{post['author']}}</p>
+          <pre>{{ post['text'] }}</pre>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+{% endblock %}

@@ -38,6 +38,10 @@ class CommentForm(Form):
 class FeedbackToSolutionForm(Form):
     feedback_to_solution = TextField('feedback_to_solution', validators=[Required()])
 
+class WebsiteFeedbackForm(Form):
+    feedback = TextField('feedback', validators=[Required()])
+    email = TextField('email',)
+
 
 class VoteForm(Form):
     vote = TextField('vote', validators=[Required()])

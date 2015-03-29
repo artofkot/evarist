@@ -5,7 +5,10 @@
 {% block body %}
 
   <div class="row">
-    <div class="col-md-8 col-md-offset-2">
+    <div class="col-md-6 col-md-offset-3">
+      <a href="{{url_for('admin.feedbacks')}}">Feedbacks</a>
+      <br>
+      <br>
       <dl>
         <dt>Problem sets:</dt>
         {%for problem_set in problem_sets%}
@@ -18,7 +21,7 @@
   </div>
 
   <div class="row">
-    <div class="col-md-8 col-md-offset-2">
+    <div class="col-md-6 col-md-offset-3">
       <form action=" {{url_for('admin.home')}}" method="post">
         <div class="form-group" style='width: 350px'>
 
