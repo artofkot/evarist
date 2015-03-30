@@ -39,7 +39,7 @@ def home():
     psets=model_problem_set.get_all(g.db)
     problem_sets=[]
     for pset in psets:
-        if pset['title'] in ['Sets',u'Множества']:
+        if pset['title'] in ['Sets',u'Множества','Group Theory']:
             problem_sets.append(pset)
 
     return render_template('home.html',

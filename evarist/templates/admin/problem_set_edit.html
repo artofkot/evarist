@@ -66,7 +66,7 @@
             </button>
             <div class="collapse" id="collapsId{{(loop.index)}}">
               <form action=" {{url_for('.problem_set_edit', problem_set_slug=problem_set['slug'], entry_id=entry['_id'])}}" method="post">
-                <div class="form-group" style='width: 500px'>
+                <div class="form-group" style='width: 800px'>
                   {{ edit_entry_form.hidden_tag() }}
                   <div class="checkbox">
                     
@@ -79,7 +79,7 @@
 
                   </div>
                   <label for="edit_text">Edit the entry: </label>
-                  <textarea class="form-control" rows="5"  name='edit_text'>{{entry['text']}}</textarea>
+                  <textarea class="form-control" rows="10" name='edit_text'>{{entry['text']}}</textarea>
 
                   <label for="title">Write here the number of entry after which you want this entry to pop up: </label>
                   <input type="text" class="form-control" name="entry_number" value='{{loop.index-1}}'>
@@ -117,7 +117,7 @@
     <div class="col-md-8 col-md-offset-2">
       <form action=" {{url_for('.problem_set_edit', problem_set_slug=problem_set['slug'])}}" method="post">
         Create a new entry.
-        <div class="form-group" style='width: 500px'>
+        <div class="form-group" style='width: 800px'>
 
           {{ entryform.hidden_tag() }}
           <div class="checkbox">
