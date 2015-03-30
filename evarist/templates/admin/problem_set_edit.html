@@ -54,10 +54,12 @@
           <li>
             
             <div>
+              <p>
               {% if entry.get('problem_number') %}
                 Problem {{entry.get('problem_number')}}.
               {%endif%}
-              <p>{{entry['text']|safe}}</p>
+              {{entry['text']|safe}}
+              </p>
             </div>
 
 
