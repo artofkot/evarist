@@ -17,13 +17,15 @@
               <strong>Error:</strong> {{ error }} 
             </div> 
           {% endif %}
-            <h2 class="form-signin-heading">Please, sign up.</h2>
+            <h2 class="form-signin-heading">Registration.</h2>
             <label for="inputLogin" class="sr-only">Username</label>
             <input id="inputLogin" class="form-control" type=text placeholder="Username" autofocus required name='username'>
-            <label for="inputemail" class="sr-only">email</label>
-            <input id="inputemail" class="form-control" type=text placeholder="Email" required name='email'>
-            <label for="inputPassword" class="sr-only">Password</label>
+            <label for="inputPassword" class="sr-only">password</label>
             <input id="inputPassword" class="form-control" type=password placeholder="Password" required name='password'>
+            <label for="inputConfirmPassword" class="sr-only">confirm the password</label>
+            <input id="inputConfirmPassword" class="form-control" type=password placeholder="Confirm the password" required name='confirm_password'>
+            <label for="last" class="sr-only">email</label>
+            <input id="last" class="form-control" type=text placeholder="Email" required name='email'>
             <button class="btn btn-lg btn-primary btn-block" type="submit" value='signup'>Sign up</button>
         </dl>
       </form>

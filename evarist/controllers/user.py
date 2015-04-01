@@ -73,12 +73,17 @@ def signup():
     signup_form=SignUpForm()
 
     if request.method == 'POST' and signup_form.validate_on_submit():
-        model_user.add(email=signup_form.email.data,
-                        password=signup_form.password.data,
-                        username=signup_form.username.data,
-                        db=g.db,
-                        secret_key=current_app.config["SECRET_KEY"])
-        return redirect(url_for('user.login'))
+        if signup_form.password.data == signup_form.confirm_password.data:
+            model_user.add(email=signup_form.email.data,
+                            password=signup_form.password.data,
+                            username=signup_form.username.data,
+                            db=g.db,
+                            secret_key=current_app.config["SECRET_KEY"])
+            return redirect(url_for('user.login'))
+        else:
+            flash('passwords should be the same, try one more time, please')
+            return redirect(url_for('user.signup'))
+        
 
     error=''
     if request.method == 'POST' and not signup_form.validate_on_submit():

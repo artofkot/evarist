@@ -26,6 +26,7 @@ class EditSolutionForm(Form):
 class SignUpForm(Form):
     email = TextField('email', validators=[Required(), Email()])
     username = TextField('username', validators=[Required(), Regexp(USER_RE,message=u'Invalid username.')])
+    confirm_password = PasswordField('confirm_password', validators=[Required()])
     password = PasswordField('password', validators=[Required()])
 
 class SignInForm(Form):
