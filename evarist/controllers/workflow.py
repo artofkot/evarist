@@ -51,6 +51,10 @@ def home():
 def index():
     return redirect(url_for('.home'))
 
+@workflow.route('/about')
+def about():
+    return render_template('about.html')
+
 
 @workflow.route('/problem_sets/<problem_set_slug>/', methods=["GET", "POST"])
 def problem_set(problem_set_slug):
@@ -240,7 +244,3 @@ def problem(problem_set_slug,problem_number):
 @workflow.route('/startertry')
 def startertry():
     return render_template('examples/startertry.html')
-
-@workflow.route('/indexBitStarter')
-def indexBitStarter():
-    return render_template('examples/indexBitStarter.html')

@@ -1,6 +1,9 @@
 body {
   padding-top: 70px; /* for the navbar and a lil more */
   font-family: 'Computer Modern Bright';
+  font-size: 18px;
+  line-height: 24px;
+  /*text-align: justify;*/
 }
 
 pre {
