@@ -51,9 +51,9 @@ def home():
 def index():
     return redirect(url_for('.home'))
 
-@workflow.route('/about')
-def about():
-    return render_template('about.html')
+@workflow.route('/roots')
+def roots():
+    return render_template('roots.html')
 
 
 @workflow.route('/problem_sets/<problem_set_slug>/', methods=["GET", "POST"])
