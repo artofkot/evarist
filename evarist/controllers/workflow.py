@@ -72,8 +72,10 @@ def problem_set(problem_set_slug):
                             problem_set=problem_set)
 
 
-@workflow.route('/problem_sets/<problem_set_slug>/problem/<int:problem_number>/', methods=["GET", "POST"])
-def problem(problem_set_slug,problem_number):
+# @workflow.route('/problem_sets/<problem_set_slug>/problem/<int:problem_number>/', methods=["GET", "POST"])
+@workflow.route('/problem_sets/<problem_set_slug>/problem/<prob_id>/', methods=["GET", "POST"])
+def problem(problem_set_slug,prob_id):
+    # problem_number=int(request.args['problem_number'])
     problem_set=model_problem_set.get_by_slug(problem_set_slug, g.db)
     if problem_set==False: 
         flash('No such problem set.')
@@ -82,12 +84,15 @@ def problem(problem_set_slug,problem_number):
     #get the problem_set
     model_problem_set.load_entries(problem_set,g.db)
 
-    #get the problem out of problem_set
+    # get the problem out of problem_set  -  OLD, when we tried to use numbers of problems in url
     try:
-        problem=next(entry for entry in problem_set['entries'] if entry.get('problem_number')==problem_number)
+        problem, problem_number=next((entry, entry['problem_number']) for entry in problem_set['entries'] if entry.get('_id')==ObjectId(prob_id))
     except StopIteration:
-        flash('No such problem.')
+        flash('No such problem in this problem_set.')
         return redirect(url_for('workflow.problem_set',problem_set_slug=problem_set_slug))
+
+    
+    
 
     #load general discussion
     model_entry.load_posts(problem,g.db)
