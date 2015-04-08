@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
 
-# TODO:  (TALK TO LESHA BOUT THIS!)
-# correct e-mail check
-# requirements management
-# validator in bootstrap
-# labels
-
 from bson.objectid import ObjectId
 import os, datetime, urllib, urllib2,sys
 from flask import Flask, request, session, g, redirect, url_for, \
