@@ -51,6 +51,10 @@ def home():
 def index():
     return redirect(url_for('.home'))
 
+@workflow.route('/ru/home')
+def index_ru():
+    return render_template('homeru.html')
+
 @workflow.route('/roots')
 def roots():
     return render_template('roots.html')
