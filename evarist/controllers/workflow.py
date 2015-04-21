@@ -117,7 +117,7 @@ def problem(problem_set_slug,prob_id):
         
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
-                                problem_number=problem_number))
+                                prob_id=problem['_id']))
 
     vote_form=VoteForm()
     if vote_form.validate_on_submit():
@@ -164,7 +164,7 @@ def problem(problem_set_slug,prob_id):
                             update_value=voted_solution['usernames_voted'])
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
-                                problem_number=problem_number))
+                                prob_id=problem['_id']))
 
 
     solution_comment_form=FeedbackToSolutionForm()
@@ -182,7 +182,7 @@ def problem(problem_set_slug,prob_id):
         
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
-                                problem_number=problem_number))
+                                prob_id=problem['_id']))
 
     currentuser_solution_id=None
     if not problem.get('solution'):
@@ -202,7 +202,8 @@ def problem(problem_set_slug,prob_id):
 
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
-                                problem_number=problem_number))
+                                prob_id=problem['_id']))
+                                # problem_number=problem_number)
 
     edit_solution_form=EditSolutionForm()
     if edit_solution_form.validate_on_submit():
@@ -217,7 +218,7 @@ def problem(problem_set_slug,prob_id):
 
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
-                                problem_number=problem_number))
+                                prob_id=problem['_id']))
 
     user=g.db.users.find_one({'username':session.get('username')})
 
