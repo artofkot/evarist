@@ -30,22 +30,24 @@
         $('#signinButton').attr('style','display:none');
         //passing to server 1-time code google gave to user
         $.ajax({
-          type: 'POST',
+          type: "POST",
           url: '/user/gconnect?state={{session["state"]}}',
           processData: false,
           data: authResult['code'],
           contentType: 'application/octet-stream; charset=utf-8',
           success: function(result) {
-            // Handle or verify the server response if necessary.
-            if (result) {
-              $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
-             setTimeout(function() {
-              window.location.href = "/home";
-             }, 2000);
-            } else if (authResult['error']) {
-              console.log('There was an error: ' + authResult['error']);
-            } else {
-              $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+            if (!initializedGoogleCallback) {
+              // Handle or verify the server response if necessary.
+              if (result) {
+                $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
+               setTimeout(function() {
+                window.location.href = "/home";
+               }, 2000);
+              } else if (authResult['error']) {
+                console.log('There was an error: ' + authResult['error']);
+              } else {
+                $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+              }
             }
           }
         });
