@@ -1,5 +1,5 @@
 .DS_Store
 tmp
 *.pyc
-listki.sublime
+listki.sublime*
 client_secrets.json

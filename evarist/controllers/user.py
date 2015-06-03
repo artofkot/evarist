@@ -60,8 +60,8 @@ def login():
         for err in signin_form.errors:
             error=error+signin_form.errors[err][0]+' '
         return render_template("user/login.html", error=error, signin_form=SignInForm())
-        
-    return render_template('user/login.html', error=error, signin_form=signin_form, client_id_yep=current_app['CLIENT_ID'])
+    print current_app.config['CLIENT_ID']
+    return render_template('user/login.html', error=error, signin_form=signin_form, client_id_yep=current_app.config['CLIENT_ID'])
 
 @user.route('/user/logout')
 def logout():
