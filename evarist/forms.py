@@ -30,7 +30,7 @@ class SignUpForm(Form):
     password = PasswordField('password', validators=[Required()])
 
 class SignInForm(Form):
-    username = TextField('username', validators=[Required(message=u'Whats the username?')])
+    email = TextField('email', validators=[Required(message=u'Whats the email?'), Email()])
     password = PasswordField('password', validators=[Required(message=u'Whats the password?')])
 
 class CommentForm(Form):

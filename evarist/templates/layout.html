@@ -79,20 +79,24 @@
                 <!-- <li><a href="{{ url_for('workflow.home')}}" in_tag="ul" kaspersky_status="skipped">Contact</a></li> -->
               </ul>
               {% if "username" not in session%}
+              
               <form class="navbar-form navbar-right" class="metanav" action="{{ url_for('user.login') }}" method=post>
-                {{g.signin_form.hidden_tag()}}
+                <a href="{{ url_for('user.login') }}" class="btn btn-default" role="button">Login</a>
+
+               <!--  {{g.signin_form.hidden_tag()}}
                 <div class="form-group">
-                  <input type="text" placeholder="Login" class="form-control" name='username'>
+                  <input type="text" placeholder="Email" class="form-control" name='email'>
                 </div>
                 <div class="form-group">
                   <input type="password" placeholder="Password" class="form-control" name='password'>
                 </div>
-                <button type="submit" class="btn btn-default" value=Login>Sign in</button>
+                <button type="submit" class="btn btn-default" value=Login>Sign in</button> -->
                 
-                <a href="{{ url_for('user.signup') }}" class="btn btn-default" role="button">Sign up</a>
+                <!-- <a href="{{ url_for('user.signup') }}" class="btn btn-default" role="button">Sign up</a> -->
               </form>
               {% else %}
               <ul class="nav navbar-nav navbar-right">
+                <li><img src="{{session['picture']}}" height="40" width="40" ></li>
                 <li> <a href="{{ url_for('workflow.home') }}">{{session.username}} </a></li>
                 <li><a href="{{ url_for('user.logout') }}">Log out</a></li>
               </ul>

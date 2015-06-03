@@ -16,9 +16,9 @@ workflow = Blueprint('workflow', __name__,
 @workflow.route('/', methods=["GET", "POST"])
 def home():
     # USE THIS CAREFULLY! This is template for updating some keys in all documents.
-    #
-    # mongo.update(collection=g.db.solutions,doc_key='all',doc_value='notimportant',
-    #             update_key='GOGGO',update_value=False)
+    
+    # mongo.update(collection=g.db.users,doc_key='all',doc_value='notimportant',
+    #             update_key='picture',update_value='https://cdn.rawgit.com/artofkot/evarist_static/master/no_pic.jpg')
 
     website_feedback_form=WebsiteFeedbackForm()
     if website_feedback_form.validate_on_submit():

@@ -18,14 +18,15 @@ def check_pwd(user_password, hashed_password, secret_key):
 # def check_pwd(password,hashed):
 #     return bcrypt.hashpw(current_app.config["SECRET_KEY"]+password,hashed) == hashed
 
-def add(username, password, email,db, secret_key):
-    if db.users.find_one({"username": username}):
+def add(username, password, email,db, secret_key, picture):
+    if db.users.find_one({"email": email}):
         return False
     else:
         pw_hash = hash_str(password,secret_key)
         db.users.insert({"username":username, 
                         "pw_hash":pw_hash, 
-                        "email":email, 
+                        "email":email,
+                        'picture':picture,
                         "date":datetime.datetime.utcnow(),
                         'rights':{'is_checker':False, #checkers can see and vote any solutions
                                   'is_moderator':False #moderators are checkers who also 

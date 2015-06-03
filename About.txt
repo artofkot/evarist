@@ -2,7 +2,6 @@ About
 
 Evarist - a place on the internet to learn University-level math.
 
-
 Our method / way // Features:
 
 - Only practice.
