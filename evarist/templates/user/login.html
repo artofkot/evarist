@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
   {% block head %}
-    <link href="/static/login.css" rel="stylesheet">
     <script src="https://apis.google.com/js/client:platform.js" async defer></script>
+    <link href="/static/login.css" rel="stylesheet">
   {% endblock %}
 {% block body %}
   <!-- {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %} -->
@@ -41,7 +41,7 @@
               $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
              setTimeout(function() {
               window.location.href = "/home";
-             }, 4000);
+             }, 2000);
             } else if (authResult['error']) {
               console.log('There was an error: ' + authResult['error']);
             } else {

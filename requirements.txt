@@ -1,5 +1,5 @@
 clang==3.3
-Flask==0.9
+Flask==0.10.1
 Flask-PyMongo==0.3.0
 gnureadline==6.3.3
 gunicorn==19.1.1

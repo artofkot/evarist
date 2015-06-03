@@ -12,9 +12,21 @@ from evarist.forms import SignUpForm, SignInForm
 
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
+from oauth2client.client import AccessTokenCredentials
 import httplib2, json, uuid, hashlib, string, random
 from flask import make_response
 import requests
+
+# def json_to_obj(s):
+#     def h2o(x):
+#         if isinstance(x, dict):
+#             return type('jo', (), {k: h2o(v) for k, v in x.iteritems()})
+#         else:
+#             return x
+#     return h2o(json.loads(s))
+
+
+
 
 
 user = Blueprint('user', __name__,
@@ -127,9 +139,6 @@ def gconnect():
         oauth_flow = flow_from_clientsecrets('client_secrets.json', scope='')
         oauth_flow.redirect_uri = 'postmessage'
         credentials = oauth_flow.step2_exchange(code)
-        #!!!
-        print type(credentials)
-        # print credentials + '\n'
     except FlowExchangeError:
         response = make_response(
             json.dumps('Failed to upgrade the authorization code.'), 401)
@@ -178,7 +187,7 @@ def gconnect():
 
 
     # Store the access token in the session for later use.
-    session['credentials'] = credentials
+    session['credentials'] = credentials.access_token
     session['gplus_id'] = gplus_id
 
     
@@ -214,7 +223,7 @@ def gconnect():
 @user.route('/user/gdisconnect')
 def gdisconnect():
         # Only disconnect a connected user.
-    credentials = session.get('credentials')
+    credentials = AccessTokenCredentials(login_session['credentials'], 'user-agent-value')
     if credentials is None:
         response = make_response(
             json.dumps('Current user not connected.'), 401)
