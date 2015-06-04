@@ -11,7 +11,13 @@ from controllers.workflow import workflow
 from controllers.admin import admin
 from forms import SignInForm
 
+import logging
+
 app = Flask('evarist')
+
+app.logger.addHandler(logging.StreamHandler(sys.stdout))
+app.logger.setLevel(logging.ERROR)
+
 app.config.from_object('config')
 app.register_blueprint(user)
 app.register_blueprint(workflow)
