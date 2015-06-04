@@ -126,6 +126,8 @@ def signup():
 
 @user.route('/user/gconnect', methods=['POST'])
 def gconnect():
+    
+    
     # Validate state token
     if request.args.get('state') != session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
