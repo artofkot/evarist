@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import os, re, datetime
 from bson.objectid import ObjectId
 # import bcrypt - fuck this shit, seriously hate this library
@@ -32,6 +34,39 @@ import requests
 user = Blueprint('user', __name__,
                         template_folder='templates')
 
+
+@user.route('/user/signup', methods=['GET', 'POST'])
+def signup():
+    # for i in g.db.users.find():
+    #     print i
+
+    if "username" in session:
+        flash('please log out first')
+        return redirect(url_for('workflow.home'))
+
+    signup_form=SignUpForm()
+
+    if request.method == 'POST' and signup_form.validate_on_submit():
+        if signup_form.password.data == signup_form.confirm_password.data:
+            model_user.add(email=signup_form.email.data,
+                            picture='https://cdn.rawgit.com/artofkot/evarist_static/master/no_pic.jpg',
+                            password=signup_form.password.data,
+                            username=signup_form.username.data,
+                            db=g.db,
+                            secret_key=current_app.config["SECRET_KEY"])
+            return redirect(url_for('user.login'))
+        else:
+            flash('passwords should be the same, try one more time, please')
+            return redirect(url_for('user.signup'))
+        
+
+    error=''
+    if request.method == 'POST' and not signup_form.validate_on_submit():
+        for err in signup_form.errors:
+            error=error+signup_form.errors[err][0]+' '
+        return render_template("user/signup.html", error=error, signup_form=SignUpForm())
+
+    return render_template("user/signup.html", error=error, signup_form=signup_form)
 
 @user.route('/user/login', methods=['GET', 'POST'])
 def login():
@@ -74,55 +109,6 @@ def login():
         return render_template("user/login.html", error=error, signin_form=SignInForm())
     print current_app.config['CLIENT_ID']
     return render_template('user/login.html', error=error, signin_form=signin_form, client_id_yep=current_app.config['CLIENT_ID'], fb_app_id_yep=current_app.config['FB_APP_ID'])
-
-@user.route('/user/logout')
-def logout():
-    session.pop('username', None)
-    session.pop('is_moderator', None)
-    session.pop('email', None)
-    session.pop('picture', None)
-    session.pop('is_checker', None)
-    session.pop('gplus_id', None)
-    # We use a neat trick here:
-    # if you use the pop() method of the dict and pass a second parameter to it (the default),
-    # the method will delete the key from the dictionary if present or
-    # do nothing when that key is not in there.
-    return redirect(url_for('workflow.home'))
-
-
-@user.route('/user/signup', methods=['GET', 'POST'])
-def signup():
-    # for i in g.db.users.find():
-    #     print i
-
-    if "username" in session:
-        flash('please log out first')
-        return redirect(url_for('workflow.home'))
-
-    signup_form=SignUpForm()
-
-    if request.method == 'POST' and signup_form.validate_on_submit():
-        if signup_form.password.data == signup_form.confirm_password.data:
-            model_user.add(email=signup_form.email.data,
-                            picture='https://cdn.rawgit.com/artofkot/evarist_static/master/no_pic.jpg',
-                            password=signup_form.password.data,
-                            username=signup_form.username.data,
-                            db=g.db,
-                            secret_key=current_app.config["SECRET_KEY"])
-            return redirect(url_for('user.login'))
-        else:
-            flash('passwords should be the same, try one more time, please')
-            return redirect(url_for('user.signup'))
-        
-
-    error=''
-    if request.method == 'POST' and not signup_form.validate_on_submit():
-        for err in signup_form.errors:
-            error=error+signup_form.errors[err][0]+' '
-        return render_template("user/signup.html", error=error, signup_form=SignUpForm())
-
-    return render_template("user/signup.html", error=error, signup_form=signup_form)
-
 
 @user.route('/user/gconnect', methods=['POST'])
 def gconnect():
@@ -195,24 +181,33 @@ def gconnect():
 
 
     # Store the access token in the session for later use.
-    session['credentials'] = credentials.access_token
+    session['access_token'] = credentials.access_token
     session['gplus_id'] = gplus_id
-
-
-    
     # Get user info
     userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
     params = {'access_token': credentials.access_token, 'alt': 'json'}
     answer = requests.get(userinfo_url, params=params)
-
     data = answer.json()
-
-
-    # here you might want to add them to your database!!!
-    session['provider'] = 'facebook'
+    session['provider'] = 'gplus'
     session['username'] = data['name']
     session['picture'] = data['picture']
     session['email'] = data['email']
+
+    # add user if such email does not exist in database
+    user_wasnt_in_db = model_user.add(email=session['email'],
+                                    picture=session['picture'],
+                                    password=current_app.config["SECRET_KEY"], #чтобы пользователи не могли зайти по паролю, только через гугл
+                                    username=session['username'],
+                                    db=g.db,
+                                    secret_key=current_app.config["SECRET_KEY"])
+    if user_wasnt_in_db:
+        session['is_moderator']=False
+        session['is_checker']=False
+    else:
+        user=g.db.users.find_one({"email": session['email']})
+        session['is_moderator']=user['rights']['is_moderator']
+        session['is_checker']=user['rights']['is_checker']
+    
 
     output = ''
     output += '<h1>Welcome, '
@@ -233,13 +228,12 @@ def gconnect():
 @user.route('/user/gdisconnect')
 def gdisconnect():
         # Only disconnect a connected user.
-    credentials = AccessTokenCredentials(session['credentials'], 'user-agent-value')
-    if credentials is None:
+    access_token = session['access_token']
+    if access_token is None:
         response = make_response(
             json.dumps('Current user not connected.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
-    access_token = credentials.access_token
     url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
@@ -247,21 +241,41 @@ def gdisconnect():
     if result['status'] == '200':
         # Reset the user's sesson.
         del session['provider']
-        del session['credentials']
+        del session['access_token']
         del session['gplus_id']
         del session['username']
         del session['email']
         del session['picture']
+        session.pop('is_moderator', None)
+        session.pop('is_checker', None)
 
         response = make_response(json.dumps('Successfully disconnected.'), 200)
         response.headers['Content-Type'] = 'application/json'
-        return response
+        return redirect(url_for('workflow.home'))
+        # return response
     else:
         # For whatever reason, the given token was invalid.
         response = make_response(
             json.dumps('Failed to revoke token for given user.', 400))
         response.headers['Content-Type'] = 'application/json'
         return response
+
+@user.route('/user/logout')
+def logout():
+    if session['provider']=='gplus':
+        return redirect(url_for('user.gdisconnect'))
+    else:
+        session.pop('username', None)
+        session.pop('provider', None)
+        session.pop('is_moderator', None)
+        session.pop('email', None)
+        session.pop('picture', None)
+        session.pop('is_checker', None)
+        # We use a neat trick here:
+        # if you use the pop() method of the dict and pass a second parameter to it (the default),
+        # the method will delete the key from the dictionary if present or
+        # do nothing when that key is not in there.
+        return redirect(url_for('workflow.home'))
 
 # @user.route('/fbconnect', methods=['POST'])
 # def fbconnect():

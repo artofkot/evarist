@@ -139,6 +139,10 @@
             <label for="last" class="sr-only">Password</label>
             <input id="last" class="form-control" type=password placeholder="Password" required name='password'>
             <button class="btn btn-lg btn-primary btn-block" type="submit" value='Login'>Login</button>
+            
+            <div style='height:50px'></div>
+            <a href="{{ url_for('user.signup') }}" class="btn btn-lg btn-default btn-block" role="button">Sign up with email</a>
+
             <!-- <div class="checkbox">
               <label>
                 <input type="checkbox" value="remember-me"> Remember me
@@ -146,6 +150,8 @@
             </div> -->
         </dl>
       </form>
+    
+
     </div>
   </div>
 
