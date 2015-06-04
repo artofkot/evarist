@@ -108,7 +108,7 @@ def login():
             error=error+signin_form.errors[err][0]+' '
         return render_template("user/login.html", error=error, signin_form=SignInForm())
     print current_app.config['CLIENT_ID']
-    return render_template('user/login.html', error=error, signin_form=signin_form, client_id_yep=current_app.config['CLIENT_ID'], fb_app_id_yep=current_app.config['FB_APP_ID'])
+    return render_template('user/login.html', error=error, signin_form=signin_form, client_id_yep=current_app.config['CLIENT_ID']) #fb_app_id_yep=current_app.config['FB_APP_ID'])
 
 @user.route('/user/gconnect', methods=['POST'])
 def gconnect():
