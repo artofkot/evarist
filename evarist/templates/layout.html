@@ -96,7 +96,7 @@
               </form>
               {% else %}
               <ul class="nav navbar-nav navbar-right">
-                <li><img src="{{session['picture']}}" height="40" width="40" ></li>
+                <li><img src="{{session['picture']}}" style='height:40px;width=40px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px'></li>
                 <li> <a href="{{ url_for('workflow.home') }}">{{session.username}} </a></li>
                 <li><a href="{{ url_for('user.logout') }}">Log out</a></li>
               </ul>
