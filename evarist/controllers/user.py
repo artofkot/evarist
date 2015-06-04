@@ -126,8 +126,8 @@ def signup():
 
 @user.route('/user/gconnect', methods=['POST'])
 def gconnect():
-    
-    
+
+
     # Validate state token
     if request.args.get('state') != session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
@@ -138,7 +138,13 @@ def gconnect():
 
     try:
         # Upgrade the authorization code into a credentials object
+
+        # CLIENT_SECRETS_JSON = json.loads(os.environ.get("CLIENT_SECRETS_JSON"))
+        temp_file = open("client_secrets.json", "w")
+        temp_file.write(os.environ.get("CLIENT_SECRETS_JSON"))
+        temp_file.close()
         oauth_flow = flow_from_clientsecrets('client_secrets.json', scope='')
+        os.remove('client_secrets.json')
         oauth_flow.redirect_uri = 'postmessage'
         credentials = oauth_flow.step2_exchange(code)
     except FlowExchangeError:
