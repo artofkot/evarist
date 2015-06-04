@@ -22,7 +22,7 @@ def home():
 
     website_feedback_form=WebsiteFeedbackForm()
     if website_feedback_form.validate_on_submit():
-        author=session.get('username')
+        author=session.get('email')
         if not author:
             author=website_feedback_form.email.data
         model_post.add(text=website_feedback_form.feedback.data,
@@ -220,10 +220,10 @@ def problem(problem_set_slug,prob_id):
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem['_id']))
 
-    user=g.db.users.find_one({'username':session.get('username')})
+    user=g.db.users.find_one({'email':session.get('email')})
 
     g.other_solutions=[]
-    if 'username' in session:
+    if 'email' in session:
         if problem['_id'] in user['problems_ids']['can_see_other_solutions'] or session.get("is_moderator") or session.get("is_checker"):
             for sol_id in problem['solutions_ids']:
                 if not currentuser_solution_id==sol_id:

@@ -210,7 +210,7 @@ def problem_set_edit(problem_set_slug):
         if entryform.general_entry.data: 
             entry_type='general_entry'
         if model_entry.add(entry_type=entry_type, 
-                            author=session['username'], 
+                            author=session['email'], 
                             title=entryform.title.data, 
                             db=g.db, 
                             text=entryform.text.data, 
