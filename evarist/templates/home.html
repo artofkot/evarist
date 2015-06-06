@@ -124,19 +124,19 @@
           <dt></dt>
             <dd>
             {% if session.get("is_moderator")%}
-            <a href="{{url_for('admin.home')}}">(go to admin's page)</a>
+            <p><a href="{{url_for('admin.home')}}">(go to admin's page)</a></p>
             {%endif%}
             </dd>
             <dd>
             {% if session.get("email")%}
-            <a class='pull-right' href="{{url_for('workflow.check')}}">vote for others' solutions</a>
+            <p><a class='pull-right' href="{{url_for('workflow.check')}}">vote for others' solutions</a></p>
             {%endif%}
             </dd>
         </dl>
     
         <dl>
           <dt>Problem sets:</dt>
-          <br>
+          <p></p>
           {%for problem_set in problem_sets%}
             <dd>
               <p><a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>

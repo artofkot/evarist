@@ -239,7 +239,7 @@ def gdisconnect():
     result = h.request(url, 'GET')[0]
 
     if result['status'] == '200':
-        # Reset the user's sesson.
+        # Reset the user's session.
         del session['provider']
         del session['access_token']
         del session['gplus_id']
@@ -255,6 +255,15 @@ def gdisconnect():
         # return response
     else:
         # For whatever reason, the given token was invalid.
+        del session['provider']
+        del session['access_token']
+        del session['gplus_id']
+        del session['username']
+        del session['email']
+        del session['picture']
+        session.pop('is_moderator', None)
+        session.pop('is_checker', None)
+        
         response = make_response(
             json.dumps('Failed to revoke token for given user.', 400))
         response.headers['Content-Type'] = 'application/json'
