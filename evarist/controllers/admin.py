@@ -13,6 +13,7 @@ from evarist.models import model_problem_set, model_entry, mongo, model_post, mo
 
 admin = Blueprint('admin', __name__,
                         template_folder='templates')
+        
 
 def admin_required(f):
     @wraps(f)
