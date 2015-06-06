@@ -83,6 +83,10 @@ def not_checked_solutions():
     sols=[]
     for solution in solutions:
         model_solution.load_discussion(g.db,solution)
+        problem=g.db.entries.find_one({'_id':ObjectId(solution['problem_id'])})
+        problem_set=g.db.problem_sets.find_one({'_id':ObjectId(solution['problem_set_id'])})
+        solution['problem_text']=problem['text']
+        solution['problem_set']=problem_set['title']
         sols.append(solution)
 
     vote_form=VoteForm()
@@ -111,6 +115,7 @@ def not_checked_solutions():
                             update_value=True)
                     user=g.db.users.find_one({'username':voted_solution['author']})
                     user['problems_ids']['can_see_other_solutions'].append(voted_solution['problem_id'])
+                    user['problems_ids']['solved'].append(voted_solution['problem_id'])
                     mongo.update(collection=g.db.users,doc_key='username',doc_value=user['username'],
                             update_key='problems_ids',
                             update_value=user['problems_ids'])

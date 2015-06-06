@@ -120,9 +120,19 @@
   <div class="row">
     <div class="col-md-6 col-md-offset-3">
       <h3>
-        {% if session.get("is_moderator")%}
-        <a class='pull-right' href="{{url_for('admin.home')}}">(go to admin's page)</a>
-        {%endif%}
+        <dl class='pull-right'>
+          <dt></dt>
+            <dd>
+            {% if session.get("is_moderator")%}
+            <a href="{{url_for('admin.home')}}">(go to admin's page)</a>
+            {%endif%}
+            </dd>
+            <dd>
+            {% if session.get("email")%}
+            <a class='pull-right' href="{{url_for('workflow.check')}}">vote for others' solutions</a>
+            {%endif%}
+            </dd>
+        </dl>
     
         <dl>
           <dt>Problem sets:</dt>

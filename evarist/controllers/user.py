@@ -262,7 +262,7 @@ def gdisconnect():
 
 @user.route('/user/logout')
 def logout():
-    if session['provider']=='gplus':
+    if session.get('provider')=='gplus':
         return redirect(url_for('user.gdisconnect'))
     else:
         session.pop('username', None)

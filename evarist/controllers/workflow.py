@@ -136,6 +136,8 @@ def problem(problem_set_slug,prob_id):
                             doc_value=ObjectId(request.args['sol_id']),
                             update_key='usernames_voted',
                             update_value=voted_solution['usernames_voted'])
+                
+                # solution is right after this
                 if voted_solution['upvotes']>=2:
                     mongo.update(collection=g.db.solutions,doc_key='_id',doc_value=ObjectId(request.args['sol_id']),
                             update_key='is_right',
@@ -145,6 +147,7 @@ def problem(problem_set_slug,prob_id):
                             update_value=True)
                     user=g.db.users.find_one({'username':voted_solution['author']})
                     user['problems_ids']['can_see_other_solutions'].append(voted_solution['problem_id'])
+                    user['problems_ids']['solved'].append(voted_solution['problem_id'])
                     mongo.update(collection=g.db.users,doc_key='username',doc_value=user['username'],
                             update_key='problems_ids',
                             update_value=user['problems_ids'])
@@ -224,6 +227,7 @@ def problem(problem_set_slug,prob_id):
 
     g.other_solutions=[]
     if 'email' in session:
+        print str(session.get('is_checker')) +'!!!!'
         if problem['_id'] in user['problems_ids']['can_see_other_solutions'] or session.get("is_moderator") or session.get("is_checker"):
             for sol_id in problem['solutions_ids']:
                 if not currentuser_solution_id==sol_id:
@@ -246,6 +250,95 @@ def problem(problem_set_slug,prob_id):
                             edit_solution_form=edit_solution_form,
                             vote_form=vote_form)
 
+
+@workflow.route('/check', methods=["GET", "POST"])
+def check():
+    user=g.db.users.find_one({'email': session['email']})
+    if session.get("is_moderator") or session.get("is_checker"):
+        solutions=g.db.solutions.find({'checked': False})
+    else:
+        solutions=[]
+        for idd in user['problems_ids']['can_see_other_solutions']:
+            solutions.extend(g.db.solutions.find({'problem_id':ObjectId(idd), 'checked': False}))
+
+    sols=[]
+    for solution in solutions:
+        model_solution.load_discussion(g.db,solution)
+        problem=g.db.entries.find_one({'_id':ObjectId(solution['problem_id'])})
+        problem_set=g.db.problem_sets.find_one({'_id':ObjectId(solution['problem_set_id'])})
+        solution['problem_text']=problem['text']
+        solution['problem_set']=problem_set['title']
+        sols.append(solution)
+
+    vote_form=VoteForm()
+    if vote_form.validate_on_submit():
+        voted_solution=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
+        if not session['username'] in voted_solution['usernames_voted']:
+            if vote_form.vote.data == 'upvote': 
+                voted_solution['upvotes']=voted_solution['upvotes']+1
+                mongo.update(collection=g.db.solutions,
+                            doc_key='_id',
+                            doc_value=ObjectId(request.args['sol_id']),
+                            update_key='upvotes',
+                            update_value=voted_solution['upvotes'])
+                voted_solution['usernames_voted'].append(session['username'])
+                mongo.update(collection=g.db.solutions,
+                            doc_key='_id',
+                            doc_value=ObjectId(request.args['sol_id']),
+                            update_key='usernames_voted',
+                            update_value=voted_solution['usernames_voted'])
+                if voted_solution['upvotes']>=2:
+                    mongo.update(collection=g.db.solutions,doc_key='_id',doc_value=ObjectId(request.args['sol_id']),
+                            update_key='is_right',
+                            update_value=True)
+                    mongo.update(collection=g.db.solutions,doc_key='_id',doc_value=ObjectId(request.args['sol_id']),
+                            update_key='checked',
+                            update_value=True)
+                    user=g.db.users.find_one({'username':voted_solution['author']})
+                    user['problems_ids']['can_see_other_solutions'].append(voted_solution['problem_id'])
+                    user['problems_ids']['solved'].append(voted_solution['problem_id'])
+                    mongo.update(collection=g.db.users,doc_key='username',doc_value=user['username'],
+                            update_key='problems_ids',
+                            update_value=user['problems_ids'])
+
+            if vote_form.vote.data == 'downvote':
+                voted_solution['downvotes']=voted_solution['downvotes']+1
+                mongo.update(collection=g.db.solutions,
+                            doc_key='_id',
+                            doc_value=ObjectId(request.args['sol_id']),
+                            update_key='downvotes',
+                            update_value=voted_solution['downvotes'])
+                voted_solution['usernames_voted'].append(session['username'])
+                mongo.update(collection=g.db.solutions,
+                            doc_key='_id',
+                            doc_value=ObjectId(request.args['sol_id']),
+                            update_key='usernames_voted',
+                            update_value=voted_solution['usernames_voted'])
+        
+        return redirect(url_for('.check'))
+
+    solution_comment_form=FeedbackToSolutionForm()
+    if solution_comment_form.validate_on_submit():
+
+        if solution_comment_form.feedback_to_solution.data:
+            solut=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
+            model_post.add(text=solution_comment_form.feedback_to_solution.data,
+                           db=g.db,
+                           author=session['username'],
+                           post_type='comment',
+                           parent_type='solution',
+                           parent_id=ObjectId(request.args['sol_id']),
+                           problem_id=solut['problem_id'],
+                           problem_set_id=solut['problem_set_id'])
+        
+        return redirect(url_for('.check'))
+
+
+
+    return render_template("check.html", 
+                            solutions=sols,
+                            vote_form=vote_form,
+                            solution_comment_form=solution_comment_form)
 
 
 

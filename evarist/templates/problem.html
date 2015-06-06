@@ -69,7 +69,7 @@
               <div class="form-group" style='width: 370px'>
                 {{ edit_solution_form.hidden_tag() }}
                 <label for="edit_text">Edit solution here: </label>
-                <textarea class="form-control" rows="5"  name='edited_solution'>{{problem['solution']['text']}}  
+                <textarea class="form-control" rows="2"  name='edited_solution'>{{problem['solution']['text']}}  
                 </textarea>
                 
                 <div class="checkbox" style='background-color:red'>
@@ -87,7 +87,7 @@
 
               {{ solution_comment_form.hidden_tag() }}
               <label for="feedback_to_solution">  <strong> Comment: </strong> </label>
-              <textarea class="form-control" rows="5"  name='feedback_to_solution'></textarea>
+              <textarea class="form-control" rows="2"  name='feedback_to_solution'></textarea>
               
 
             </div>
@@ -173,17 +173,17 @@
               <div class="form-group" >
                 {{ solution_comment_form.hidden_tag() }}
                 <label for="feedback_to_solution">  <strong> Comment: </strong> </label>
-                <textarea class="form-control" rows="5"  name='feedback_to_solution'></textarea>
+                <textarea class="form-control" rows="2"  name='feedback_to_solution'></textarea>
               </div>
               <button type="submit" class="btn btn-default">Submit</button>
             </form>
             
             <div style='height:5px'></div>
 
-            <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#collapseId{{loop.index}}" aria-expanded="false" aria-controls="collapseId{{loop.index}}">
-              press to see previous comments
+            <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#collapseId{{loop.index}}" aria-expanded="true" aria-controls="collapseId{{loop.index}}">
+              press to hide commments
             </button>
-            <div class="collapse" id="collapseId{{loop.index}}">
+            <div class="collapse in" aria-expanded="true" id="collapseId{{loop.index}}">
               {% for post in solution['discussion'] | reverse %}
                 <div class="blog-post">
                     <p class="blog-post-meta">{{post['date'].day}}/{{post['date'].month}}/{{post['date'].year}} by {{post['author']}}</p>
@@ -210,7 +210,7 @@
 
             {{ general_comment_form.hidden_tag() }}
             <!-- <label for="text"> </label> -->
-            <textarea class="form-control" rows="5"  name='text'></textarea>
+            <textarea class="form-control" rows="2"  name='text'></textarea>
 
           </div>
           <button type="submit" class="btn btn-default">Submit</button>

@@ -35,9 +35,9 @@ def add(username, password, email,db, secret_key, picture):
 
                         'problems_ids':{
                             "solution_written":[], #either unchecked ot not correct
-                            'can_see_other_solutions':[], #all true if checker or moderator
-                            "solved":[],
-                            'can_vote':[] #all true if checker or moderator
+                            "solved":[], #
+                            'can_see_other_solutions':[], # all true if checker or moderator
+                            'can_vote':[] # we are not using it yet , we use previous one instead
                             } 
                         })
         return True
