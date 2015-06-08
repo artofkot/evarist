@@ -121,7 +121,20 @@
         {% block body %}{% endblock %}
       </div>
 
+      <footer class="footer">
+        <div class="container">
+          <div class="col-md-3">
+
+          {% if session['lang']=='en'%}
+          <a href="{{ url_for('workflow.lang_ru') }}?pa={{request.url}}">Switch to russian</a>
+          {%else%}
+          <a href="{{ url_for('workflow.lang_en') }}?pa={{request.url}}">Switch to english</a>
+          {%endif%}
+        </div>
+    </footer>
     </div>
+    
+
   </body>
 </html>
 <!-- this is cheatshit for content -->
