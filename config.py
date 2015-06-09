@@ -8,6 +8,9 @@ DEBUG=False
 CLIENT_SECRETS_JSON = json.loads(os.environ.get("CLIENT_SECRETS_JSON"))
 CLIENT_ID = CLIENT_SECRETS_JSON['web']['client_id']
 
+BABEL_DEFAULT_LOCALE='ru'
+# BABEL_DEFAULT_TIMEZONE
+
 # FB_CLIENT_SECRETS_JSON = json.loads(os.environ.get("FB_CLIENT_SECRETS_JSON"))
 # FB_APP_ID = FB_CLIENT_SECRETS_JSON['web']['app_id']
 

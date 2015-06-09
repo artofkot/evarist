@@ -3,3 +3,4 @@ tmp
 *.pyc
 listki.sublime*
 client_secrets.json
+venv_heroku

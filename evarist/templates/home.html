@@ -135,7 +135,7 @@
         </dl>
     
         <dl>
-          <dt>Problem sets:</dt>
+          <dt>{{_('Problem sets:')}}</dt>
           <p></p>
           {%for problem_set in problem_sets%}
             <dd>
@@ -158,11 +158,11 @@
         <form action=" {{url_for('workflow.home')}}" method="post">
           <div class="form-group" >
             {{ website_feedback_form.hidden_tag() }}
-            <label for="feedback">  <strong> We love feedback. Tell us your thoughts: </strong> </label>
+            <label for="feedback">  <strong> {{_('We love feedback. Tell us your thoughts:')}} </strong> </label>
             <textarea class="form-control" rows="5"  name='feedback'></textarea>
             
             {% if not 'username' in session%}
-              <label for="email">Your email (optional) </label>
+              <label for="email">{{_('Your email (optional)')}} </label>
               <input type="text" class="form-control" name="email">
             {%endif%}
           
