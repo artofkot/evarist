@@ -9,12 +9,13 @@ from bson.objectid import ObjectId
 # print g.mongo.db.users.find_one({"_id":ObjectId(artidhex)})
 
 
-def add(text,db,author,entry_type,problem_set_id,title=None,entry_number=None):
+def add(text,db,author,entry_type,problem_set_id,title=None,entry_number=None,authors_email=None):
     if title: #then it will have field title
         if entry_type=='problem': #then it will have field solutions
             ob_id=db.entries.insert({'text':text, 
                                     "title":title,
-                                    'author':author, 
+                                    'author':author,
+                                    'authors_email':authors_email, 
                                     'entry_type':entry_type, 
                                     'general_discussion_ids':[], 
                                     'solutions_ids':[],
@@ -75,9 +76,9 @@ def load_posts(problem,db):
                 problem['general_discussion'].append(post)
 
 
-def load_solution(problem,db,username):
+def load_solution(problem,db,username,email):
     # user=db.users.find_one({'username':username})
-    solution=db.solutions.find_one({'author':username,
+    solution=db.solutions.find_one({'authors_email':email,
                             'problem_id':problem['_id']})
     if solution:
         problem['solution']=solution

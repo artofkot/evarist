@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-06-10 15:47+0300\n"
+"POT-Creation-Date: 2015-06-10 15:46+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,136 +17,139 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
-#: templates/check.html:8
+#: evarist/templates/check.html:8
 msgid ""
 "These are solutions of problems that you already solved. Please, vote and"
 " write feedback if needed."
 msgstr ""
 
-#: templates/check.html:27 templates/check.html:33
+#: evarist/templates/check.html:27 evarist/templates/check.html:33
 #, python-format
 msgid "Solution of %(author)s"
 msgstr ""
 
-#: templates/check.html:28 templates/problem.html:115
+#: evarist/templates/check.html:28 evarist/templates/problem.html:115
 msgid "Checked and correct."
 msgstr ""
 
-#: templates/check.html:41
+#: evarist/templates/check.html:41
 #, python-format
 msgid "%(num)s upvotes"
 msgstr ""
 
-#: templates/check.html:42
+#: evarist/templates/check.html:42
 #, python-format
 msgid "%(num)s downvotes"
 msgstr ""
 
-#: templates/check.html:53 templates/check.html:54 templates/problem.html:141
+#: evarist/templates/check.html:53 evarist/templates/check.html:54
+#: evarist/templates/problem.html:141
 msgid "upvote"
 msgstr ""
 
-#: templates/check.html:59 templates/check.html:60 templates/problem.html:147
+#: evarist/templates/check.html:59 evarist/templates/check.html:60
+#: evarist/templates/problem.html:147
 msgid "downvote"
 msgstr ""
 
-#: templates/check.html:64 templates/problem.html:151
+#: evarist/templates/check.html:64 evarist/templates/problem.html:151
 msgid "Vote"
 msgstr ""
 
-#: templates/check.html:77 templates/problem.html:164
+#: evarist/templates/check.html:77 evarist/templates/problem.html:164
 msgid "You voted."
 msgstr ""
 
-#: templates/check.html:88 templates/problem.html:89 templates/problem.html:175
+#: evarist/templates/check.html:88 evarist/templates/problem.html:89
+#: evarist/templates/problem.html:175
 msgid "Comment:"
 msgstr ""
 
-#: templates/check.html:91
+#: evarist/templates/check.html:91
 msgid "Submit"
 msgstr ""
 
-#: templates/check.html:97
+#: evarist/templates/check.html:97
 msgid "press to see previous comments"
 msgstr ""
 
-#: templates/home.html:21
+#: evarist/templates/home.html:21
 msgid "A place on the internet to learn University-level math."
 msgstr ""
 
-#: templates/home.html:138
+#: evarist/templates/home.html:138
 msgid "Problem sets:"
 msgstr ""
 
-#: templates/home.html:161
+#: evarist/templates/home.html:161
 msgid "We love feedback. Tell us your thoughts:"
 msgstr ""
 
-#: templates/home.html:165
+#: evarist/templates/home.html:165
 msgid "Your email (optional)"
 msgstr ""
 
-#: templates/layout.html:76
+#: evarist/templates/layout.html:76
 msgid "Evarist"
 msgstr ""
 
-#: templates/layout.html:81
+#: evarist/templates/layout.html:81
 msgid "Roots"
 msgstr ""
 
-#: templates/problem.html:10
+#: evarist/templates/problem.html:10
 msgid "Back to the problem set"
 msgstr ""
 
-#: templates/problem.html:21
+#: evarist/templates/problem.html:21
 msgid "Problem"
 msgstr ""
 
-#: templates/problem.html:36
+#: evarist/templates/problem.html:36
 msgid "Your solution"
 msgstr ""
 
-#: templates/problem.html:61 templates/problem.html:128
+#: evarist/templates/problem.html:61 evarist/templates/problem.html:128
 msgid "upvotes"
 msgstr ""
 
-#: templates/problem.html:62 templates/problem.html:129
+#: evarist/templates/problem.html:62 evarist/templates/problem.html:129
 msgid "downvotes"
 msgstr ""
 
-#: templates/problem.html:65
+#: evarist/templates/problem.html:65
 msgid "Edit solution"
 msgstr ""
 
-#: templates/problem.html:71
+#: evarist/templates/problem.html:71
 msgid "Edit solution here:"
 msgstr ""
 
-#: templates/problem.html:77
+#: evarist/templates/problem.html:77
 msgid "just want to delete this solution, forever"
 msgstr ""
 
-#: templates/problem.html:114 templates/problem.html:120
+#: evarist/templates/problem.html:114 evarist/templates/problem.html:120
 msgid "Solution of"
 msgstr ""
 
-#: templates/problem.html:184
+#: evarist/templates/problem.html:184
 msgid "press to hide commments"
 msgstr ""
 
-#: templates/problem.html:207
+#: evarist/templates/problem.html:207
 msgid "General discussion of the problem, questions about the condidtions, etc."
 msgstr ""
 
-#: templates/problem_set.html:9
+#: evarist/templates/problem_set.html:9
 msgid "Back to the list of problem sets"
 msgstr ""
 
-#: templates/roots.html:27
+#: evarist/templates/roots.html:27
 msgid "About special math schools in Russia."
 msgstr ""
 
-#: templates/roots.html:35
+#: evarist/templates/roots.html:35
 msgid ""
 "There is a large number of strong mathematicians (and other natural "
 "scientists) of russian origin. This is no coincidence. What is not widely"
@@ -161,21 +164,21 @@ msgid ""
 "world significance.'</a>)"
 msgstr ""
 
-#: templates/roots.html:38
+#: evarist/templates/roots.html:38
 msgid ""
 "Our idea is to take the techniques of USSR special mathematical schools "
 "online and make them accessible to the whole globe."
 msgstr ""
 
-#: templates/roots.html:45
+#: evarist/templates/roots.html:45
 msgid "Here is the description of said methodology."
 msgstr ""
 
-#: templates/roots.html:48
+#: evarist/templates/roots.html:48
 msgid "a) <i>Everything-in-problems</i> approach."
 msgstr ""
 
-#: templates/roots.html:50
+#: evarist/templates/roots.html:50
 msgid ""
 "The student gets a <i>sheet</i>, say called “X theory”, in which "
 "definitions of “X object” and “Y property” are given with a set of "
@@ -185,11 +188,11 @@ msgid ""
 "relevant to X theory. Average time to solve a sheet - about 2 weeks."
 msgstr ""
 
-#: templates/roots.html:53
+#: evarist/templates/roots.html:53
 msgid "b) <i>Undergraduate students review solutions.</i>"
 msgstr ""
 
-#: templates/roots.html:55
+#: evarist/templates/roots.html:55
 msgid ""
 "As the pupils would solve problems and work their way through sheets, "
 "they would tell their solutions to one of the team teaching the class. "

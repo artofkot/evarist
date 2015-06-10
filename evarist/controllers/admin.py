@@ -76,6 +76,80 @@ def users():
     return render_template("admin/users.html", 
                             users=users)
 
+@admin.route('/admin/checked_solutions', methods=["GET", "POST"])
+@admin_required
+def checked_solutions():
+    solutions=g.db.solutions.find({'checked': True})
+    sols=[]
+    for solution in solutions:
+        model_solution.load_discussion(g.db,solution)
+        problem=g.db.entries.find_one({'_id':ObjectId(solution['problem_id'])})
+        problem_set=g.db.problem_sets.find_one({'_id':ObjectId(solution['problem_set_id'])})
+        solution['problem_text']=problem['text']
+        solution['problem_set']=problem_set['title']
+        sols.append(solution)
+
+    vote_form=VoteForm()
+    if vote_form.validate_on_submit():
+        voted_solution=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
+        if not session['username'] in voted_solution['usernames_voted']:
+            if vote_form.vote.data == 'upvote': 
+                voted_solution['upvotes']=voted_solution['upvotes']+1
+                mongo.update(collection=g.db.solutions,
+                            doc_key='_id',
+                            doc_value=ObjectId(request.args['sol_id']),
+                            update_key='upvotes',
+                            update_value=voted_solution['upvotes'])
+                voted_solution['usernames_voted'].append(session['username'])
+                mongo.update(collection=g.db.solutions,
+                            doc_key='_id',
+                            doc_value=ObjectId(request.args['sol_id']),
+                            update_key='usernames_voted',
+                            update_value=voted_solution['usernames_voted'])
+
+            if vote_form.vote.data == 'downvote':
+                voted_solution['downvotes']=voted_solution['downvotes']+1
+                mongo.update(collection=g.db.solutions,
+                            doc_key='_id',
+                            doc_value=ObjectId(request.args['sol_id']),
+                            update_key='downvotes',
+                            update_value=voted_solution['downvotes'])
+                voted_solution['usernames_voted'].append(session['username'])
+                mongo.update(collection=g.db.solutions,
+                            doc_key='_id',
+                            doc_value=ObjectId(request.args['sol_id']),
+                            update_key='usernames_voted',
+                            update_value=voted_solution['usernames_voted'])
+
+            model_solution.update_status(g.db, voted_solution)
+        
+        return redirect(url_for('.not_checked_solutions'))
+
+    solution_comment_form=FeedbackToSolutionForm()
+    if solution_comment_form.validate_on_submit():
+
+        if solution_comment_form.feedback_to_solution.data:
+            solut=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
+            model_post.add(text=solution_comment_form.feedback_to_solution.data,
+                           db=g.db,
+                           author=session['username'],
+                           authors_email=session['email'],
+                           post_type='comment',
+                           parent_type='solution',
+                           parent_id=ObjectId(request.args['sol_id']),
+                           problem_id=solut['problem_id'],
+                           problem_set_id=solut['problem_set_id'])
+        
+        return redirect(url_for('.not_checked_solutions'))
+
+
+
+    return render_template("admin/checked_solutions.html", 
+                            solutions=sols,
+                            vote_form=vote_form,
+                            solution_comment_form=solution_comment_form)
+
+
 @admin.route('/admin/not_checked_solutions', methods=["GET", "POST"])
 @admin_required
 def not_checked_solutions():
@@ -133,6 +207,7 @@ def not_checked_solutions():
             model_post.add(text=solution_comment_form.feedback_to_solution.data,
                            db=g.db,
                            author=session['username'],
+                           authors_email=session['email'],
                            post_type='comment',
                            parent_type='solution',
                            parent_id=ObjectId(request.args['sol_id']),
@@ -204,7 +279,8 @@ def problem_set_edit(problem_set_slug):
         if entryform.general_entry.data: 
             entry_type='general_entry'
         if model_entry.add(entry_type=entry_type, 
-                            author=session['email'], 
+                            author=session['username'],
+                            authors_email=session['email'], 
                             title=entryform.title.data, 
                             db=g.db, 
                             text=entryform.text.data, 
