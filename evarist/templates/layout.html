@@ -73,12 +73,12 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="{{ url_for('workflow.home')}}"> Evarist </a>
+              <a class="navbar-brand" href="{{ url_for('workflow.home')}}"> {{_('Evarist')}} </a>
             </div>
             <div id="navbar" class="collapse navbar-collapse">
               <ul class="nav navbar-nav">
                <!--  <li ><a href="{{ url_for('workflow.home')}}" in_tag="ul" kaspersky_status="skipped">Home</a></li> -->
-                <li><a href="{{ url_for('workflow.roots')}}" in_tag="ul" kaspersky_status="skipped"> Roots </a></li>
+                <li><a href="{{ url_for('workflow.roots')}}" in_tag="ul" kaspersky_status="skipped"> {{_('Roots')}} </a></li>
                 <!-- <li><a href="{{ url_for('workflow.home')}}" in_tag="ul" kaspersky_status="skipped">Contact</a></li> -->
               </ul>
               {% if "username" not in session%}
@@ -121,7 +121,20 @@
         {% block body %}{% endblock %}
       </div>
 
+      <footer class="footer">
+        <div class="container">
+          <div class="col-md-3">
+
+          {% if session['lang']=='en'%}
+          <a href="{{ url_for('workflow.lang_ru') }}?pa={{request.url}}">Switch to russian</a>
+          {%else%}
+          <a href="{{ url_for('workflow.lang_en') }}?pa={{request.url}}">Switch to english</a>
+          {%endif%}
+        </div>
+    </footer>
     </div>
+    
+
   </body>
 </html>
 <!-- this is cheatshit for content -->

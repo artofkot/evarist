@@ -136,21 +136,6 @@ def problem(problem_set_slug,prob_id):
                             doc_value=ObjectId(request.args['sol_id']),
                             update_key='usernames_voted',
                             update_value=voted_solution['usernames_voted'])
-                
-                # solution is right after this
-                if voted_solution['upvotes']>=2:
-                    mongo.update(collection=g.db.solutions,doc_key='_id',doc_value=ObjectId(request.args['sol_id']),
-                            update_key='is_right',
-                            update_value=True)
-                    mongo.update(collection=g.db.solutions,doc_key='_id',doc_value=ObjectId(request.args['sol_id']),
-                            update_key='checked',
-                            update_value=True)
-                    user=g.db.users.find_one({'username':voted_solution['author']})
-                    user['problems_ids']['can_see_other_solutions'].append(voted_solution['problem_id'])
-                    user['problems_ids']['solved'].append(voted_solution['problem_id'])
-                    mongo.update(collection=g.db.users,doc_key='username',doc_value=user['username'],
-                            update_key='problems_ids',
-                            update_value=user['problems_ids'])
 
             if vote_form.vote.data == 'downvote':
                 voted_solution['downvotes']=voted_solution['downvotes']+1
@@ -165,6 +150,9 @@ def problem(problem_set_slug,prob_id):
                             doc_value=ObjectId(request.args['sol_id']),
                             update_key='usernames_voted',
                             update_value=voted_solution['usernames_voted'])
+
+            model_solution.update_status(g.db, voted_solution)
+
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem['_id']))
@@ -287,19 +275,7 @@ def check():
                             doc_value=ObjectId(request.args['sol_id']),
                             update_key='usernames_voted',
                             update_value=voted_solution['usernames_voted'])
-                if voted_solution['upvotes']>=2:
-                    mongo.update(collection=g.db.solutions,doc_key='_id',doc_value=ObjectId(request.args['sol_id']),
-                            update_key='is_right',
-                            update_value=True)
-                    mongo.update(collection=g.db.solutions,doc_key='_id',doc_value=ObjectId(request.args['sol_id']),
-                            update_key='checked',
-                            update_value=True)
-                    user=g.db.users.find_one({'username':voted_solution['author']})
-                    user['problems_ids']['can_see_other_solutions'].append(voted_solution['problem_id'])
-                    user['problems_ids']['solved'].append(voted_solution['problem_id'])
-                    mongo.update(collection=g.db.users,doc_key='username',doc_value=user['username'],
-                            update_key='problems_ids',
-                            update_value=user['problems_ids'])
+                
 
             if vote_form.vote.data == 'downvote':
                 voted_solution['downvotes']=voted_solution['downvotes']+1
@@ -315,6 +291,8 @@ def check():
                             update_key='usernames_voted',
                             update_value=voted_solution['usernames_voted'])
         
+            model_solution.update_status(g.db, voted_solution)
+
         return redirect(url_for('.check'))
 
     solution_comment_form=FeedbackToSolutionForm()
@@ -340,8 +318,17 @@ def check():
                             vote_form=vote_form,
                             solution_comment_form=solution_comment_form)
 
+@workflow.route('/lang/en', methods=["GET", "POST"])
+def lang_en():
+    session['lang']='en'
+    pa=request.args['pa']
+    return redirect(pa)
 
-
+@workflow.route('/leng/ru', methods=["GET", "POST"])
+def lang_ru():
+    session['lang']='ru'
+    pa=request.args['pa']
+    return redirect(pa)
 
 
 @workflow.route('/startertry')
