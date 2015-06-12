@@ -92,7 +92,7 @@ def checked_solutions():
     vote_form=VoteForm()
     if vote_form.validate_on_submit():
         voted_solution=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
-        if not session['username'] in voted_solution['usernames_voted']:
+        if not session['email'] in voted_solution['emails_voted']:
             if vote_form.vote.data == 'upvote': 
                 voted_solution['upvotes']=voted_solution['upvotes']+1
                 mongo.update(collection=g.db.solutions,
@@ -100,12 +100,12 @@ def checked_solutions():
                             doc_value=ObjectId(request.args['sol_id']),
                             update_key='upvotes',
                             update_value=voted_solution['upvotes'])
-                voted_solution['usernames_voted'].append(session['username'])
+                voted_solution['emails_voted'].append(session['email'])
                 mongo.update(collection=g.db.solutions,
                             doc_key='_id',
                             doc_value=ObjectId(request.args['sol_id']),
-                            update_key='usernames_voted',
-                            update_value=voted_solution['usernames_voted'])
+                            update_key='emails_voted',
+                            update_value=voted_solution['emails_voted'])
 
             if vote_form.vote.data == 'downvote':
                 voted_solution['downvotes']=voted_solution['downvotes']+1
@@ -114,12 +114,12 @@ def checked_solutions():
                             doc_value=ObjectId(request.args['sol_id']),
                             update_key='downvotes',
                             update_value=voted_solution['downvotes'])
-                voted_solution['usernames_voted'].append(session['username'])
+                voted_solution['emails_voted'].append(session['email'])
                 mongo.update(collection=g.db.solutions,
                             doc_key='_id',
                             doc_value=ObjectId(request.args['sol_id']),
-                            update_key='usernames_voted',
-                            update_value=voted_solution['usernames_voted'])
+                            update_key='emails_voted',
+                            update_value=voted_solution['emails_voted'])
 
             model_solution.update_status(g.db, voted_solution)
         
@@ -166,7 +166,7 @@ def not_checked_solutions():
     vote_form=VoteForm()
     if vote_form.validate_on_submit():
         voted_solution=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
-        if not session['username'] in voted_solution['usernames_voted']:
+        if not session['email'] in voted_solution['emails_voted']:
             if vote_form.vote.data == 'upvote': 
                 voted_solution['upvotes']=voted_solution['upvotes']+1
                 mongo.update(collection=g.db.solutions,
@@ -174,12 +174,12 @@ def not_checked_solutions():
                             doc_value=ObjectId(request.args['sol_id']),
                             update_key='upvotes',
                             update_value=voted_solution['upvotes'])
-                voted_solution['usernames_voted'].append(session['username'])
+                voted_solution['emails_voted'].append(session['email'])
                 mongo.update(collection=g.db.solutions,
                             doc_key='_id',
                             doc_value=ObjectId(request.args['sol_id']),
-                            update_key='usernames_voted',
-                            update_value=voted_solution['usernames_voted'])
+                            update_key='emails_voted',
+                            update_value=voted_solution['emails_voted'])
 
             if vote_form.vote.data == 'downvote':
                 voted_solution['downvotes']=voted_solution['downvotes']+1
@@ -188,12 +188,12 @@ def not_checked_solutions():
                             doc_value=ObjectId(request.args['sol_id']),
                             update_key='downvotes',
                             update_value=voted_solution['downvotes'])
-                voted_solution['usernames_voted'].append(session['username'])
+                voted_solution['emails_voted'].append(session['email'])
                 mongo.update(collection=g.db.solutions,
                             doc_key='_id',
                             doc_value=ObjectId(request.args['sol_id']),
-                            update_key='usernames_voted',
-                            update_value=voted_solution['usernames_voted'])
+                            update_key='emails_voted',
+                            update_value=voted_solution['emails_voted'])
 
             model_solution.update_status(g.db, voted_solution)
         
