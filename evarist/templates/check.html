@@ -5,7 +5,7 @@
 
   <div class="row">
     <div class="col-md-6 col-md-offset-3">
-      <h1>Это решения, которые вы можете проверить, то есть проголосовать за или против, и написать отзыв при необходимости (например если решение недоведено). Вы можете проверять только уже решенные вами задачи. </h1>
+      <h1>Это решения, которые можно проверить, то есть проголосовать за или против, и написать отзыв при необходимости (например если решение недоведено). Вы можете проверять только уже решенные вами задачи. </h1>
       
     
         {%for solution in solutions | reverse %}
@@ -93,17 +93,19 @@
           
           <div style='height:5px'></div>
 
-          <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#collapseId{{loop.index}}" aria-expanded="false" aria-controls="collapseId{{loop.index}}">
-            press to see previous comments
-          </button>
-          <div class="collapse" id="collapseId{{loop.index}}">
-            {% for post in solution['discussion'] | reverse %}
-              <div class="blog-post">
-                  <p class="blog-post-meta">{{post['date'].day}}/{{post['date'].month}}/{{post['date'].year}} by {{post['author']}}</p>
-                  <pre>{{ post['text'] }}</pre>
-              </div>
-            {% endfor %}
-          </div>
+          {% if solution.get('discussion')%}
+            <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#collapseId{{loop.index}}" aria-expanded="true" aria-controls="collapseId{{loop.index}}">
+              спрятать комментарии
+            </button>
+            <div class="collapse in" aria-expanded="true" id="collapseId{{loop.index}}">
+              {% for post in solution['discussion'] | reverse %}
+                <div class="blog-post">
+                    <p class="blog-post-meta">{{post['date'].day}}/{{post['date'].month}}/{{post['date'].year}} by {{post['author']}}</p>
+                    <pre>{{ post['text'] }}</pre>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
 
         {%endfor%}
 
