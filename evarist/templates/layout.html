@@ -128,9 +128,9 @@
           <div class="col-md-3">
 
           {% if session['lang']=='en'%}
-          <a href="{{ url_for('workflow.lang_ru') }}?pa={{request.url}}">Switch to russian</a>
+          <a href="{{ url_for('workflow.lang_ru') }}?pa={{request.url}}"><small>Switch to russian</small></a>
           {%else%}
-          <a href="{{ url_for('workflow.lang_en') }}?pa={{request.url}}">Switch to english</a>
+          <a href="{{ url_for('workflow.lang_en') }}?pa={{request.url}}"><small>Switch to english</small></a>
           {%endif%}
         </div>
     </footer>
