@@ -265,9 +265,10 @@ def gdisconnect():
         session.pop('is_checker', None)
         
         response = make_response(
-            json.dumps('Failed to revoke token for given user.', 400))
+            json.dumps('Failed to revoke token for a given user.', 400))
         response.headers['Content-Type'] = 'application/json'
-        return response
+        # return response
+        return redirect(url_for('workflow.home'))
 
 @user.route('/user/logout')
 def logout():

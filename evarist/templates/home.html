@@ -14,11 +14,11 @@
 {% block body %}
   
   <div class="jumbotron">
-    <h1 class="text-center">Evarist</h1>
+    <h1 class="text-center">{{gettext("Эварист")}}</h1>
   </div>
 
   <div class="row" class="one-liner">
-    <h1 class="text-center">{{_('A place on the internet to learn University-level math.')}}</h1>
+    <h1 class="text-center">{{gettext("Учимся думать красиво.")}}</h1>
   </div>
 
   <div class="row" class="landing-description">
@@ -129,13 +129,13 @@
             </dd>
             <dd>
             {% if session.get("email")%}
-            <p><a class='pull-right' href="{{url_for('workflow.check')}}">vote for others' solutions</a></p>
+            <p><a class='pull-right' href="{{url_for('workflow.check')}}">голосовать за другие решения</a></p>
             {%endif%}
             </dd>
         </dl>
     
         <dl>
-          <dt>{{_('Problem sets:')}}</dt>
+          <dt>Листки:</dt>
           <p></p>
           {%for problem_set in problem_sets%}
             <dd>
@@ -158,16 +158,16 @@
         <form action=" {{url_for('workflow.home')}}" method="post">
           <div class="form-group" >
             {{ website_feedback_form.hidden_tag() }}
-            <label for="feedback">  <strong> {{_('We love feedback. Tell us your thoughts:')}} </strong> </label>
+            <label for="feedback">  <strong> Что думаете? </strong> </label>
             <textarea class="form-control" rows="5"  name='feedback'></textarea>
             
             {% if not 'username' in session%}
-              <label for="email">{{_('Your email (optional)')}} </label>
+              <label for="email"> Ваш email (необязательно) </label>
               <input type="text" class="form-control" name="email">
             {%endif%}
           
           </div>
-          <button type="submit" class="btn btn-default">Submit</button>
+          <button type="submit" class="btn btn-default">Отправить</button>
         </form>
 
       </h3>

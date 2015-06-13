@@ -15,9 +15,10 @@ import os, datetime
 #     'text': 'This is so bogus ... '
 # }
 
-def add(text,db,author,post_type,parent_type,parent_id,problem_id,problem_set_id):
+def add(text,db,author,post_type,parent_type,parent_id,problem_id,problem_set_id,authors_email=None):
     ob_id=db.posts.insert({'text':text,
-                            'author':author, 
+                            'author':author,
+                            'authors_email':authors_email, 
                             'post_type':post_type,
                             'parent_type':parent_type,
                             'parent_id':parent_id,

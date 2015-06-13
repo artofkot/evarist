@@ -17,17 +17,20 @@ workflow = Blueprint('workflow', __name__,
 def home():
     # USE THIS CAREFULLY! This is template for updating some keys in all documents.
     
-    # mongo.update(collection=g.db.users,doc_key='all',doc_value='notimportant',
-    #             update_key='picture',update_value='https://cdn.rawgit.com/artofkot/evarist_static/master/no_pic.jpg')
+    # mongo.update(collection=g.db.solutions,doc_key='all',doc_value='notimportant',
+    #             update_key='emails_voted',update_value=[])
 
     website_feedback_form=WebsiteFeedbackForm()
     if website_feedback_form.validate_on_submit():
-        author=session.get('email')
-        if not author:
-            author=website_feedback_form.email.data
+        authors_email=session.get('email')
+        author=session.get('username')
+        if not authors_email:
+            authors_email=website_feedback_form.email.data
+            author=authors_email
         model_post.add(text=website_feedback_form.feedback.data,
                         db=g.db,
                         author=author,
+                        authors_email=authors_email,
                         post_type='feedback',
                         parent_type='evarist_feedback',
                         parent_id=None,
@@ -51,14 +54,13 @@ def home():
 def index():
     return redirect(url_for('.home'))
 
-@workflow.route('/ru/home')
-def index_ru():
-    return render_template('homeru.html')
-
 @workflow.route('/roots')
 def roots():
     return render_template('roots.html')
 
+@workflow.route('/about')
+def about():
+    return render_template('about.html')
 
 @workflow.route('/problem_sets/<problem_set_slug>/', methods=["GET", "POST"])
 def problem_set(problem_set_slug):
@@ -101,7 +103,7 @@ def problem(problem_set_slug,prob_id):
     #load general discussion
     model_entry.load_posts(problem,g.db)
     # load solutions
-    model_entry.load_solution(problem,g.db,session.get('username'))
+    model_entry.load_solution(problem,g.db,session.get('username'),session.get('email'))
     #TODO load comments to solutions
 
     general_comment_form=CommentForm()
@@ -109,6 +111,7 @@ def problem(problem_set_slug,prob_id):
         model_post.add(text=general_comment_form.text.data,
                        db=g.db,
                        author=session['username'],
+                       authors_email=session['email'],
                        post_type='comment',
                        parent_type='problem',
                        parent_id=problem['_id'],
@@ -122,7 +125,7 @@ def problem(problem_set_slug,prob_id):
     vote_form=VoteForm()
     if vote_form.validate_on_submit():
         voted_solution=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
-        if not session['username'] in voted_solution['usernames_voted']:
+        if not session['email'] in voted_solution['emails_voted']:
             if vote_form.vote.data == 'upvote': 
                 voted_solution['upvotes']=voted_solution['upvotes']+1
                 mongo.update(collection=g.db.solutions,
@@ -130,12 +133,12 @@ def problem(problem_set_slug,prob_id):
                             doc_value=ObjectId(request.args['sol_id']),
                             update_key='upvotes',
                             update_value=voted_solution['upvotes'])
-                voted_solution['usernames_voted'].append(session['username'])
+                voted_solution['emails_voted'].append(session['email'])
                 mongo.update(collection=g.db.solutions,
                             doc_key='_id',
                             doc_value=ObjectId(request.args['sol_id']),
-                            update_key='usernames_voted',
-                            update_value=voted_solution['usernames_voted'])
+                            update_key='emails_voted',
+                            update_value=voted_solution['emails_voted'])
 
             if vote_form.vote.data == 'downvote':
                 voted_solution['downvotes']=voted_solution['downvotes']+1
@@ -144,12 +147,12 @@ def problem(problem_set_slug,prob_id):
                             doc_value=ObjectId(request.args['sol_id']),
                             update_key='downvotes',
                             update_value=voted_solution['downvotes'])
-                voted_solution['usernames_voted'].append(session['username'])
+                voted_solution['emails_voted'].append(session['email'])
                 mongo.update(collection=g.db.solutions,
                             doc_key='_id',
                             doc_value=ObjectId(request.args['sol_id']),
-                            update_key='usernames_voted',
-                            update_value=voted_solution['usernames_voted'])
+                            update_key='emails_voted',
+                            update_value=voted_solution['emails_voted'])
 
             model_solution.update_status(g.db, voted_solution)
 
@@ -165,6 +168,7 @@ def problem(problem_set_slug,prob_id):
             model_post.add(text=solution_comment_form.feedback_to_solution.data,
                            db=g.db,
                            author=session['username'],
+                           authors_email=session['email'],
                            post_type='comment',
                            parent_type='solution',
                            parent_id=ObjectId(request.args['sol_id']),
@@ -186,10 +190,11 @@ def problem(problem_set_slug,prob_id):
     solution_form=SolutionForm()
     if solution_form.validate_on_submit():
         model_solution.add(text=solution_form.solution.data,
-                       db=g.db,
-                       author=session['username'],
-                       problem_id=problem['_id'],
-                       problem_set_id=problem_set['_id'])
+                           db=g.db,
+                           author=session['username'],
+                           authors_email=session['email'],
+                           problem_id=problem['_id'],
+                           problem_set_id=problem_set['_id'])
 
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
@@ -261,7 +266,7 @@ def check():
     vote_form=VoteForm()
     if vote_form.validate_on_submit():
         voted_solution=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
-        if not session['username'] in voted_solution['usernames_voted']:
+        if not session['email'] in voted_solution['emails_voted']:
             if vote_form.vote.data == 'upvote': 
                 voted_solution['upvotes']=voted_solution['upvotes']+1
                 mongo.update(collection=g.db.solutions,
@@ -269,12 +274,12 @@ def check():
                             doc_value=ObjectId(request.args['sol_id']),
                             update_key='upvotes',
                             update_value=voted_solution['upvotes'])
-                voted_solution['usernames_voted'].append(session['username'])
+                voted_solution['emails_voted'].append(session['email'])
                 mongo.update(collection=g.db.solutions,
                             doc_key='_id',
                             doc_value=ObjectId(request.args['sol_id']),
-                            update_key='usernames_voted',
-                            update_value=voted_solution['usernames_voted'])
+                            update_key='emails_voted',
+                            update_value=voted_solution['emails_voted'])
                 
 
             if vote_form.vote.data == 'downvote':
@@ -284,12 +289,12 @@ def check():
                             doc_value=ObjectId(request.args['sol_id']),
                             update_key='downvotes',
                             update_value=voted_solution['downvotes'])
-                voted_solution['usernames_voted'].append(session['username'])
+                voted_solution['emails_voted'].append(session['email'])
                 mongo.update(collection=g.db.solutions,
                             doc_key='_id',
                             doc_value=ObjectId(request.args['sol_id']),
-                            update_key='usernames_voted',
-                            update_value=voted_solution['usernames_voted'])
+                            update_key='emails_voted',
+                            update_value=voted_solution['emails_voted'])
         
             model_solution.update_status(g.db, voted_solution)
 
@@ -303,6 +308,7 @@ def check():
             model_post.add(text=solution_comment_form.feedback_to_solution.data,
                            db=g.db,
                            author=session['username'],
+                           authors_email=session['email'],
                            post_type='comment',
                            parent_type='solution',
                            parent_id=ObjectId(request.args['sol_id']),

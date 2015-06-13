@@ -6,7 +6,7 @@
 
   <div class="row">
     <div class="col-md-6 col-md-offset-3">
-      <a href="{{url_for('workflow.home')}}">{{_('Back to the list of problem sets')}}</a>
+      <a href="{{url_for('workflow.home')}}">Обратно к списку листков</a>
     </div>
   </div>
 
@@ -22,7 +22,7 @@
           <p>
           {% if entry.get('problem_number') %}
           <a href="{{ url_for('workflow.problem', problem_set_slug=problem_set['slug'], prob_id=entry.get('_id') ) }}">
-            Problem {{entry.get('problem_number')}}. </a>
+            Задача {{entry.get('problem_number')}}. </a>
           {%endif%}
 
           {{entry['text']|safe}}

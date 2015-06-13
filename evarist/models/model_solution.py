@@ -2,9 +2,10 @@ import os, datetime
 from bson.objectid import ObjectId
 import mongo
 
-def add(text,db,author,problem_id,problem_set_id):
+def add(text,db,author,problem_id,problem_set_id,authors_email=None):
     ob_id=db.solutions.insert({'text':text,
                                'author':author,
+                               'authors_email':authors_email,
                                'problem_id':problem_id,
                                'problem_set_id':problem_set_id,
                                'date':datetime.datetime.utcnow(),
@@ -12,7 +13,7 @@ def add(text,db,author,problem_id,problem_set_id):
                                'discussion':[],
                                'upvotes':0,
                                'downvotes':0,
-                               'usernames_voted':[],
+                               'emails_voted':[],
                                'checked': False,
                                'is_right': False})
 
@@ -59,7 +60,7 @@ def load_discussion(db,solution):
                 solution['discussion'].append(post)
 
 def update_status(db,solution):
-    if solution['upvotes']>=3:
+    if solution['upvotes']>=2:
         mongo.update(collection=db.solutions,doc_key='_id',doc_value=ObjectId(solution['_id']),
                 update_key='is_right',
                 update_value=True)
