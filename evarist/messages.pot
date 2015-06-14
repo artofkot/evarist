@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-06-13 18:31+0300\n"
+"POT-Creation-Date: 2015-06-14 19:03+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,12 +20,12 @@ msgstr ""
 #: templates/check.html:27 templates/check.html:33
 #, python-format
 msgid "Решение от %(author)s"
-msgstr ""
+msgstr "Solution by %(author)s"
 
 #: templates/home.html:17
 msgid "Эварист"
-msgstr ""
+msgstr "Evarist"
 
 #: templates/home.html:21
 msgid "Учимся думать красиво."
-msgstr ""
+msgstr "A place on the internet to learn math"

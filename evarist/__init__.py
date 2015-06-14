@@ -42,6 +42,8 @@ def before_request():
     g.mongo = mongo
     g.db=mongo.db
     g.signin_form=SignInForm()
+    
+    g.locale = get_locale()
 # g.mongo.cx  is connection object
 
 @babel.localeselector

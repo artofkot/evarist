@@ -263,13 +263,17 @@ def problem_set_edit(problem_set_slug):
                                        problem_set_id=problem_set['_id'],
                                        db=g.db)
         else:
-            model_entry.edit(ob_id=ObjectId(request.args['entry_id']),
+            rez=model_entry.edit(ob_id=ObjectId(request.args['entry_id']),
                              db=g.db, 
                              title=edit_entry_form.edit_title.data,
                              text=edit_entry_form.edit_text.data,
                              entry_type=entry_type,
                              entry_number= int(edit_entry_form.entry_number.data),
                              problem_set_id=problem_set['_id'])
+            if rez:
+                print flash('Entry edited, sir.')
+            else:
+                print flash('Didnt work, slug or title is wrooooong.')
 
         return redirect(url_for('admin.problem_set_edit',
                                 problem_set_slug=problem_set['slug']))

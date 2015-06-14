@@ -23,6 +23,7 @@
         {%for problem_set in problem_sets%}
           <dd>
             <a href="{{url_for('.problem_set_edit',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a> 
+            (slug is {{problem_set['slug']}})
           </dd>
         {% endfor %}
       </dl>
