@@ -41,9 +41,17 @@ def home():
 
     psets=model_problem_set.get_all(g.db)
     problem_sets=[]
-    for pset in psets:
-        if pset['title'] in ['Sets',u'Множества','Group Theory',u'Отображения',u'Комбинаторика']:
-            problem_sets.append(pset)
+
+    rus_set=['mnozhestva','otobrazhenia','kombinatorika']
+    eng_set=['sets','group-theory']
+    if g.locale == 'ru':
+        page_set=rus_set
+    else:
+        page_set=eng_set
+    
+    for slug in page_set:
+        pset= next(pset for pset in psets if pset['slug']==slug)
+        problem_sets.append(pset)
 
     return render_template('home.html',
                         problem_sets=problem_sets,
