@@ -39,7 +39,7 @@ Our method / way // Features:
 
     It was said that our material fits a paradigm of standalone self-education.
 
-    // However, although it is a resort for many, studying in isolation is the worst way of learning. The best way is having peers, having a healthy not pressing competion, having live communication with higher adepts // , ready to guide and answer questions.
+    // However, although it is a resort for many, studying in isolation is the worst way of learning. The best way is having peers, having live communication with higher adepts that are ready to guide and answer questions.
 
     For that we are building a supprting platform, where for each problem there is a discussion attached.
 

@@ -22,3 +22,8 @@ pre {
     padding-top: 60px; /* for the navbar and a lil more */
   }
 }
+
+ol {
+    list-style-position: inside;
+    padding-left:0;
+}
