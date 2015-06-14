@@ -4,12 +4,12 @@ body {
   font-size: 18px;
   line-height: 24px;
   /*text-align: justify;*/
-  /* 
-  background-image: url(https://download.unsplash.com/photo-1429091967365-492aaa5accfe);
+   
+/*  background-image: url(https://download.unsplash.com/photo-1429091967365-492aaa5accfe);
   background-repeat: no-repeat;
   background-attachment: fixed;
-  background-position: center; 
-  */
+  background-position: center; */
+  
 }
 
 pre {
@@ -26,4 +26,11 @@ pre {
 ol {
     list-style-position: inside;
     padding-left:0;
+}
+
+jumbotron {
+  padding: 30px 15px;
+  margin-bottom: 30px;
+  color: inherit;
+  background-color: #eee;
 }
