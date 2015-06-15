@@ -53,9 +53,9 @@ footer {
 }
 
 body {
-  /*background-image: url(https://download.unsplash.com/photo-1428342109953-409d2876cdab);*/
-  background-image: url(https://download.unsplash.com/photo-1434323197752-16d745928e51);
-  /*background-image: url(https://download.unsplash.com/photo-1434235017538-99f45ef0b451);*/
+  /*background-image: url(https://download.unsplash.com/photo-1428342109953-409d2876cdab);*/ /*eagle*/
+  /*background-image: url(https://download.unsplash.com/photo-1434323197752-16d745928e51);*/ /*boy*/
+  background-image: url(https://download.unsplash.com/photo-1434235017538-99f45ef0b451);   /*stars*/
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-position: center top; 
