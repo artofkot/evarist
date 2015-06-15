@@ -54,6 +54,7 @@ def home():
         pset= next(pset for pset in psets if pset['slug']==slug)
         problem_sets.append(pset)
 
+
     return render_template('home.html',
                         problem_sets=problem_sets,
                         website_feedback_form=website_feedback_form)
@@ -86,6 +87,18 @@ def problem_set(problem_set_slug):
     return render_template('problem_set.html', 
                             problem_set=problem_set)
 
+@workflow.route('/problem_sets/<problem_set_slug>/<entry_type>/<__id>/', methods=["GET", "POST"])
+def entry(problem_set_slug,entry_type,__id):
+    problem_set=model_problem_set.get_by_slug(problem_set_slug, g.db)
+    if problem_set==False: 
+        flash('No such problem set.')
+        return redirect(url_for('.home'))   
+
+    entry=g.db.entries.find_one({"_id":ObjectId(__id)})
+
+    return render_template('entry.html', 
+                            problem_set=problem_set, 
+                            entry=entry)
 
 # @workflow.route('/problem_sets/<problem_set_slug>/problem/<int:problem_number>/', methods=["GET", "POST"])
 @workflow.route('/problem_sets/<problem_set_slug>/problem/<prob_id>/', methods=["GET", "POST"])
@@ -95,6 +108,7 @@ def problem(problem_set_slug,prob_id):
     if problem_set==False: 
         flash('No such problem set.')
         return redirect(url_for('.home'))
+
 
     #get the problem_set
     model_problem_set.load_entries(problem_set,g.db)

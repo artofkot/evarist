@@ -71,7 +71,6 @@ def load_entries(problem_set,db):
             entry=db.entries.find_one({'_id':ob_id})
             if entry:
                 problem_set['entries'].append(entry)
-
                 if entry['entry_type']=='problem': #then set the number of this problem
                     n=n+1
                     problem_set['entries'][-1]['problem_number']= n
