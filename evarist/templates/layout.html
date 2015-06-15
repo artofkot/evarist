@@ -60,12 +60,30 @@
     {% block head %}{% endblock %}
   </head>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   <body> 
     <div class=page>
-
       <div class="container" >
         <nav class="navbar navbar-default navbar-fixed-top">
-          <div class="container">
+          <div class="container" >
             <div class="navbar-header">
               <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                 <span class="sr-only">Toggle navigation</span>
@@ -75,37 +93,76 @@
               </button>
               <a class="navbar-brand" href="{{ url_for('workflow.home')}}"> Эварист </a>
             </div>
+
             <div id="navbar" class="collapse navbar-collapse">
               <ul class="nav navbar-nav">
-               <!--  <li ><a href="{{ url_for('workflow.home')}}" in_tag="ul" kaspersky_status="skipped">Home</a></li> -->
                 <li><a href="{{ url_for('workflow.about')}}" in_tag="ul" kaspersky_status="skipped"> О проекте </a></li>
-                <li><a href="{{ url_for('workflow.roots')}}" in_tag="ul" kaspersky_status="skipped"> Корни </a></li>
-
-                <!-- <li><a href="{{ url_for('workflow.home')}}" in_tag="ul" kaspersky_status="skipped">Contact</a></li> -->
               </ul>
-              {% if "username" not in session%}
-              
-              <form class="navbar-form navbar-right" class="metanav" action="{{ url_for('user.login') }}" method=post>
-                <a href="{{ url_for('user.login') }}" class="btn btn-default" role="button">Login</a>
 
-               <!--  {{g.signin_form.hidden_tag()}}
-                <div class="form-group">
-                  <input type="text" placeholder="Email" class="form-control" name='email'>
-                </div>
-                <div class="form-group">
-                  <input type="password" placeholder="Password" class="form-control" name='password'>
-                </div>
-                <button type="submit" class="btn btn-default" value=Login>Sign in</button> -->
-                
-                <!-- <a href="{{ url_for('user.signup') }}" class="btn btn-default" role="button">Sign up</a> -->
-              </form>
-              {% else %}
+
               <ul class="nav navbar-nav navbar-right">
-                <li><img src="{{session['picture']}}" style='height:40px;width=40px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px'></li>
+                <li>
+                  {% if session['lang']=='en'%}
+                  <a href="{{ url_for('workflow.lang_ru') }}?pa={{request.url}}"><small>view rus</small></a>
+                  {%else%}
+                  <a href="{{ url_for('workflow.lang_en') }}?pa={{request.url}}"><small>view eng</small></a>
+                  {%endif%}
+                </li>
+
+                {% if "username" not in session%}
+                <li>
+                  <form class="navbar-form" class="metanav" action="{{ url_for('user.login') }}" method=post>
+                    <a href="{{ url_for('user.login') }}" class="btn btn-default" role="button">Login</a>
+
+                   <!--  {{g.signin_form.hidden_tag()}}
+                    <div class="form-group">
+                      <input type="text" placeholder="Email" class="form-control" name='email'>
+                    </div>
+                    <div class="form-group">
+                      <input type="password" placeholder="Password" class="form-control" name='password'>
+                    </div>
+                    <button type="submit" class="btn btn-default" value=Login>Sign in</button> -->
+                    
+                    <!-- <a href="{{ url_for('user.signup') }}" class="btn btn-default" role="button">Sign up</a> -->
+                  </form>
+                </li>
+
+                {% else %}
+                <li>
+                  <div>
+                    <img src="{{session['picture']}}" style='height:50px;width=50px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px; vertical-align:middle '>
+                  </div>
+                </li>
                 <li> <a href="{{ url_for('workflow.home') }}">{{session.username}} </a></li>
                 <li><a href="{{ url_for('user.logout') }}">Log out</a></li>
+                {% endif%}
               </ul>
+<!-- 
+              {% if "username" not in session%}
+              
+                <form class="navbar-form navbar-right" class="metanav" action="{{ url_for('user.login') }}" method=post>
+                  <a href="{{ url_for('user.login') }}" class="btn btn-default" role="button">Login</a>
+ -->
+                 <!--  {{g.signin_form.hidden_tag()}}
+                  <div class="form-group">
+                    <input type="text" placeholder="Email" class="form-control" name='email'>
+                  </div>
+                  <div class="form-group">
+                    <input type="password" placeholder="Password" class="form-control" name='password'>
+                  </div>
+                  <button type="submit" class="btn btn-default" value=Login>Sign in</button> -->
+                  
+                  <!-- <a href="{{ url_for('user.signup') }}" class="btn btn-default" role="button">Sign up</a> -->
+<!--                 </form>
+
+              {% else %}
+                <ul class="nav navbar-nav navbar-right">
+                  <li><img src="{{session['picture']}}" style='height:40px;width=40px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px'></li>
+                  <li> <a href="{{ url_for('workflow.home') }}">{{session.username}} </a></li>
+                  <li><a href="{{ url_for('user.logout') }}">Log out</a></li>
+                </ul>
               {% endif%}
+ -->
             </div>
           </div>
         </nav>
@@ -126,25 +183,10 @@
       <footer class="footer">
         <div class="container">
           <div class="col-md-3">
-
-          {% if session['lang']=='en'%}
-          <a href="{{ url_for('workflow.lang_ru') }}?pa={{request.url}}"><small>Switch to russian</small></a>
-          {%else%}
-          <a href="{{ url_for('workflow.lang_en') }}?pa={{request.url}}"><small>Switch to english</small></a>
-          {%endif%}
         </div>
     </footer>
     </div>
-    
+
 
   </body>
 </html>
-<!-- this is cheatshit for content -->
-<!--   
-  <div class="container">
-    <div class="row">
-      <div class="col-md-7 col-md-offset-2">
-
-      </div>
-    </div>
-  </div>  -->
