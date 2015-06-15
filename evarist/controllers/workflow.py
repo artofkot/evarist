@@ -43,7 +43,7 @@ def home():
     problem_sets=[]
 
     rus_set=['mnozhestva','otobrazhenia','kombinatorika', 'delimost', 'algoritm-evklida', 
-             'sravneniya','integers-praktika', 'teoriya-grup']
+             'sravneniya','integers-praktika', 'teoriya-grup', 'gomomorphismy']
     eng_set=['sets','group-theory']
     if g.locale == 'ru':
         page_set=rus_set
