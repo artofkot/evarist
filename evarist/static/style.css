@@ -1,15 +1,28 @@
+jumbotron {
+  padding: 30px 15px;
+  margin-bottom: 30px;
+  color: white;
+  background: white;
+  background-color: black;
+}
+
+div.transbox {
+    opacity: 0.6;
+    filter: alpha(opacity=60); /* For IE8 and earlier */
+}
+
+.problem_set {
+  background-color: white;
+  color:black;
+}
+
 body {
   padding-top: 70px; /* for the navbar and a lil more */
   font-family: 'Computer Modern Bright';
   font-size: 18px;
   line-height: 24px;
+  /*margin-bottom: 60px; */
   /*text-align: justify;*/
-   
-/*  background-image: url(https://download.unsplash.com/photo-1429091967365-492aaa5accfe);
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-position: center; */
-  
 }
 
 pre {
@@ -25,12 +38,45 @@ pre {
 
 ol {
     list-style-position: inside;
-    padding-left:0;
+    list-style: none;
+    padding-left:0; 
 }
 
-jumbotron {
-  padding: 30px 15px;
-  margin-bottom: 30px;
-  color: inherit;
-  background-color: #eee;
+footer {
+  height: 50px;
+  color: #f5f5f5;
+}
+
+body {
+  background-image: url(https://download.unsplash.com/photo-1428342109953-409d2876cdab);
+  /*background-image: url(https://download.unsplash.com/photo-1434323197752-16d745928e51);*/
+  /*background-image: url(https://download.unsplash.com/photo-1434235017538-99f45ef0b451);*/
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center top; 
+  background-size: 1900px 1080px;
+
+  /*color: white;*/
+}
+
+/* unvisited link */
+a:link {
+    color: #000000;
+}
+
+/* visited link */
+a:visited {
+    color: #FFFFFF;
+}
+
+/* mouse over link */
+a:hover {
+    /*color: #FF00FF;*/
+    text-decoration: underline;
+}
+
+/* selected link */
+a:active {
+    /*color: #FFFFFF;*/
+    text-decoration: underline;
 }

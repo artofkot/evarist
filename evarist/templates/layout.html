@@ -1,34 +1,39 @@
 <!doctype html>
 <!-- <html lang="en">  // ?? -->
 <html>
+
   <head>
-    <title>Эварист</title>
+    <meta charset="utf-8"> <!-- as early as possible -->
+    
+    <title>Evarist</title>
 
     <!-- favicon.ico -->
-    <link rel="shortcut icon" href="https://cdn.rawgit.com/artofkot/evarist_static/master/favicon.ico">
+      <link rel="shortcut icon" href="https://cdn.rawgit.com/artofkot/evarist_static/2c650e9c422a61e4eea1d46808188c878926e19c/E.ico">    
+      <!-- <link rel="shortcut icon" href="https://cdn.rawgit.com/artofkot/evarist_static/master/favicon.ico"> -->
 
     <!-- Bootstrap headers from official Get Started -->
-      <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="viewport" content="width=device-width, initial-scale=1"> 
       <!-- maximum-scale=1, user-scalable=no --> <!-- add if u want it to like like a native app-->
-    
-    <!-- Bootstrap CDN from official site -->
-      <!-- Differs from what we had in index.html. i dunno why. why did u end up using different cdn there?     TOREAD     -->
-      <!-- Also, note, this is bootstrap 3 (v3.3.2). Before, we used bootstrap 2. let's go with 3, seems like that's the best practice. -->
 
       <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 
 
       <!-- Latest compiled and minified CSS -->
-      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+      <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"> -->
+      <!-- <link rel="stylesheet" href="/static/vendor/bootstrap-3.3.2-dist/css/bootstrap.min.css"> -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/css/bootstrap.min.css">
+
 
       <!-- Optional theme -->
       <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css"> -->
 
       <!-- Latest compiled and minified JavaScript -->
-      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+      <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script> -->
+      <!--
+      <script src="/static/vendor/bootstrap-3.3.2-dist/js/bootstrap.min.js"></script>-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
 
       <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
       <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -38,45 +43,24 @@
       <![endif]-->
 
     <!-- mathjax -->
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        tex2jax: {
-          inlineMath: [['$','$'], ['\\(','\\)']],
-          processEscapes: true,
-          skipTags: ["script","noscript","style","textarea","code"]
-        }
-      });
-    </script>
-    <script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+      <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+          tex2jax: {
+            inlineMath: [['$','$'], ['\\(','\\)']],
+            processEscapes: true,
+            skipTags: ["script","noscript","style","textarea","code"]
+          }
+        });
+      </script>
+      <script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
-    <!-- Our own custom resources -->
     <!-- Fonts -->
-    <!-- Roman said that it's supposed to be gh-pages... talk to him later. -->
     <link href="https://cdn.rawgit.com/Aelay/aelay.github.io/master/ComputerModern/Bright/cmun-bright.css" rel="stylesheet" type="text/css">
     
-    <!-- Our own custom styles -->
     <link href="/static/style.css" rel="stylesheet" type="text/css">
 
     {% block head %}{% endblock %}
   </head>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   <body> 
@@ -91,7 +75,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="{{ url_for('workflow.home')}}"> Эварист </a>
+              <a class="navbar-brand" href="{{ url_for('workflow.home')}}"> Evarist </a>
             </div>
 
             <div id="navbar" class="collapse navbar-collapse">
@@ -103,9 +87,9 @@
               <ul class="nav navbar-nav navbar-right">
                 <li>
                   {% if session['lang']=='en'%}
-                  <a href="{{ url_for('workflow.lang_ru') }}?pa={{request.url}}"><small>view rus</small></a>
+                  <a href="{{ url_for('workflow.lang_ru') }}?pa={{request.url}}"><small>view RU</small></a>
                   {%else%}
-                  <a href="{{ url_for('workflow.lang_en') }}?pa={{request.url}}"><small>view eng</small></a>
+                  <a href="{{ url_for('workflow.lang_en') }}?pa={{request.url}}"><small>view EN</small></a>
                   {%endif%}
                 </li>
 
@@ -137,32 +121,7 @@
                 <li><a href="{{ url_for('user.logout') }}">Log out</a></li>
                 {% endif%}
               </ul>
-<!-- 
-              {% if "username" not in session%}
-              
-                <form class="navbar-form navbar-right" class="metanav" action="{{ url_for('user.login') }}" method=post>
-                  <a href="{{ url_for('user.login') }}" class="btn btn-default" role="button">Login</a>
- -->
-                 <!--  {{g.signin_form.hidden_tag()}}
-                  <div class="form-group">
-                    <input type="text" placeholder="Email" class="form-control" name='email'>
-                  </div>
-                  <div class="form-group">
-                    <input type="password" placeholder="Password" class="form-control" name='password'>
-                  </div>
-                  <button type="submit" class="btn btn-default" value=Login>Sign in</button> -->
-                  
-                  <!-- <a href="{{ url_for('user.signup') }}" class="btn btn-default" role="button">Sign up</a> -->
-<!--                 </form>
 
-              {% else %}
-                <ul class="nav navbar-nav navbar-right">
-                  <li><img src="{{session['picture']}}" style='height:40px;width=40px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px'></li>
-                  <li> <a href="{{ url_for('workflow.home') }}">{{session.username}} </a></li>
-                  <li><a href="{{ url_for('user.logout') }}">Log out</a></li>
-                </ul>
-              {% endif%}
- -->
             </div>
           </div>
         </nav>
@@ -170,7 +129,7 @@
         {% for message in get_flashed_messages() %}
           <div class='row'>
             <div class="col-md-8 col-md-offset-2">
-              <div class=flash> <h3 style="color:red">{{ message }}</h1></div>
+              <div class=flash> <h3 style="color:red">{{ message }}</h3></div>
               </div>
             </div>
           </div>          
@@ -180,13 +139,13 @@
         {% block body %}{% endblock %}
       </div>
 
-      <footer class="footer">
-        <div class="container">
-          <div class="col-md-3">
-        </div>
-    </footer>
+      <div class="container" style="backgroud-color:#f5f5f5">
+        <footer class="footer">
+          <div class="container">
+            <p class="text-muted">  </p>
+          </div>
+        </footer>
+      </div>
     </div>
-
-
   </body>
 </html>
