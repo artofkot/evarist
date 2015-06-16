@@ -51,8 +51,12 @@ def home():
         page_set=eng_set
     
     for slug in page_set:
-        pset= next(pset for pset in psets if pset['slug']==slug)
-        problem_sets.append(pset)
+        try:
+            pset= next(pset for pset in psets if pset['slug']==slug)
+            problem_sets.append(pset)
+        except StopIteration:
+            flash('slug ' + slug + ' was not found')
+        
 
 
     return render_template('home.html',
