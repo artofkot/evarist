@@ -57,9 +57,9 @@ body {
   background-image: url(https://download.unsplash.com/photo-1434323197752-16d745928e51); /*boy*/
   /*background-image: url(https://download.unsplash.com/photo-1434235017538-99f45ef0b451);   /*stars*/*/
   background-repeat: no-repeat;
-  background-attachment: fixed;
+  /*background-attachment: fixed;*/
   background-position: center top; 
-  background-size: 1900px 1080px;
+  background-size: 1920px 1080px;
 
   color: white;
 }
