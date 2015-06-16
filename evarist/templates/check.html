@@ -42,7 +42,7 @@
               <p>{{solution.get('downvotes')}} неверно</p>
             </div>
             <div class="col-md-4 col-md-offset-2">
-              {%if session['username'] not in solution.get('usernames_voted')%}
+              {%if session['email'] not in solution.get('emails_voted')%}
                 <form action=" {{url_for('.check', sol_id=solution['_id'])}}" method="post">
                   
                   {{ vote_form.hidden_tag() }}

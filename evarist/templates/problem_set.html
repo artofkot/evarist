@@ -25,10 +25,8 @@
             <a href="{{ url_for('workflow.problem', problem_set_slug=problem_set['slug'], prob_id=entry.get('_id') ) }}">
               Задача {{entry.get('problem_number')}}. </a>
             {% else %}
-            <a href="{{ url_for('workflow.entry', problem_set_slug=problem_set['slug'], entry_type=entry.get('entry_type'), __id=entry.get('_id') ) }}">
-              {{entry.get('entry_type')}}</a>
+            <a href="{{ url_for('workflow.entry', problem_set_slug=problem_set['slug'], entry_type=entry.get('entry_type'), __id=entry.get('_id') ) }}">.</a>
             {%endif%}
-
             {{entry['text']|safe}}
             </p>
           </div>
