@@ -255,10 +255,7 @@ def problem_set_edit(problem_set_slug):
 
     edit_entry_form=EditEntryForm()
     if edit_entry_form.validate_on_submit():
-        entry_type='problem'
-        if edit_entry_form.general_entry.data: 
-            entry_type='general_entry'
-            
+        entry_type=edit_entry_form.entry_type.data
         if edit_entry_form.delete_entry.data:
             model_entry.delete_forever(entry_id=request.args['entry_id'],
                                        problem_set_id=problem_set['_id'],
@@ -274,16 +271,14 @@ def problem_set_edit(problem_set_slug):
             if rez:
                 print flash('Entry edited, sir.')
             else:
-                print flash('Didnt work, slug or title is wrooooong.')
+                print flash('Didnt work, slug or title is wrong.')
 
         return redirect(url_for('admin.problem_set_edit',
                                 problem_set_slug=problem_set['slug']))
 
     entryform = EntryForm()
     if entryform.validate_on_submit():
-        entry_type='problem'
-        if entryform.general_entry.data: 
-            entry_type='general_entry'
+        entry_type=entryform.entry_type.data
         if model_entry.add(entry_type=entry_type, 
                             author=session['username'],
                             authors_email=session['email'], 

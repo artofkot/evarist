@@ -34,3 +34,25 @@ jumbotron {
   color: inherit;
   background-color: #eee;
 }
+
+/* unvisited link */
+a.def_prob_as_link:link {
+    color: black;
+    font-weight: bold;
+}
+
+/* visited link */
+a.def_prob_as_link:visited {
+    color: black;
+    font-weight: bold;
+}
+
+/* mouse over link */
+a:hover {
+    text-decoration: underline;
+}
+
+/* selected link */
+a:active {
+    text-decoration: underline;
+}
