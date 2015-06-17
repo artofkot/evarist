@@ -48,6 +48,7 @@ class VoteForm(Form):
     vote = TextField('vote', validators=[Required()])
 
 class ProblemSetForm(Form):
+    status= TextField('status')
     title = TextField('title', validators=[Required()])
     slug = TextField('slug', validators=[Required()]) # validators=[Required()]
 

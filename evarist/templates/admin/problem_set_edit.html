@@ -12,17 +12,27 @@
       <div style='height:20px'></div>
       
 
-      <h4>{{problem_set['title']}}</h4>
+      <h4>{{problem_set['title']}} ( {{problem_set['status']}} mode )</h4>
         
 
 
         <div>
           <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#collapsIdUnique" aria-expanded="false" aria-controls="collapsIdUnique">
-            Edit title and slug
+            Edit title, slug and status
           </button>
           <div class="collapse" id="collapsIdUnique">
             <form action="{{url_for('.problem_set_edit',problem_set_slug=problem_set['slug'])}}" method="post">
               <div class="form-group" style='width: 350px'>
+
+                <div class="radio">
+                  <label ><input type="radio" name='status' value='dev' checked> change status to "dev". </label>
+                </div>
+                <div class='radio'>
+                  <label ><input type="radio" name='status'  value='stage'> change status to "stage". </label>
+                </div> 
+                <div class="radio">
+                  <label ><input type="radio" name='status' value='production'> change status to "production". </label>
+                </div>
 
                 {{ edit_problem_set_form.hidden_tag() }}
                 <label for="title">Edit the title: </label>
@@ -36,6 +46,7 @@
             </form> 
           </div>
         </div>
+        
         <div style='height:5px'></div>
         
         <form class="form-inline" action="{{url_for('.problem_set_edit',problem_set_slug=problem_set['slug'])}}" method="post">  

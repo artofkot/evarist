@@ -15,10 +15,9 @@ workflow = Blueprint('workflow', __name__,
 
 @workflow.route('/', methods=["GET", "POST"])
 def home():
-    # USE THIS CAREFULLY! This is template for updating some keys in all documents.
-    
-    # mongo.update(collection=g.db.solutions,doc_key='all',doc_value='notimportant',
-    #             update_key='emails_voted',update_value=[])
+    # USE THIS CAREFULLY! This is template for updating keys in all documents.
+    # mongo.update(collection=g.db.problem_sets,doc_key='all',doc_value='notimportant',
+    #             update_key='status',update_value='dev')
 
     website_feedback_form=WebsiteFeedbackForm()
     if website_feedback_form.validate_on_submit():
