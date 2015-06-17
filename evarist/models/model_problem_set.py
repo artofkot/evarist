@@ -44,9 +44,9 @@ def get_by_slug(problem_set_slug, db):
         return False
 
 def edit(ob_id, title, slug, db):
-    if db.problem_sets.find_one({"title": title}):
-        return False
-    elif db.problem_sets.find_one({"slug": slug}):
+    # if db.problem_sets.find_one({"title": title}):
+    #     return False
+    if db.problem_sets.find_one({"slug": slug}):
         return False
     problem_set=db.problem_sets.find_one({"_id": ob_id})
     problem_set['slug']=slug
