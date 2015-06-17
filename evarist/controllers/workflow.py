@@ -42,7 +42,7 @@ def home():
     psets=model_problem_set.get_all(g.db)
     problem_sets=[]
 
-    rus_set=['mnozhestva','otobrazhenia','kombinatorika', 'delimost', 'algoritm-evklida', 
+    rus_set=['mnozhestva','otobrazhenia','kombinatorika','podstanovki','indukcia', 'binom-newtona', 'podstanovki-2','delimost', 'algoritm-evklida', 
              'sravneniya','integers-praktika', 'teoriya-grup', 'gomomorphismy']
     eng_set=['sets','group-theory']
     if g.locale == 'ru':

@@ -238,10 +238,11 @@ def problem_set_edit(problem_set_slug):
 
     edit_problem_set_form=ProblemSetForm()
     if edit_problem_set_form.validate_on_submit():
-        model_problem_set.edit(ob_id=problem_set['_id'], 
+        if model_problem_set.edit(ob_id=problem_set['_id'], 
                                 title=edit_problem_set_form.title.data, 
                                 slug=edit_problem_set_form.slug.data, 
-                                db=g.db)
+                                db=g.db): flash ('edited')
+        else: flash('you must change the slug to other slug, which does not exist. Sorry :)')
         return redirect(url_for('admin.problem_set_edit',
                                 problem_set_slug=edit_problem_set_form.slug.data))
 
