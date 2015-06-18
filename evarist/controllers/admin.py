@@ -44,9 +44,18 @@ def home():
             flash('Need different title or slug.')
         return redirect(url_for('admin.home'))
 
+    problem_sets=model_problem_set.get_all(g.db)
+
+    problem_sets_dev=[pset for pset in problem_sets if pset['status']=='dev']
+    problem_sets_stage=[pset for pset in problem_sets if pset['status']=='stage']
+    problem_sets_production=[pset for pset in problem_sets if pset['status']=='production']
+
     return render_template("admin/home.html", 
                             form=form, 
-                            problem_sets=model_problem_set.get_all(g.db))
+                            problem_sets=model_problem_set.get_all(g.db),
+                            problem_sets_dev=problem_sets_dev,
+                            problem_sets_stage=problem_sets_stage,
+                            problem_sets_production=problem_sets_production)
 
 @admin.route('/admin/feedbacks', methods=["GET", "POST"])
 @admin_required
@@ -241,7 +250,9 @@ def problem_set_edit(problem_set_slug):
         if model_problem_set.edit(ob_id=problem_set['_id'], 
                                 title=edit_problem_set_form.title.data, 
                                 slug=edit_problem_set_form.slug.data, 
-                                db=g.db): flash ('edited')
+                                db=g.db,
+                                status=edit_problem_set_form.status.data,
+                                old_slug=problem_set['slug']):flash ('edited')
         else: flash('you must change the slug to other slug, which does not exist. Sorry :)')
         return redirect(url_for('admin.problem_set_edit',
                                 problem_set_slug=edit_problem_set_form.slug.data))
@@ -255,10 +266,7 @@ def problem_set_edit(problem_set_slug):
 
     edit_entry_form=EditEntryForm()
     if edit_entry_form.validate_on_submit():
-        entry_type='problem'
-        if edit_entry_form.general_entry.data: 
-            entry_type='general_entry'
-            
+        entry_type=edit_entry_form.entry_type.data
         if edit_entry_form.delete_entry.data:
             model_entry.delete_forever(entry_id=request.args['entry_id'],
                                        problem_set_id=problem_set['_id'],
@@ -274,16 +282,14 @@ def problem_set_edit(problem_set_slug):
             if rez:
                 print flash('Entry edited, sir.')
             else:
-                print flash('Didnt work, slug or title is wrooooong.')
+                print flash('Didnt work, slug or title is wrong.')
 
         return redirect(url_for('admin.problem_set_edit',
                                 problem_set_slug=problem_set['slug']))
 
     entryform = EntryForm()
     if entryform.validate_on_submit():
-        entry_type='problem'
-        if entryform.general_entry.data: 
-            entry_type='general_entry'
+        entry_type=entryform.entry_type.data
         if model_entry.add(entry_type=entry_type, 
                             author=session['username'],
                             authors_email=session['email'], 

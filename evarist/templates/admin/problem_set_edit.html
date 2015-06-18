@@ -12,17 +12,27 @@
       <div style='height:20px'></div>
       
 
-      <h4>{{problem_set['title']}}</h4>
+      <h4>{{problem_set['title']}} ( {{problem_set['status']}} mode )</h4>
         
 
 
         <div>
           <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#collapsIdUnique" aria-expanded="false" aria-controls="collapsIdUnique">
-            Edit title and slug
+            Edit title, slug and status
           </button>
           <div class="collapse" id="collapsIdUnique">
             <form action="{{url_for('.problem_set_edit',problem_set_slug=problem_set['slug'])}}" method="post">
               <div class="form-group" style='width: 350px'>
+
+                <div class="radio">
+                  <label ><input type="radio" name='status' value='dev' checked> change status to "dev". </label>
+                </div>
+                <div class='radio'>
+                  <label ><input type="radio" name='status'  value='stage'> change status to "stage". </label>
+                </div> 
+                <div class="radio">
+                  <label ><input type="radio" name='status' value='production'> change status to "production". </label>
+                </div>
 
                 {{ edit_problem_set_form.hidden_tag() }}
                 <label for="title">Edit the title: </label>
@@ -32,10 +42,11 @@
                 <input type="text" class="form-control" name='slug' value="{{problem_set['slug']}}">
 
               </div>
-              <button type="submit" class="btn btn-default">Отправить</button>
+              <button type="submit" class="btn btn-default">Submin</button>
             </form> 
           </div>
         </div>
+        
         <div style='height:5px'></div>
         
         <form class="form-inline" action="{{url_for('.problem_set_edit',problem_set_slug=problem_set['slug'])}}" method="post">  
@@ -55,9 +66,17 @@
             
             <div>
               <p>
-              {% if entry.get('problem_number') %}
-                Problem {{entry.get('problem_number')}}.
+              {% if entry.get('entry_type')=='problem' %}
+              <a href="{{ url_for('workflow.problem', problem_set_slug=problem_set['slug'], prob_id=entry.get('_id') ) }}">
+                Задача {{entry.get('problem_number')}}.</a>
+              {% elif entry.get('entry_type')=='definition' %}
+              <a href="{{ url_for('workflow.entry', problem_set_slug=problem_set['slug'], entry_type=entry.get('entry_type'), __id=entry.get('_id') ) }}">
+                ∆ Определение {{entry.get('definition_number')}}.</a>
+              {% else %}
+              <a href="{{ url_for('workflow.entry', problem_set_slug=problem_set['slug'], entry_type=entry.get('entry_type'), __id=entry.get('_id') ) }}"> general_entry </a>
               {%endif%}
+
+              <br>
               {{entry['text']|safe}}
               </p>
             </div>
@@ -73,11 +92,43 @@
                   <div class="checkbox">
                     
                     {% if entry['entry_type']=='problem' %}
-                    <label><input type="checkbox" name='general_entry'> Check this, if this entry is not a problem. </label>
+                      <div class="form-group" >
+                        <div class="radio">
+                          <label ><input type="radio" name='entry_type' value='general_entry'> Check this, if this entry has type "general_entry". </label>
+                        </div>
+                        <div class='radio'>
+                          <label ><input type="radio" name='entry_type'  value='definition'> Check this, if this entry has type "definition". </label>
+                        </div> 
+                        <div class="radio">
+                          <label ><input type="radio" name='entry_type' value='problem' checked> Check this, if this entry has type "problem". </label>
+                        </div>
+                      </div>
+                    {% elif entry['entry_type']=='definition' %}
+                      <div class="form-group" >
+                        <div class="radio">
+                          <label ><input type="radio" name='entry_type' value='general_entry'> Check this, if this entry has type "general_entry". </label>
+                        </div>
+                        <div class='radio'>
+                          <label ><input type="radio" name='entry_type'  value='definition' checked> Check this, if this entry has type "definition. </label>
+                        </div> 
+                        <div class="radio">
+                          <label ><input type="radio" name='entry_type' value='problem'> Check this, if this entry has type "problem". </label>
+                        </div>
+                      </div>
                     {% else %}
-                    <label><input type="checkbox" name='general_entry' checked> Check this, if this entry is not a problem. </label>
+                      <div class="form-group" >
+                        <div class="radio">
+                          <label ><input type="radio" name='entry_type' value='general_entry' checked> Check this, if this entry has type "general_entry". </label>
+                        </div>
+                        <div class='radio'>
+                          <label ><input type="radio" name='entry_type'  value='definition'> Check this, if this entry has type "definition. </label>
+                        </div> 
+                        <div class="radio">
+                          <label ><input type="radio" name='entry_type' value='problem'> Check this, if this entry has type "problem". </label>
+                        </div>
+                      </div>
                     {% endif %}
-
+      
 
                   </div>
                   <label for="edit_text">Edit the entry: </label>
@@ -95,7 +146,7 @@
                     </label>
                   </div>
                 </div>
-                <button type="submit" class="btn btn-default">Отправить</button>
+                <button type="submit" class="btn btn-default">Submit</button>
               </form>
             </div>
 
@@ -122,13 +173,21 @@
         <div class="form-group" style='width: 800px'>
 
           {{ entryform.hidden_tag() }}
-          <div class="checkbox">
-            <label><input type="checkbox" name='general_entry'> Check this, if this entry is not a problem. </label>
+          <div class="form-group" >
+            <div class="radio">
+              <label ><input type="radio" name='entry_type' value='general_entry'> Check this, if this entry has type "general_entry". </label>
+            </div>
+            <div class='radio'>
+              <label ><input type="radio" name='entry_type'  value='definition'> Check this, if this entry has type "definition". </label>
+            </div> 
+            <div class="radio">
+              <label ><input type="radio" name='entry_type' value='problem' checked> Check this, if this entry has type "problem". </label>
+            </div>
           </div>
           <label for="text">Here put the content of entry: </label>
           <textarea class="form-control" rows="5"  name='text'></textarea>
 
-          <label for="title">Write here the number of entry after which you want this entry to pop up: </label>
+          <label for="entry_number">Write here the number of entry after which you want this entry to pop up: </label>
           <input type="text" class="form-control" name="entry_number" value='{{problem_set["entries"] | length}}'>
 
           <label for="title">Write here its title (optional and not important): </label>

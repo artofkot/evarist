@@ -25,7 +25,8 @@ def add(title,slug,db,author):
                                 'slug':slug,
                                 'author':author, 
                                 'entries_ids':[],
-                                'entries':[]})
+                                'entries':[],
+                                'status':'dev'})
         return True
 
 def get_all(db):
@@ -43,14 +44,15 @@ def get_by_slug(problem_set_slug, db):
     else:
         return False
 
-def edit(ob_id, title, slug, db):
+def edit(ob_id, title, slug, db, status, old_slug):
     # if db.problem_sets.find_one({"title": title}):
     #     return False
-    if db.problem_sets.find_one({"slug": slug}):
+    if old_slug!=slug and db.problem_sets.find_one({"slug": slug}):
         return False
     problem_set=db.problem_sets.find_one({"_id": ob_id})
     problem_set['slug']=slug
     problem_set['title']=title
+    problem_set['status']=status
     db.problem_sets.update({"_id":ob_id}, {"$set": problem_set}, upsert=False)
     return True
 
@@ -65,12 +67,16 @@ def delete(ob_id, db):
 
 def load_entries(problem_set,db):
     problem_set['entries']=[]
-    n=0
+    problem_counter=0
+    definition_counter=0
     if problem_set.get('entries_ids'):
         for ob_id in problem_set['entries_ids']:
             entry=db.entries.find_one({'_id':ob_id})
             if entry:
                 problem_set['entries'].append(entry)
                 if entry['entry_type']=='problem': #then set the number of this problem
-                    n=n+1
-                    problem_set['entries'][-1]['problem_number']= n
+                    problem_counter=problem_counter+1
+                    problem_set['entries'][-1]['problem_number']= problem_counter
+                if entry['entry_type']=='definition': #then set the number of this definition
+                    definition_counter=definition_counter+1
+                    problem_set['entries'][-1]['definition_number']= definition_counter

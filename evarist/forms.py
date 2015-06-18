@@ -48,6 +48,7 @@ class VoteForm(Form):
     vote = TextField('vote', validators=[Required()])
 
 class ProblemSetForm(Form):
+    status= TextField('status')
     title = TextField('title', validators=[Required()])
     slug = TextField('slug', validators=[Required()]) # validators=[Required()]
 
@@ -57,11 +58,11 @@ class ProblemSetDelete(Form):
 class EntryForm(Form):
     title= TextField('title')
     text= TextField('text', validators=[Required()])
-    general_entry=BooleanField('general_entry')
+    entry_type=TextField('entry_type')
     entry_number=TextField('entry_number')
 
 class EditEntryForm(Form):
-    general_entry=BooleanField('general_entry')
+    entry_type=TextField('entry_type')
     entry_number=TextField('entry_number')
     edit_title= TextField('edit_title')
     edit_text= TextField('edit_text', validators=[Required()])

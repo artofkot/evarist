@@ -8,7 +8,12 @@
     <div class="col-md-6 col-md-offset-2">
       <div>
         <p>
-        {{entry['entry_type']}} <br>
+        {% if entry.get('entry_type')=='problem' %}
+          Задача.
+        {% elif entry.get('entry_type')=='definition' %}
+          ∆ Определение.
+        {%endif%}
+        <br>
         {{entry['text']|safe}}
         </p>
       </div>
