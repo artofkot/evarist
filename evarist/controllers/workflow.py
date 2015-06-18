@@ -15,7 +15,7 @@ workflow = Blueprint('workflow', __name__,
 
 @workflow.route('/', methods=["GET", "POST"])
 def home():
-    # USE THIS CAREFULLY! This is template for updating keys in all documents.
+    # USE THIS CAREFULLY, its DANGEROUS! This is template for updating keys in all documents.
     # mongo.update(collection=g.db.problem_sets,doc_key='all',doc_value='notimportant',
     #             update_key='status',update_value='dev')
 
@@ -36,29 +36,30 @@ def home():
                         problem_id=None,
                         problem_set_id=None)
         flash('Thank you for your feedback!')
-        return redirect(url_for('.home'))
+        return redirect(url_for('workflow.home'))
 
-    psets=model_problem_set.get_all(g.db)
-    problem_sets=[]
-
-    rus_set=['mnozhestva','otobrazhenia','kombinatorika','podstanovki',
+    
+    # this is how we manually choose which problem_sets to display on homepage
+    rus_slugset=['mnozhestva','otobrazhenia','kombinatorika','podstanovki',
             'indukcia', 'binom-newtona','teoriya-graphov-1', 
             'podstanovki-2','delimost', 'algoritm-evklida', 'otnoshenia',
              'sravneniya','integers-praktika', 'teoriya-graphov-2', 'teoriya-grup', 'gomomorphismy']
-    eng_set=['sets','group-theory']
-    if g.locale == 'ru':
-        page_set=rus_set
-    else:
-        page_set=eng_set
+    eng_slugset=['sets','group-theory']
+    if g.locale == 'ru': homepage_slugset=rus_slugset
+    else: homepage_slugset=eng_slugset
     
-    for slug in page_set:
+    # get all problem_sets
+    psets=model_problem_set.get_all(g.db)
+
+    # choose those problem_sets, which slug is in homepage_slugset
+    # check if all chosen slugs matched to some problem_sets, and if not - write which ones are wrong
+    problem_sets=[]
+    for slug in homepage_slugset:
         try:
             pset= next(pset for pset in psets if pset['slug']==slug)
             problem_sets.append(pset)
         except StopIteration:
             flash('slug ' + slug + ' was not found')
-        
-
 
     return render_template('home.html',
                         problem_sets=problem_sets,
