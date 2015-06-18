@@ -23,7 +23,9 @@ def add(text,db,author,problem_id,problem_set_id,authors_email=None):
     problem['solutions_ids'].append(ob_id)
     db.entries.update({"_id":problem_id}, {"$set": problem}, upsert=False)
 
-    user=db.users.find_one({'authors_email':authors_email})
+    print authors_email + '\n'
+    print author + '\n'
+    user=db.users.find_one({'email':authors_email})
     if not user.get('problems_ids'):
         user['problems_ids']={
                             "solution_written":[], #either unchecked ot not correct
