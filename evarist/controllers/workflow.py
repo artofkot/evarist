@@ -95,6 +95,7 @@ def problem_set(problem_set_slug):
 
 @workflow.route('/problem_sets/<problem_set_slug>/<entry_type>/<__id>/', methods=["GET", "POST"])
 def entry(problem_set_slug,entry_type,__id):
+
     problem_set=model_problem_set.get_by_slug(problem_set_slug, g.db)
     if problem_set==False: 
         flash('No such problem set.')

@@ -61,17 +61,25 @@ def load_discussion(db,solution):
 
 def update_status(db,solution):
     if solution['upvotes']>=2:
-        mongo.update(collection=db.solutions,doc_key='_id',doc_value=ObjectId(solution['_id']),
-                update_key='is_right',
-                update_value=True)
-        mongo.update(collection=db.solutions,doc_key='_id',doc_value=ObjectId(solution['_id']),
-                update_key='checked',
-                update_value=True)
+        mongo.update(collection=db.solutions,
+                    doc_key='_id',
+                    doc_value=ObjectId(solution['_id']),
+                    update_key='is_right',
+                    update_value=True)
+        mongo.update(collection=db.solutions,
+                    doc_key='_id',
+                    doc_value=ObjectId(solution['_id']),
+                    update_key='checked',
+                    update_value=True)
         user=db.users.find_one({'username':solution['author']})
-        user['problems_ids']['can_see_other_solutions'].append(solution['problem_id'])
-        user['problems_ids']['solved'].append(solution['problem_id'])
-        mongo.update(collection=db.users,doc_key='username',doc_value=user['username'],
-                update_key='problems_ids',
-                update_value=user['problems_ids'])
+        if solution['problem_id'] not in user['problems_ids']['can_see_other_solutions']:
+            user['problems_ids']['can_see_other_solutions'].append(solution['problem_id'])
+        if solution['problem_id'] not in user['problems_ids']['solved']:
+            user['problems_ids']['solved'].append(solution['problem_id'])
+        mongo.update(collection=db.users,
+                    doc_key='username',
+                    doc_value=user['username'],
+                    update_key='problems_ids',
+                    update_value=user['problems_ids'])
         return 1
     return 0
