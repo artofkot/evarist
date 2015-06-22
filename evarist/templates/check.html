@@ -17,7 +17,10 @@
         <!-- solutions text, and the name of problem set -->
         <div>
           <p>
-            <em>{{solution.get('problem_set')|safe}}</em> <br>
+            <em>
+              {{solution.get('problem_set')|safe}}
+            </em> 
+            <br>
             {{solution.get('problem_text')|safe}}
           </p>
         </div>
