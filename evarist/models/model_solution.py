@@ -23,8 +23,6 @@ def add(text,db,author,problem_id,problem_set_id,authors_email=None):
     problem['solutions_ids'].append(ob_id)
     db.entries.update({"_id":problem_id}, {"$set": problem}, upsert=False)
 
-    print authors_email + '\n'
-    print author + '\n'
     user=db.users.find_one({'email':authors_email})
     if not user.get('problems_ids'):
         user['problems_ids']={
