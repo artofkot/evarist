@@ -41,7 +41,8 @@ mongo = PyMongo(app)
 if not app.debug:
     import logging
     from logging.handlers import SMTPHandler
-    mail_handler = SMTPHandler(mailhost= '127.0.0.1',# 'smtp.mandrillapp.com'
+    mail_handler = SMTPHandler(mailhost=('smtp.mandrillapp.com',587),
+                            # mailhost= 'smtp.mandrillapp.com',
                             fromaddr=app.config['MANDRILL_USERNAME'],
                             toaddrs=app.config['ADMINS'],
                             subject='The log',
