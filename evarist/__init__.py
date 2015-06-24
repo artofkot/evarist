@@ -38,15 +38,19 @@ mongo = PyMongo(app)
 # print app.config['MONGO_DBNAME']
 
 # emailing bugs
-# if not app.debug:
-#     import logging
-#     from logging.handlers import SMTPHandler
-#     mail_handler = SMTPHandler('127.0.0.1',
-#                                'server-error@example.com',
-#                                app.config['ADMINS'], 
-#                                'YourApplication Failed')
-#     mail_handler.setLevel(logging.ERROR)
-#     app.logger.addHandler(mail_handler)
+if not app.debug:
+    import logging
+    from logging.handlers import SMTPHandler
+    mail_handler = SMTPHandler(mailhost= '127.0.0.1',# 'smtp.mandrillapp.com'
+                            fromaddr=app.config['MANDRILL_USERNAME'],
+                            toaddrs=app.config['ADMINS'],
+                            subject='The log',
+                            credentials=(app.config['MANDRILL_USERNAME'],app.config['MANDRILL_APIKEY']),
+                            secure=None)
+
+
+    mail_handler.setLevel(logging.ERROR)
+    app.logger.addHandler(mail_handler)
 
 @app.before_request
 def before_request():
