@@ -66,7 +66,7 @@
           
           <!-- displaying existing comments -->
           {% for post in problem['solution']['discussion'] | reverse %}
-            {% import 'macros/posts.html' as post_macros %}
+            {{ post_macros.post(post) }}
           {% endfor %}
         {%endif%}
         
@@ -113,7 +113,7 @@
               </button>
               <div class="collapse in" aria-expanded="true" id="collapse_Id_{{loop.index}}">
                 {% for post in solution['discussion'] | reverse %}
-                  {% import 'macros/posts.html' as post_macros %}
+                  {{ post_macros.post(post) }}
                 {% endfor %}
               </div>
             {% endif %}
@@ -148,7 +148,7 @@
 
       <!-- displaying old comments if they exist -->
       {% for post in problem.get('general_discussion') | reverse %}
-        {% import 'macros/posts.html' as post_macros %}
+        {{ post_macros.post(post) }}
       {% endfor %}
       
     </div>

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from bson.objectid import ObjectId
-import os, datetime, urllib, urllib2
+import os, time, datetime, urllib, urllib2
 from flask import current_app, Flask, Blueprint, request, session, g, redirect, url_for, \
     abort, render_template, flash
 from contextlib import closing
@@ -16,8 +16,8 @@ workflow = Blueprint('workflow', __name__,
 @workflow.route('/', methods=["GET", "POST"])
 def home():
     # USE THIS CAREFULLY, its DANGEROUS! This is template for updating keys in all documents.
-    # mongo.update(collection=g.db.problem_sets,doc_key='all',doc_value='notimportant',
-    #             update_key='status',update_value='dev')
+    # print mongo.update(collection=g.db.entries,doc_key='all',doc_value='notimportant',
+    #             update_key='parentdsddfs_ids',update_value=[])
 
     website_feedback_form=WebsiteFeedbackForm()
     if website_feedback_form.validate_on_submit():
@@ -81,8 +81,10 @@ def about():
 @workflow.route('/problem_sets/<problem_set_slug>/', methods=["GET", "POST"])
 def problem_set(problem_set_slug):
 
+
+
     # get the problem set
-    problem_set=model_problem_set.get_by_slug(problem_set_slug, g.db)
+    problem_set=g.db.problem_sets.find_one({"slug": problem_set_slug})
     if problem_set==False: 
         flash('No such problem set.')
         return redirect(url_for('.home'))
@@ -100,44 +102,45 @@ def problem_set(problem_set_slug):
 @workflow.route('/problem_sets/<problem_set_slug>/<entry_type>/<__id>/', methods=["GET", "POST"])
 def entry(problem_set_slug,entry_type,__id):
 
-    problem_set=model_problem_set.get_by_slug(problem_set_slug, g.db)
+    # get the problem set of entry
+    problem_set=g.db.problem_sets.find_one({"slug": problem_set_slug})
     if problem_set==False: 
         flash('No such problem set.')
         return redirect(url_for('.home'))   
 
+    # get the entry
     entry=g.db.entries.find_one({"_id":ObjectId(__id)})
 
     return render_template('entry.html', 
                             problem_set=problem_set, 
                             entry=entry)
 
-# @workflow.route('/problem_sets/<problem_set_slug>/problem/<int:problem_number>/', methods=["GET", "POST"])
 @workflow.route('/problem_sets/<problem_set_slug>/problem/<prob_id>/', methods=["GET", "POST"])
 def problem(problem_set_slug,prob_id):
-    # problem_number=int(request.args['problem_number'])
-    problem_set=model_problem_set.get_by_slug(problem_set_slug, g.db)
+
+    # get the problem_set
+    problem_set=g.db.problem_sets.find_one({"slug": problem_set_slug})
     if problem_set==False: 
         flash('No such problem set.')
         return redirect(url_for('.home'))
 
-
-    #get the problem_set
+    
+    #load the entries of problem_set in order to get the number of problem
     model_problem_set.load_entries(problem_set,g.db)
-
-    # get the problem out of problem_set  -  OLD, when we tried to use numbers of problems in url
+    # get the problem and problem's number out of problem_set
     try:
         problem, problem_number=next((entry, entry['problem_number']) for entry in problem_set['entries'] if entry.get('_id')==ObjectId(prob_id))
     except StopIteration:
         flash('No such problem in this problem_set.')
         return redirect(url_for('workflow.problem_set',problem_set_slug=problem_set_slug))
-
     
     
-
     #load general discussion
     model_entry.load_posts(problem,g.db)
-    # load solutions
+    
+    # load solutions !!"!ФЫЩЫЛВАЩВЫАЩЫВА" ЫВАЫВ ИСПРАВЬ!!!!!!!!!
     model_entry.load_solution(problem,g.db,session.get('username'),session.get('email'))
+    
     #TODO load comments to solutions
 
     general_comment_form=CommentForm()
@@ -254,7 +257,6 @@ def problem(problem_set_slug,prob_id):
 
     g.other_solutions=[]
     if 'email' in session:
-        print str(session.get('is_checker')) +'!!!!'
         if problem['_id'] in user['problems_ids']['can_see_other_solutions'] or session.get("is_moderator") or session.get("is_checker"):
             for sol_id in problem['solutions_ids']:
                 if not currentuser_solution_id==sol_id:
