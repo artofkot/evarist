@@ -19,8 +19,6 @@ def home():
     # print mongo.update(collection=g.db.entries,doc_key='all',doc_value='notimportant',
     #             update_key='parentdsddfs_ids',update_value=[])
 
-    print 'hello'
-
     website_feedback_form=WebsiteFeedbackForm()
     if website_feedback_form.validate_on_submit():
         authors_email=session.get('email')
