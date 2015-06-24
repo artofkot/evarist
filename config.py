@@ -1,6 +1,6 @@
 import os, json
 
-
+ADMINS = ['artofkot@gmail.com']
 MONGO_URI=os.environ.get("MONGO_URI")
 SECRET_KEY = os.environ.get("LISTKI_SECRET_KEY")
 DEBUG=False

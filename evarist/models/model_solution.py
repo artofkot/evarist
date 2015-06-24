@@ -24,14 +24,6 @@ def add(text,db,author,problem_id,problem_set_id,authors_email=None):
     db.entries.update({"_id":problem_id}, {"$set": problem}, upsert=False)
 
     user=db.users.find_one({'email':authors_email})
-    if not user.get('problems_ids'):
-        user['problems_ids']={
-                            "solution_written":[], #either unchecked ot not correct
-                            'can_see_other_solutions':[], #all true if checker or moderator
-                            "solved":[],
-                            'can_vote':[] #all true if checker or moderator
-                            } 
-
     user['problems_ids']['solution_written'].append(problem['_id'])
     db.users.update({"_id":user['_id']}, {"$set": user}, upsert=False)
 
@@ -46,8 +38,8 @@ def delete(db,solution):
                 doc_key='_id',doc_value=solution["problem_id"],
                 update_key='solutions_ids',
                 update_value=problem['solutions_ids'])
-
-
+    
+    # UPDATE OTHER DATABASES
 
 
 def load_discussion(db,solution):

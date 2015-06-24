@@ -81,14 +81,18 @@ def about():
 @workflow.route('/problem_sets/<problem_set_slug>/', methods=["GET", "POST"])
 def problem_set(problem_set_slug):
 
-
+    # get the problem set
     problem_set=model_problem_set.get_by_slug(problem_set_slug, g.db)
     if problem_set==False: 
         flash('No such problem set.')
         return redirect(url_for('.home'))
 
-
+    # load problems, definition, etc
     model_problem_set.load_entries(problem_set,g.db)
+
+    # check if all entries loaded correctly
+    if len(problem_set['entries'])!=len(problem_set['entries_ids']): 
+        flash('Some entry was not found!')
 
     return render_template('problem_set.html', 
                             problem_set=problem_set)

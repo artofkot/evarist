@@ -69,14 +69,20 @@ def load_entries(problem_set,db):
     problem_set['entries']=[]
     problem_counter=0
     definition_counter=0
-    if problem_set.get('entries_ids'):
-        for ob_id in problem_set['entries_ids']:
-            entry=db.entries.find_one({'_id':ob_id})
-            if entry:
-                problem_set['entries'].append(entry)
-                if entry['entry_type']=='problem': #then set the number of this problem
-                    problem_counter=problem_counter+1
-                    problem_set['entries'][-1]['problem_number']= problem_counter
-                if entry['entry_type']=='definition': #then set the number of this definition
-                    definition_counter=definition_counter+1
-                    problem_set['entries'][-1]['definition_number']= definition_counter
+    if not problem_set.get('entries_ids'): return False
+
+    # load entries accorfing to entries_ids
+    for ob_id in problem_set['entries_ids']:
+        entry=db.entries.find_one({'_id':ob_id})
+        if not entry: continue
+        
+        # get the number of problem or definition
+        problem_set['entries'].append(entry)
+        if entry['entry_type']=='problem': #then set the number of this problem
+            problem_counter=problem_counter+1
+            problem_set['entries'][-1]['problem_number']= problem_counter
+        if entry['entry_type']=='definition': #then set the number of this definition
+            definition_counter=definition_counter+1
+            problem_set['entries'][-1]['definition_number']= definition_counter
+
+    return True

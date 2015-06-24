@@ -37,6 +37,17 @@ app.register_blueprint(admin)
 mongo = PyMongo(app)
 # print app.config['MONGO_DBNAME']
 
+# emailing bugs
+# if not app.debug:
+#     import logging
+#     from logging.handlers import SMTPHandler
+#     mail_handler = SMTPHandler('127.0.0.1',
+#                                'server-error@example.com',
+#                                app.config['ADMINS'], 
+#                                'YourApplication Failed')
+#     mail_handler.setLevel(logging.ERROR)
+#     app.logger.addHandler(mail_handler)
+
 @app.before_request
 def before_request():
     g.mongo = mongo
