@@ -1,5 +1,6 @@
 {% import 'macros/solutions.html' as solution_macros %}
 {% import 'macros/forms.html' as form_macros %}
+{% import 'macros/posts.html' as post_macros %}
 
 
 {% extends "layout.html" %}
@@ -17,16 +18,14 @@
         <!-- solutions text, and the name of problem set -->
         <div>
           <p>
-            <em>
-              {{solution.get('problem_set')|safe}}
-            </em> 
+            <em>{{solution.get('problem_set')|safe}}</em> 
             <br>
             {{solution.get('problem_text')|safe}}
           </p>
         </div>
 
         <!-- solution -->
-        {{solution_macros.solution(solution=solution)}}
+        {{solution_macros.solution(solution=solution,inscription=gettext('Решение от %(author)s', author = solution['author']))}}
 
         <!-- votes + form for voting-->
         <div class='row'>
@@ -47,30 +46,25 @@
           {%endif%}
           </div>
         </div>
+        
+        <div style='height:14px'></div>
 
         <!-- comment form -->
         <form action=" {{url_for('.check', sol_id=solution['_id'])}}" method="post">
-          <div class="form-group" >
-            {{ solution_comment_form.hidden_tag() }}
-            <label for="feedback_to_solution">  <strong> Комментировать: </strong> </label>
-            <textarea class="form-control" rows="2"  name='feedback_to_solution'></textarea>
-          </div>
-          <button type="submit" class="btn btn-default">Отправить</button>
+          {{ solution_comment_form.hidden_tag() }}
+          {{ form_macros.comment_form(name_of_textarea="feedback_to_solution", name_of_the_button="Оставить комментарий") }}
         </form>
 
         <div style='height:5px'></div>
 
-        <!-- displaying existing comments -->
+        <!-- displaying comments if they exist -->
         {% if solution.get('discussion')%}
           <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#collapse_Id_{{loop.index}}" aria-expanded="true" aria-controls="collapse_Id_{{loop.index}}">
             спрятать комментарии
           </button>
           <div class="collapse in" aria-expanded="true" id="collapse_Id_{{loop.index}}">
             {% for post in solution['discussion'] | reverse %}
-              <div class="blog-post">
-                  <p class="blog-post-meta">{{post['date'].day}}/{{post['date'].month}}/{{post['date'].year}} by {{post['author']}}</p>
-                  <pre>{{ post['text'] }}</pre>
-              </div>
+              {{ post_macros.post(post) }}
             {% endfor %}
           </div>
         {% endif %}

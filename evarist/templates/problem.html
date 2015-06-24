@@ -1,5 +1,7 @@
 {% import 'macros/solutions.html' as solution_macros %}
 {% import 'macros/forms.html' as form_macros %}
+{% import 'macros/posts.html' as post_macros %}
+{% import 'macros/entries.html' as entry_macros %}
 
 {% extends "layout.html" %}
 {% block head %}
@@ -19,13 +21,7 @@
 
   <div class="row">
     <div class="col-md-6 col-md-offset-2">
-      <div>
-        <p>
-        Задача {{problem.get('problem_number')}}.
-        
-        {{problem['text']|safe}}
-        </p>
-      </div>
+        {{entry_macros.entry(problem, number=problem.get('problem_number'), entry_type="problem")}}
     </div>
   </div>  
 
@@ -35,71 +31,50 @@
     <div class="col-md-5 col-md-offset-2">
       {% if "username" in session %}  
         
-
-        <strong class="text-center"> Ваше решение </strong>
+        <!-- this part is related to solution of logged in user -->
         {% if not g.solution_written %}
+          <strong class="text-center"> Ваше решение </strong>
+          <!-- this is form for writing solution -->
           <form action=" {{url_for('workflow.problem', problem_set_slug=problem_set_slug, prob_id=problem['_id'])}}" method="post">
-            
             {{ solution_form.hidden_tag() }}
-            <div class="form-group" >
-
-              <label for="solution"> </label>
-              <textarea class="form-control" rows="5"  name='solution'></textarea>
-
-            </div>
-            <button type="submit" class="btn btn-default">Отправить</button>
+            {{ form_macros.comment_form(name_of_textarea="solution",name_of_the_button="Отправить") }}
           </form>
-        {% elif g.solution_written%}
-          
 
-          {{solution_macros.solution(solution=solution)}}     
-          {{solution_macros.display_votes(solution)}}
+        {% elif g.solution_written%}
+          <!-- if solution is already written, it is displayed -->
+          {{solution_macros.solution(solution=problem['solution'], inscription="Ваше решение.")}}     
+          {{solution_macros.display_votes(problem['solution'])}}
           
+          <!-- edit solution form -->
           <button class="btn btn-default" type="button" data-toggle="collapse" data-target="#collapsId" aria-expanded="false" aria-controls="collapsId">
             Исправить решение
           </button>
           <div class="collapse" id="collapsId">
             <form action=" {{url_for('workflow.problem', problem_set_slug=problem_set_slug, prob_id=problem['_id'])}}" method="post">
-              <div class="form-group" style='width: 370px'>
-                {{ edit_solution_form.hidden_tag() }}
-                <label for="edit_text">Исправьте решение здесь: </label>
-                <textarea class="form-control" rows="2"  name='edited_solution'>{{problem['solution']['text']}}  
-                </textarea>
-                
-                <div class="checkbox" style='background-color:red'>
-                  <label >
-                    <input type="checkbox" name='delete_solution'>удалить это решение, навсегда
-                  </label>
-                </div>
-              </div>
-              <button type="submit" class="btn btn-default">Отправить</button>
+              {{ edit_solution_form.hidden_tag() }}
+              {{form_macros.edit_solution_form(problem['solution'])}}
             </form>
           </div>
 
+          <div style="height:15px"></div>
+
+          <!-- comment form -->
           <form action=" {{url_for('workflow.problem', problem_set_slug=problem_set_slug, prob_id=problem['_id'], sol_id=problem['solution']['_id'])}}" method="post">
-            <div class="form-group" >
-
-              {{ solution_comment_form.hidden_tag() }}
-              <label for="feedback_to_solution">  <strong> Комментировать: </strong> </label>
-              <textarea class="form-control" rows="2"  name='feedback_to_solution'></textarea>
-              
-
-            </div>
-            <button type="submit" class="btn btn-default">Отправить</button>
+            {{ solution_comment_form.hidden_tag() }}
+            {{ form_macros.comment_form(name_of_textarea="feedback_to_solution",name_of_the_button="Оставить комментарий") }}
           </form>
-
+          
+          <!-- displaying existing comments -->
           {% for post in problem['solution']['discussion'] | reverse %}
-            <div class="blog-post">
-              <p class="blog-post-meta">{{post['date'].day}}/{{post['date'].month}}/{{post['date'].year}} by {{post['author']}}</p>
-              <pre>{{ post['text'] }}</pre>
-            </div>
+            {% import 'macros/posts.html' as post_macros %}
           {% endfor %}
         {%endif%}
         
+        <!-- this part is related to other solutions, that logged in user can see/vote/comment on -->
         {%if g.other_solutions%}
           {%for solution in g.other_solutions%}
             
-            {{solution_macros.solution(solution=solution)}}       
+            {{solution_macros.solution(solution=solution,inscription=gettext('Решение от %(author)s', author = solution['author']))}}       
             
             <!-- votes + form for voting-->
             <div class='row'>
@@ -121,27 +96,24 @@
               </div>
             </div>
 
+            <div style='height:14px'></div>
+
+            <!-- comment form -->
             <form action="{{url_for('workflow.problem', problem_set_slug=problem_set_slug, prob_id=problem['_id'], sol_id=solution['_id'])}}" method="post">
               {{ solution_comment_form.hidden_tag() }}
-              <div class="form-group" >
-                <label for="feedback_to_solution">  <strong> Комментировать: </strong> </label>
-                <textarea class="form-control" rows="2"  name='feedback_to_solution'></textarea>
-              </div>
-              <button type="submit" class="btn btn-default">Отправить</button>
+              {{ form_macros.comment_form(name_of_textarea="feedback_to_solution",name_of_the_button="Оставить комментарий") }}
             </form>
 
             <div style='height:5px'></div>
 
+            <!-- displaying comments if they exist -->
             {% if solution.get('discussion')%}
               <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#collapse_Id_{{loop.index}}" aria-expanded="true" aria-controls="collapse_Id_{{loop.index}}">
                 спрятать комментарии
               </button>
               <div class="collapse in" aria-expanded="true" id="collapse_Id_{{loop.index}}">
                 {% for post in solution['discussion'] | reverse %}
-                  <div class="blog-post">
-                      <p class="blog-post-meta">{{post['date'].day}}/{{post['date'].month}}/{{post['date'].year}} by {{post['author']}}</p>
-                      <pre>{{ post['text'] }}</pre>
-                  </div>
+                  {% import 'macros/posts.html' as post_macros %}
                 {% endfor %}
               </div>
             {% endif %}
@@ -164,27 +136,19 @@
     <div class="col-md-3 col-md-offset-2">
       <strong> Вопросы по условию </strong>
       
+      <!-- comment form -->
       {% if "username" in session %}
       <p>
         <form action=" {{url_for('workflow.problem', problem_set_slug=problem_set_slug, prob_id=problem['_id'])}}" method="post">
-          <div class="form-group" >
-
-            {{ general_comment_form.hidden_tag() }}
-            <!-- <label for="text"> </label> -->
-            <textarea class="form-control" rows="2"  name='text'></textarea>
-
-          </div>
-          <button type="submit" class="btn btn-default">Отправить</button>
+          {{ general_comment_form.hidden_tag() }}
+          {{ form_macros.comment_form(name_of_textarea="text",name_of_the_button="Отправить") }}
         </form>
       </p>
       {% endif %}
 
-
+      <!-- displaying old comments if they exist -->
       {% for post in problem.get('general_discussion') | reverse %}
-        <div class="blog-post">
-          <p class="blog-post-meta">{{post['date'].day}}/{{post['date'].month}}/{{post['date'].year}} by {{post['author']}}</p>
-          <pre>{{ post['text'] }}</pre>
-        </div>
+        {% import 'macros/posts.html' as post_macros %}
       {% endfor %}
       
     </div>

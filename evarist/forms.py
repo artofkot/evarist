@@ -43,7 +43,6 @@ class WebsiteFeedbackForm(Form):
     feedback = TextField('feedback', validators=[Required()])
     email = TextField('email',)
 
-
 class VoteForm(Form):
     vote = TextField('vote', validators=[Required()])
 

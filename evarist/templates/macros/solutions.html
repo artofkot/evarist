@@ -2,10 +2,10 @@
 
 
 
-{% macro solution(solution) -%}
+{% macro solution(solution, inscription) -%}
 
 <div class="blog-post">
-  <p class="blog-post-meta"><strong>{{gettext('Решение от %(author)s', author = solution['author'])}}.</strong> 
+  <p class="blog-post-meta"><strong>{{inscription}}</strong> 
   {% if solution['is_right'] %}
     <strong style='color:green'> Проверено, правильное.</strong>
   {% endif %}
