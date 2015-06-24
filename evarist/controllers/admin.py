@@ -238,7 +238,7 @@ def not_checked_solutions():
 def problem_set_edit(problem_set_slug):
 
 
-    problem_set=model_problem_set.get_by_slug(problem_set_slug, g.db)
+    problem_set=g.db.problem_sets.find_one({"slug": problem_set_slug})
     if problem_set==False: 
         flash('No such slug.')
         return redirect(url_for('admin.home'))

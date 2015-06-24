@@ -50,6 +50,7 @@ if not app.debug:
     mail_handler.setLevel(logging.ERROR)
     app.logger.addHandler(mail_handler)
 
+# connecting to database before every request comes
 @app.before_request
 def before_request():
     g.mongo = mongo
@@ -57,8 +58,9 @@ def before_request():
     g.signin_form=SignInForm()
     
     g.locale = get_locale()
-# g.mongo.cx  is connection object
+    # g.mongo.cx  is connection object
 
+# this function return language for babel
 @babel.localeselector
 def get_locale():
     if session.get('lang')=='en':

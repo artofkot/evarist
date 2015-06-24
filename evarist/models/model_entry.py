@@ -68,11 +68,10 @@ def delete_forever(entry_id,problem_set_id,db):
 
 def load_posts(problem,db):
     problem['general_discussion']=[]
-    if problem.get('general_discussion_ids'):
-        for ob_id in problem['general_discussion_ids']:
-            post=db.posts.find_one({'_id':ob_id})
-            if post:
-                problem['general_discussion'].append(post)
+    if not problem.get('general_discussion_ids'): return False
+    for ob_id in problem['general_discussion_ids']:
+        post=db.posts.find_one({'_id':ob_id})
+        if post: problem['general_discussion'].append(post)
 
 
 def load_solution(problem,db,username,email):

@@ -37,13 +37,6 @@ def get_all(db):
     prlist.reverse()
     return prlist
 
-def get_by_slug(problem_set_slug, db):
-    a=db.problem_sets.find_one({"slug": problem_set_slug})
-    if a:
-        return a
-    else:
-        return False
-
 def edit(ob_id, title, slug, db, status, old_slug):
     # if db.problem_sets.find_one({"title": title}):
     #     return False
