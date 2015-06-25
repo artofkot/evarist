@@ -13,6 +13,7 @@ div.transbox {
 }
 
 body {
+  /*background-image: url(https://download.unsplash.com/photo-1434235017538-99f45ef0b451);*/
   padding-top: 70px; /* for the navbar and a lil more */
   font-family: 'Computer Modern Bright';
   font-size: 18px;
@@ -46,7 +47,7 @@ footer {
 background_pic {
   /*background-image: url(https://download.unsplash.com/photo-1428342109953-409d2876cdab); /*eagle*/
   /*background-image: url(https://download.unsplash.com/photo-1434323197752-16d745928e51); /*boy*/
-  background-image: url(https://download.unsplash.com/photo-1434235017538-99f45ef0b451); /*stars*/
+  /*background-image: url(https://download.unsplash.com/photo-1434235017538-99f45ef0b451); /*stars*/
   background-repeat: no-repeat;
   /*background-attachment: fixed;*/
   background-position: center top; 
