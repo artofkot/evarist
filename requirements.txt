@@ -24,5 +24,6 @@ Flask-WTF==0.10.2
 oauth2client==1.4.11
 requests==2.7.0
 Babel==1.3
-Flask-Babel==0.9 
+Flask-Babel==0.9
+Flask-Mail==0.9.1 
 speaklater==1.3

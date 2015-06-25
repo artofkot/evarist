@@ -6,7 +6,8 @@ import os, time, datetime, urllib, urllib2
 from flask import current_app, Flask, Blueprint, request, session, g, redirect, url_for, \
     abort, render_template, flash
 from contextlib import closing
-from flask.ext.pymongo import PyMongo
+# from flask.ext.pymongo import PyMongo
+from flask.ext.mail import Message
 from evarist.models import model_problem_set, model_entry, model_post, model_solution, mongo
 from evarist.forms import WebsiteFeedbackForm, CommentForm, SolutionForm, FeedbackToSolutionForm, EditSolutionForm, VoteForm
 
@@ -16,8 +17,16 @@ workflow = Blueprint('workflow', __name__,
 @workflow.route('/', methods=["GET", "POST"])
 def home():
     # USE THIS CAREFULLY, its DANGEROUS! This is template for updating keys in all documents.
+    #
     # print mongo.update(collection=g.db.entries,doc_key='all',doc_value='notimportant',
     #             update_key='parentdsddfs_ids',update_value=[])
+
+    
+    # this is example code for sending emails
+    #
+    # msg = Message("Hello",
+    #               recipients=["artofkot@gmail.com"])
+    # g.mail.send(msg)
 
     website_feedback_form=WebsiteFeedbackForm()
     if website_feedback_form.validate_on_submit():
