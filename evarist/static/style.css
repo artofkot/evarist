@@ -53,11 +53,11 @@ background_pic{
   background-size: 1920px 1080px;
 }
 
-jumbotron {
+.jumbotron {
   padding: 30px 15px;
   margin-bottom: 30px;
   color: inherit;
-  background-color: #eee;
+  background-color: white;
 }
 
 /* unvisited link */
