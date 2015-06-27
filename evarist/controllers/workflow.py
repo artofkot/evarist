@@ -149,7 +149,8 @@ def problem(problem_set_slug,prob_id):
     
     # load solutions !!"!ФЫЩЫЛВАЩВЫАЩЫВА" ЫВАЫВ ИСПРАВЬ!!!!!!!!!
     model_entry.load_solution(problem,g.db,session.get('username'),session.get('email'))
-    
+    current_user_solution=problem.get('solution')
+
     #TODO load comments to solutions
 
     general_comment_form=CommentForm()
@@ -273,7 +274,7 @@ def problem(problem_set_slug,prob_id):
                     if solut:
                         model_solution.load_discussion(g.db,solut)
                         g.other_solutions.append(solut)
-
+    other_solutions=g.other_solutions
 
 
 
@@ -286,7 +287,9 @@ def problem(problem_set_slug,prob_id):
                             solution_comment_form=solution_comment_form,
                             solution_form=solution_form,
                             edit_solution_form=edit_solution_form,
-                            vote_form=vote_form)
+                            vote_form=vote_form,
+                            other_solutions=other_solutions,
+                            current_user_solution=current_user_solution)
 
 
 @workflow.route('/check', methods=["GET", "POST"])
