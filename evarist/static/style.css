@@ -12,6 +12,14 @@ div.transbox {
   /*color:white;*/
 }
 
+.box-sh {
+    -moz-box-shadow:     0 0 50px rgba(255,255,255,1);
+    -webkit-box-shadow:  0 0 50px rgba(255,255,255,1);
+    box-shadow:          0 0 50px rgba(255,255,255,1);
+    background-color: white;
+    /*position:relative;*/
+}
+
 body {
   padding-top: 70px; /* for the navbar and a lil more */
   font-family: 'Computer Modern Bright';
@@ -20,6 +28,8 @@ body {
   /*margin-bottom: 60px; */
   /*text-align: justify;*/
 }
+
+
 
 pre {
   background-color: white;
@@ -57,7 +67,8 @@ background_pic{
   padding: 30px 15px;
   margin-bottom: 30px;
   color: inherit;
-  background-color: white;
+  /*background-color: white;*/
+  /*background: url(transparent-edges-box.svg);*/
 }
 
 /* unvisited link */

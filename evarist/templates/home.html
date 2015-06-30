@@ -1,11 +1,5 @@
 {% extends "layout.html" %}
 {% block head %}
-
-
-
-
-    
-
     
     <link rel="stylesheet"        href="static/vendor/jQuery-Plugin-For-Particle-System-Background-with-Parallax-Effect-Particleground/demo/css/style.css" />
     <script type='text/javascript' src='static/vendor/jQuery-Plugin-For-Particle-System-Background-with-Parallax-Effect-Particleground/demo/js/jquery-1.11.1.min.js'></script>
@@ -27,25 +21,33 @@
 {% block body %}
 
 
-  <div class="jumbotron on_particles" >
-    <div class="row" class="one-liner">
+  <div class="jumbotron on_particles">
+    <div class="row" >
       <div col-md-12>
-        <h1 class="text-center">{{gettext("Evarist")}}</h1>
+        <h1 >{{gettext("Evarist")}}</h1>
+        <!-- <h1 class="text-center">{{gettext("Evarist")}}</h1> -->
+      </div>
+    </div>
+    <div class="row">
+      <div col-md-12>
+        <h3>{{gettext("Платформа для решения и обсуждения математических задач для старшеклассников и студентов.")}}</h3>
+        <!-- <h3 class="text-center">{{gettext("Платформа для решения и обсуждения математических задач для старшеклассников и студентов.")}}</h3> -->
       </div>
     </div>
   </div>
 
-
-
-  <div id="particles" >
+  <div class="jumbotron on_particles">
+    <h1>Jumbotron</h1>
+    <p>This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+    <p><a class="btn btn-primary btn-lg">Learn more</a></p>
   </div>
-<!-- 
-    <div class="row one-liner">
-      <div col-md-12>
-        <h3 class="text-center">{{gettext("Математика онлайн.")}}</h3>
-      </div>
-    </div> -->
-  <!-- </div> -->
+
+
+  <div id="particles" class="row">
+    <div class="col-md-12">
+    </div>
+  </div>
+
   
   <hr>
 
