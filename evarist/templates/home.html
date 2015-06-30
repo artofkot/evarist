@@ -68,12 +68,16 @@
         <form action=" {{url_for('workflow.home')}}" method="post">
           <div class="form-group" >
             {{ website_feedback_form.hidden_tag() }}
+
             <label for="feedback">  <strong> Что скажете? </strong> </label>
             <textarea class="form-control" rows="5"  name='feedback'></textarea>
             
             {% if not 'username' in session%}
-              <label for="email"> Ваш email (необязательно) </label>
-              <input type="text" class="form-control" name="email">
+              {{website_feedback_form.email.label('Ваш email (необязательно)')}}
+              <!-- oh my fucking god, u can do this -->
+              {{website_feedback_form.email(class='form-control')}}
+              <!-- instead of this -->
+              <!-- <input type="text" class="form-control" name="email"> -->
             {%endif%}
           
           </div>
