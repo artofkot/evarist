@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import uuid
 import hashlib
 import os, datetime
@@ -18,7 +19,7 @@ def check_pwd(user_password, hashed_password, secret_key):
 # def check_pwd(password,hashed):
 #     return bcrypt.hashpw(current_app.config["SECRET_KEY"]+password,hashed) == hashed
 
-def add(username, password, email,db, secret_key, picture):
+def add(username, password, email,db, secret_key):
     if db.users.find_one({"email": email}):
         return False
     else:
@@ -26,18 +27,47 @@ def add(username, password, email,db, secret_key, picture):
         db.users.insert({"username":username, 
                         "pw_hash":pw_hash, 
                         "email":email,
-                        'picture':picture,
+                        "confirmed":False,
+                        'provider':'email',
                         "date":datetime.datetime.utcnow(),
+                        'rights':{'is_checker':False, #checkers can see and vote any solutions
+                                  'is_moderator':False #moderators are checkers who also 
+                                                        #can create content
+                                 },
+                        "problems_ids": { #множества идут в порядке убывания тут
+                                   "solution_written": [],
+                                   "solved": [],
+                                   "can_see_other_solutions":[], 
+                                   "can_vote": [],
+                                   "upvoted":[],
+                                   "downvoted":[]
+                               }
+                        })
+        return True
+
+def add_gplus(gplus_id, gplus_picture,db, gplus_name, gplus_email):
+    if db.users.find_one({"gplus_email": gplus_email,
+                            "provider":'gplus'}):
+        return False
+    else:
+        u=db.users.insert_one({"provider":'gplus',
+                        "date":datetime.datetime.utcnow(),
+                        "gplus_id":gplus_id,
+                        "gplus_picture":gplus_picture,
+                        "gplus_email":gplus_email,
+                        "gplus_name":gplus_name,
                         'rights':{'is_checker':False, #checkers can see and vote any solutions
                                   'is_moderator':False #moderators are checkers who also 
                                                 #can create content
                                  },
 
-                        'problems_ids':{
-                            "solution_written":[], #either unchecked ot not correct
-                            "solved":[], #
-                            'can_see_other_solutions':[], # all true if checker or moderator
-                            'can_vote':[] # we are not using it yet , we use previous one instead
-                            } 
+                        "problems_ids": {
+                                   "solution_written": [],
+                                   "solved": [],
+                                   "can_see_other_solutions":[], 
+                                   "can_vote": [],
+                                   "upvoted":[],
+                                   "downvoted":[]
+                               }
                         })
-        return True
+        return u.inserted_id

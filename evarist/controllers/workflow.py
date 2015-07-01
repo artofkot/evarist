@@ -27,6 +27,8 @@ def home():
     #               recipients=["artofkot@gmail.com"])
     # g.mail.send(msg)
 
+    print g.user
+
     website_feedback_form=WebsiteFeedbackForm()
     if website_feedback_form.validate_on_submit():
         authors_email=session.get('email')

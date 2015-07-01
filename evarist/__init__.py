@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from bson.objectid import ObjectId
 import os, sys, pymongo, re
 from flask import Flask, request, session, g, redirect, url_for
 from flask.ext.babel import Babel
@@ -48,10 +49,15 @@ if not app.debug:
 # connecting to database before every request comes
 @app.before_request
 def before_request():
-    # g.user=session.get('email')
+    
 
     # passing database in each request
     g.db=db
+
+    if session.get('_id'):
+        g.user=g.db.users.find_one({'_id':ObjectId(session['_id'])})
+        if g.user==None: g.user={}
+    else: g.user={}
 
     #connection in order to send emails
     g.mail=mail

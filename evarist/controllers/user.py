@@ -18,17 +18,6 @@ import httplib2, json, uuid, hashlib, string, random
 from flask import make_response
 import requests
 
-# def json_to_obj(s):
-#     def h2o(x):
-#         if isinstance(x, dict):
-#             return type('jo', (), {k: h2o(v) for k, v in x.iteritems()})
-#         else:
-#             return x
-#     return h2o(json.loads(s))
-
-
-
-
 
 user = Blueprint('user', __name__,
                         template_folder='templates')
@@ -36,8 +25,6 @@ user = Blueprint('user', __name__,
 
 @user.route('/user/signup', methods=['GET', 'POST'])
 def signup():
-    # for i in g.db.users.find():
-    #     print i
 
     if "username" in session:
         flash('please log out first')
@@ -48,7 +35,6 @@ def signup():
     if request.method == 'POST' and signup_form.validate_on_submit():
         if signup_form.password.data == signup_form.confirm_password.data:
             model_user.add(email=signup_form.email.data,
-                            picture='https://cdn.rawgit.com/artofkot/evarist_static/master/no_pic.jpg',
                             password=signup_form.password.data,
                             username=signup_form.username.data,
                             db=g.db,
@@ -89,8 +75,8 @@ def login():
         if user:
             print user
             if model_user.check_pwd(password,user["pw_hash"],secret_key=current_app.config["SECRET_KEY"]):
+                session['_id']=user['_id']
                 session['username'] = user['username']
-                session['picture'] = user['picture']
                 session['email']=user['email']
                 session['is_moderator']=user['rights']['is_moderator']
                 session['is_checker']=user['rights']['is_checker']
@@ -192,18 +178,22 @@ def gconnect():
     session['picture'] = data['picture']
     session['email'] = data['email']
 
-    # add user if such email does not exist in database
-    user_wasnt_in_db = model_user.add(email=session['email'],
-                                    picture=session['picture'],
-                                    password=current_app.config["SECRET_KEY"], #чтобы пользователи не могли зайти по паролю, только через гугл
-                                    username=session['username'],
-                                    db=g.db,
-                                    secret_key=current_app.config["SECRET_KEY"])
-    if user_wasnt_in_db:
+    # add user if such email does not exist in database of gplus users
+    added_user_id = model_user.add_gplus(gplus_id=gplus_id , 
+                                gplus_picture=data['picture'],
+                                db=g.db, 
+                                gplus_name=data['name'], 
+                                gplus_email=data['email'])
+
+    if added_user_id:
+        print 'gplus user added'
+        session['_id']=str(added_user_id)
         session['is_moderator']=False
         session['is_checker']=False
     else:
-        user=g.db.users.find_one({"email": session['email']})
+        print 'gplus user already was there'
+        user=g.db.users.find_one({"gplus_id": gplus_id})
+        session['_id']=str(user['_id'])
         session['is_moderator']=user['rights']['is_moderator']
         session['is_checker']=user['rights']['is_checker']
     
@@ -245,6 +235,7 @@ def gdisconnect():
         del session['username']
         del session['email']
         del session['picture']
+        session.pop('_id', None)
         session.pop('is_moderator', None)
         session.pop('is_checker', None)
 
@@ -260,6 +251,7 @@ def gdisconnect():
         del session['username']
         del session['email']
         del session['picture']
+        session.pop('_id', None)
         session.pop('is_moderator', None)
         session.pop('is_checker', None)
         
@@ -280,6 +272,7 @@ def logout():
         session.pop('email', None)
         session.pop('picture', None)
         session.pop('is_checker', None)
+        session.pop('_id', None)
         # We use a neat trick here:
         # if you use the pop() method of the dict and pass a second parameter to it (the default),
         # the method will delete the key from the dictionary if present or
