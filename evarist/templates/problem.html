@@ -32,7 +32,7 @@
       {% if "username" in session %}  
         
         <!-- this part is related to solution of logged in user -->
-        {% if not g.solution_written %}
+        {% if not current_user_solution %}
           <strong class="text-center"> Ваше решение </strong>
           <!-- this is form for writing solution -->
           <form action=" {{url_for('workflow.problem', problem_set_slug=problem_set_slug, prob_id=problem['_id'])}}" method="post">
@@ -40,7 +40,7 @@
             {{ form_macros.comment_form(name_of_textarea="solution",name_of_the_button="Отправить") }}
           </form>
 
-        {% elif g.solution_written%}
+        {% elif current_user_solution%}
           <!-- if solution is already written, it is displayed -->
           {{solution_macros.solution(solution=problem['solution'], inscription="Ваше решение.")}}     
           {{solution_macros.display_votes(problem['solution'])}}
@@ -71,8 +71,8 @@
         {%endif%}
         
         <!-- this part is related to other solutions, that logged in user can see/vote/comment on -->
-        {%if g.other_solutions%}
-          {%for solution in g.other_solutions%}
+        {%if other_solutions%}
+          {%for solution in other_solutions%}
             
             {{solution_macros.solution(solution=solution,inscription=gettext('Решение от %(author)s', author = solution['author']))}}       
             

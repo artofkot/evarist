@@ -6,7 +6,6 @@ import os, datetime, urllib, urllib2
 from flask import current_app, Flask, Blueprint, request, session, g, redirect, url_for, \
     abort, render_template, flash
 from contextlib import closing
-from flask.ext.pymongo import PyMongo
 from functools import wraps
 from evarist.forms import ProblemSetForm, EntryForm, EditEntryForm, ProblemSetDelete, VoteForm, FeedbackToSolutionForm
 from evarist.models import model_problem_set, model_entry, mongo, model_post, model_solution

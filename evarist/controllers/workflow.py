@@ -6,7 +6,8 @@ import os, time, datetime, urllib, urllib2
 from flask import current_app, Flask, Blueprint, request, session, g, redirect, url_for, \
     abort, render_template, flash
 from contextlib import closing
-from flask.ext.pymongo import PyMongo
+from flask.ext.mail import Message
+from evarist import models
 from evarist.models import model_problem_set, model_entry, model_post, model_solution, mongo
 from evarist.forms import WebsiteFeedbackForm, CommentForm, SolutionForm, FeedbackToSolutionForm, EditSolutionForm, VoteForm
 
@@ -16,8 +17,16 @@ workflow = Blueprint('workflow', __name__,
 @workflow.route('/', methods=["GET", "POST"])
 def home():
     # USE THIS CAREFULLY, its DANGEROUS! This is template for updating keys in all documents.
+    #
     # print mongo.update(collection=g.db.entries,doc_key='all',doc_value='notimportant',
     #             update_key='parentdsddfs_ids',update_value=[])
+
+    
+    # this is example code for sending emails
+    #
+    # msg = Message("Hello",
+    #               recipients=["artofkot@gmail.com"])
+    # g.mail.send(msg)
 
     website_feedback_form=WebsiteFeedbackForm()
     if website_feedback_form.validate_on_submit():
@@ -140,7 +149,8 @@ def problem(problem_set_slug,prob_id):
     
     # load solutions !!"!ФЫЩЫЛВАЩВЫАЩЫВА" ЫВАЫВ ИСПРАВЬ!!!!!!!!!
     model_entry.load_solution(problem,g.db,session.get('username'),session.get('email'))
-    
+    current_user_solution=problem.get('solution')
+
     #TODO load comments to solutions
 
     general_comment_form=CommentForm()
@@ -264,7 +274,7 @@ def problem(problem_set_slug,prob_id):
                     if solut:
                         model_solution.load_discussion(g.db,solut)
                         g.other_solutions.append(solut)
-
+    other_solutions=g.other_solutions
 
 
 
@@ -277,7 +287,9 @@ def problem(problem_set_slug,prob_id):
                             solution_comment_form=solution_comment_form,
                             solution_form=solution_form,
                             edit_solution_form=edit_solution_form,
-                            vote_form=vote_form)
+                            vote_form=vote_form,
+                            other_solutions=other_solutions,
+                            current_user_solution=current_user_solution)
 
 
 @workflow.route('/check', methods=["GET", "POST"])
