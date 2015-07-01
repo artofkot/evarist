@@ -18,7 +18,7 @@ def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         
-        if not session.get('is_moderator'):
+        if g.user and (not g.user['rights']['is_moderator']):
             flash('You are not allowed to do that.')
             return redirect(url_for('workflow.home'))
 
@@ -101,7 +101,7 @@ def checked_solutions():
     vote_form=VoteForm()
     if vote_form.validate_on_submit():
         voted_solution=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
-        if not session['email'] in voted_solution['emails_voted']:
+        if not g.user.get['email'] in voted_solution['emails_voted']:
             if vote_form.vote.data == 'upvote': 
                 voted_solution['upvotes']=voted_solution['upvotes']+1
                 mongo.update(collection=g.db.solutions,
@@ -109,7 +109,7 @@ def checked_solutions():
                             doc_value=ObjectId(request.args['sol_id']),
                             update_key='upvotes',
                             update_value=voted_solution['upvotes'])
-                voted_solution['emails_voted'].append(session['email'])
+                voted_solution['emails_voted'].append(g.user.get['email'])
                 mongo.update(collection=g.db.solutions,
                             doc_key='_id',
                             doc_value=ObjectId(request.args['sol_id']),
@@ -123,7 +123,7 @@ def checked_solutions():
                             doc_value=ObjectId(request.args['sol_id']),
                             update_key='downvotes',
                             update_value=voted_solution['downvotes'])
-                voted_solution['emails_voted'].append(session['email'])
+                voted_solution['emails_voted'].append(g.user.get['email'])
                 mongo.update(collection=g.db.solutions,
                             doc_key='_id',
                             doc_value=ObjectId(request.args['sol_id']),
@@ -141,8 +141,8 @@ def checked_solutions():
             solut=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
             model_post.add(text=solution_comment_form.feedback_to_solution.data,
                            db=g.db,
-                           author=session['username'],
-                           authors_email=session['email'],
+                           author=g.user.get('username'),
+                           authors_email=g.user.get['email'],
                            post_type='comment',
                            parent_type='solution',
                            parent_id=ObjectId(request.args['sol_id']),
@@ -175,7 +175,7 @@ def not_checked_solutions():
     vote_form=VoteForm()
     if vote_form.validate_on_submit():
         voted_solution=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
-        if not session['email'] in voted_solution['emails_voted']:
+        if not g.user.get['email'] in voted_solution['emails_voted']:
             if vote_form.vote.data == 'upvote': 
                 voted_solution['upvotes']=voted_solution['upvotes']+1
                 mongo.update(collection=g.db.solutions,
@@ -183,7 +183,7 @@ def not_checked_solutions():
                             doc_value=ObjectId(request.args['sol_id']),
                             update_key='upvotes',
                             update_value=voted_solution['upvotes'])
-                voted_solution['emails_voted'].append(session['email'])
+                voted_solution['emails_voted'].append(g.user.get['email'])
                 mongo.update(collection=g.db.solutions,
                             doc_key='_id',
                             doc_value=ObjectId(request.args['sol_id']),
@@ -197,7 +197,7 @@ def not_checked_solutions():
                             doc_value=ObjectId(request.args['sol_id']),
                             update_key='downvotes',
                             update_value=voted_solution['downvotes'])
-                voted_solution['emails_voted'].append(session['email'])
+                voted_solution['emails_voted'].append(g.user.get['email'])
                 mongo.update(collection=g.db.solutions,
                             doc_key='_id',
                             doc_value=ObjectId(request.args['sol_id']),
@@ -215,8 +215,8 @@ def not_checked_solutions():
             solut=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
             model_post.add(text=solution_comment_form.feedback_to_solution.data,
                            db=g.db,
-                           author=session['username'],
-                           authors_email=session['email'],
+                           author=g.user.get('username'),
+                           authors_email=g.user.get['email'],
                            post_type='comment',
                            parent_type='solution',
                            parent_id=ObjectId(request.args['sol_id']),
@@ -300,8 +300,8 @@ def problem_set_edit(problem_set_slug):
     if entryform.validate_on_submit():
         entry_type=entryform.entry_type.data
         if model_entry.add(entry_type=entry_type, 
-                            author=session['username'],
-                            authors_email=session['email'], 
+                            author=g.user.get('username'),
+                            authors_email=g.user.get['email'], 
                             title=entryform.title.data, 
                             db=g.db, 
                             text=entryform.text.data, 

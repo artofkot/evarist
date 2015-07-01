@@ -20,7 +20,8 @@ def check_pwd(user_password, hashed_password, secret_key):
 #     return bcrypt.hashpw(current_app.config["SECRET_KEY"]+password,hashed) == hashed
 
 def add(username, password, email,db, secret_key):
-    if db.users.find_one({"email": email}):
+    if db.users.find_one({"email": email,
+                        "provider":'email'}):
         return False
     else:
         pw_hash = hash_str(password,secret_key)

@@ -31,8 +31,8 @@ def home():
 
     website_feedback_form=WebsiteFeedbackForm()
     if website_feedback_form.validate_on_submit():
-        authors_email=session.get('email')
-        author=session.get('username')
+        authors_email=g.user.get('email')
+        author=g.user.get('username')
         if not authors_email:
             authors_email=website_feedback_form.email.data
             author=authors_email
@@ -165,7 +165,7 @@ def problem(problem_set_slug,prob_id):
     model_entry.load_posts(problem,g.db)
     
     # load solutions !!"!ФЫЩЫЛВАЩВЫАЩЫВА" ЫВАЫВ ИСПРАВЬ!!!!!!!!!
-    model_entry.load_solution(problem,g.db,session.get('username'),session.get('email'))
+    model_entry.load_solution(problem,g.db,g.user.get('username'),g.user.get('email'))
     current_user_solution=problem.get('solution')
 
     #TODO load comments to solutions
@@ -174,8 +174,8 @@ def problem(problem_set_slug,prob_id):
     if general_comment_form.validate_on_submit():
         model_post.add(text=general_comment_form.text.data,
                        db=g.db,
-                       author=session['username'],
-                       authors_email=session['email'],
+                       author=g.user['username'],
+                       authors_email=g.user['email'],
                        post_type='comment',
                        parent_type='problem',
                        parent_id=problem['_id'],
@@ -189,7 +189,7 @@ def problem(problem_set_slug,prob_id):
     vote_form=VoteForm()
     if vote_form.validate_on_submit():
         voted_solution=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
-        if not session['email'] in voted_solution['emails_voted']:
+        if not g.user['email'] in voted_solution['emails_voted']:
             if vote_form.vote.data == 'upvote': 
                 voted_solution['upvotes']=voted_solution['upvotes']+1
                 mongo.update(collection=g.db.solutions,
@@ -197,7 +197,7 @@ def problem(problem_set_slug,prob_id):
                             doc_value=ObjectId(request.args['sol_id']),
                             update_key='upvotes',
                             update_value=voted_solution['upvotes'])
-                voted_solution['emails_voted'].append(session['email'])
+                voted_solution['emails_voted'].append(g.user['email'])
                 mongo.update(collection=g.db.solutions,
                             doc_key='_id',
                             doc_value=ObjectId(request.args['sol_id']),
@@ -211,7 +211,7 @@ def problem(problem_set_slug,prob_id):
                             doc_value=ObjectId(request.args['sol_id']),
                             update_key='downvotes',
                             update_value=voted_solution['downvotes'])
-                voted_solution['emails_voted'].append(session['email'])
+                voted_solution['emails_voted'].append(g.user['email'])
                 mongo.update(collection=g.db.solutions,
                             doc_key='_id',
                             doc_value=ObjectId(request.args['sol_id']),
@@ -231,8 +231,8 @@ def problem(problem_set_slug,prob_id):
         if solution_comment_form.feedback_to_solution.data:
             model_post.add(text=solution_comment_form.feedback_to_solution.data,
                            db=g.db,
-                           author=session['username'],
-                           authors_email=session['email'],
+                           author=g.user['username'],
+                           authors_email=g.user['email'],
                            post_type='comment',
                            parent_type='solution',
                            parent_id=ObjectId(request.args['sol_id']),
@@ -255,8 +255,8 @@ def problem(problem_set_slug,prob_id):
     if solution_form.validate_on_submit():
         model_solution.add(text=solution_form.solution.data,
                            db=g.db,
-                           author=session['username'],
-                           authors_email=session['email'],
+                           author=g.user['username'],
+                           authors_email=g.user['email'],
                            problem_id=problem['_id'],
                            problem_set_id=problem_set['_id'])
 
@@ -280,11 +280,9 @@ def problem(problem_set_slug,prob_id):
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem['_id']))
 
-    user=g.db.users.find_one({'email':session.get('email')})
-
     g.other_solutions=[]
-    if 'email' in session:
-        if problem['_id'] in user['problems_ids']['can_see_other_solutions'] or session.get("is_moderator") or session.get("is_checker"):
+    if g.user:
+        if problem['_id'] in g.user['problems_ids']['can_see_other_solutions'] or g.user['rights']['is_moderator'] or g.user['rights']['is_checker']:
             for sol_id in problem['solutions_ids']:
                 if not currentuser_solution_id==sol_id:
                     solut=g.db.solutions.find_one({'_id':sol_id})
@@ -311,12 +309,15 @@ def problem(problem_set_slug,prob_id):
 
 @workflow.route('/check', methods=["GET", "POST"])
 def check():
-    user=g.db.users.find_one({'email': session['email']})
-    if session.get("is_moderator") or session.get("is_checker"):
+    if not g.user:
+        flash('Please, log in first')
+        return redirect(url_for('.check'))
+
+    if g.user['rights']['is_moderator'] or g.user['rights']['is_checker']:
         solutions=g.db.solutions.find({'checked': False})
     else:
         solutions=[]
-        for idd in user['problems_ids']['can_see_other_solutions']:
+        for idd in g.user['problems_ids']['can_see_other_solutions']:
             solutions.extend(g.db.solutions.find({'problem_id':ObjectId(idd), 'checked': False}))
 
     sols=[]
@@ -331,7 +332,7 @@ def check():
     vote_form=VoteForm()
     if vote_form.validate_on_submit():
         voted_solution=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
-        if not session['email'] in voted_solution['emails_voted']:
+        if not g.user['email'] in voted_solution['emails_voted']:
             if vote_form.vote.data == 'upvote': 
                 voted_solution['upvotes']=voted_solution['upvotes']+1
                 mongo.update(collection=g.db.solutions,
@@ -339,7 +340,7 @@ def check():
                             doc_value=ObjectId(request.args['sol_id']),
                             update_key='upvotes',
                             update_value=voted_solution['upvotes'])
-                voted_solution['emails_voted'].append(session['email'])
+                voted_solution['emails_voted'].append(g.user['email'])
                 mongo.update(collection=g.db.solutions,
                             doc_key='_id',
                             doc_value=ObjectId(request.args['sol_id']),
@@ -354,7 +355,7 @@ def check():
                             doc_value=ObjectId(request.args['sol_id']),
                             update_key='downvotes',
                             update_value=voted_solution['downvotes'])
-                voted_solution['emails_voted'].append(session['email'])
+                voted_solution['emails_voted'].append(g.user['email'])
                 mongo.update(collection=g.db.solutions,
                             doc_key='_id',
                             doc_value=ObjectId(request.args['sol_id']),
@@ -372,8 +373,8 @@ def check():
             solut=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
             model_post.add(text=solution_comment_form.feedback_to_solution.data,
                            db=g.db,
-                           author=session['username'],
-                           authors_email=session['email'],
+                           author=g.user['username'],
+                           authors_email=g.user['email'],
                            post_type='comment',
                            parent_type='solution',
                            parent_id=ObjectId(request.args['sol_id']),

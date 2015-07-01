@@ -89,7 +89,7 @@
                   {%endif%}
                 </li>
 
-                {% if "username" not in session%}
+                {% if not g.user%}
                 <li>
                   <form class="navbar-form" class="metanav" action="{{ url_for('user.login') }}" method=post>
                     <a href="{{ url_for('user.login') }}" class="btn btn-default" role="button">Login</a>
@@ -104,7 +104,7 @@
                   </div>
                   {% endif %}
                 </li>
-                <li> <a href="{{ url_for('workflow.home') }}">{{session.username}} </a></li>
+                <li> <a href="{{ url_for('workflow.home') }}">{{g.user.username}} </a></li>
                 <li><a href="{{ url_for('user.logout') }}">Log out</a></li>
                 {% endif%}
               </ul>

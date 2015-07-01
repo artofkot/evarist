@@ -26,24 +26,25 @@ user = Blueprint('user', __name__,
 @user.route('/user/signup', methods=['GET', 'POST'])
 def signup():
 
-    if "username" in session:
-        flash('please log out first')
+    if g.user:
+        flash('Please log out first')
         return redirect(url_for('workflow.home'))
 
     signup_form=SignUpForm()
 
     if request.method == 'POST' and signup_form.validate_on_submit():
-        if signup_form.password.data == signup_form.confirm_password.data:
-            model_user.add(email=signup_form.email.data,
-                            password=signup_form.password.data,
-                            username=signup_form.username.data,
-                            db=g.db,
-                            secret_key=current_app.config["SECRET_KEY"])
-            return redirect(url_for('user.login'))
-        else:
-            flash('passwords should be the same, try one more time, please')
+        if not signup_form.password.data == signup_form.confirm_password.data:
+            flash('Passwords should be the same. Try one more time, please')
             return redirect(url_for('user.signup'))
-        
+        if model_user.add(email=signup_form.email.data,
+                        password=signup_form.password.data,
+                        username=signup_form.username.data,
+                        db=g.db,
+                        secret_key=current_app.config["SECRET_KEY"]):
+            return redirect(url_for('user.login'))
+        else: 
+            flash('Such email already exists')
+            return redirect(url_for('user.signup'))
 
     error=''
     if request.method == 'POST' and not signup_form.validate_on_submit():
@@ -55,17 +56,15 @@ def signup():
 
 @user.route('/user/login', methods=['GET', 'POST'])
 def login():
-    if "email" in session:
-        flash('please log out first')
+    if g.user:
+        flash('Please log out first')
         return redirect(url_for('workflow.home'))
 
     state=''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
     session['state']=state
 
     error = ''
-
     signin_form=SignInForm()
-
     if request.method == 'POST' and signin_form.validate_on_submit():
 
         email=signin_form.email.data
@@ -73,14 +72,8 @@ def login():
 
         user=g.db.users.find_one({"email": email})
         if user:
-            print user
             if model_user.check_pwd(password,user["pw_hash"],secret_key=current_app.config["SECRET_KEY"]):
-                session['_id']=user['_id']
-                session['username'] = user['username']
-                session['email']=user['email']
-                session['is_moderator']=user['rights']['is_moderator']
-                session['is_checker']=user['rights']['is_checker']
-
+                session['_id']=str(user['_id'])
 
                 return redirect(url_for('workflow.home'))
             else:
@@ -173,10 +166,6 @@ def gconnect():
     params = {'access_token': credentials.access_token, 'alt': 'json'}
     answer = requests.get(userinfo_url, params=params)
     data = answer.json()
-    session['provider'] = 'gplus'
-    session['username'] = data['name']
-    session['picture'] = data['picture']
-    session['email'] = data['email']
 
     # add user if such email does not exist in database of gplus users
     added_user_id = model_user.add_gplus(gplus_id=gplus_id , 
@@ -188,30 +177,23 @@ def gconnect():
     if added_user_id:
         print 'gplus user added'
         session['_id']=str(added_user_id)
-        session['is_moderator']=False
-        session['is_checker']=False
     else:
         print 'gplus user already was there'
         user=g.db.users.find_one({"gplus_id": gplus_id})
         session['_id']=str(user['_id'])
-        session['is_moderator']=user['rights']['is_moderator']
-        session['is_checker']=user['rights']['is_checker']
     
 
     output = ''
     output += '<h1>Welcome, '
-    output += session['username']
+    output += data['name']
     output += '!</h1>'
     output += '<img src="'
-    output += session['picture']
+    output += data['picture']
     output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
-    flash("you are now logged in as %s" % session['username'])
+    flash("you are now logged in as %s" % data['name'])
     print "done!"
     return output
 
-# add this for pages where you want users to be logged in
-# if 'username' not in session:
-#     return redirect('/user/login')
 
 
 @user.route('/user/gdisconnect')
@@ -229,15 +211,9 @@ def gdisconnect():
 
     if result['status'] == '200':
         # Reset the user's session.
-        del session['provider']
-        del session['access_token']
-        del session['gplus_id']
-        del session['username']
-        del session['email']
-        del session['picture']
         session.pop('_id', None)
-        session.pop('is_moderator', None)
-        session.pop('is_checker', None)
+        session.pop('gplus_id', None)
+        session.pop('access_token', None)
 
         response = make_response(json.dumps('Successfully disconnected.'), 200)
         response.headers['Content-Type'] = 'application/json'
@@ -245,15 +221,9 @@ def gdisconnect():
         # return response
     else:
         # For whatever reason, the given token was invalid.
-        del session['provider']
-        del session['access_token']
-        del session['gplus_id']
-        del session['username']
-        del session['email']
-        del session['picture']
         session.pop('_id', None)
-        session.pop('is_moderator', None)
-        session.pop('is_checker', None)
+        session.pop('gplus_id', None)
+        session.pop('access_token', None)
         
         response = make_response(
             json.dumps('Failed to revoke token for a given user.', 400))
@@ -263,16 +233,12 @@ def gdisconnect():
 
 @user.route('/user/logout')
 def logout():
-    if session.get('provider')=='gplus':
+    if g.user.get('provider')=='gplus':
         return redirect(url_for('user.gdisconnect'))
     else:
-        session.pop('username', None)
-        session.pop('provider', None)
-        session.pop('is_moderator', None)
-        session.pop('email', None)
-        session.pop('picture', None)
-        session.pop('is_checker', None)
         session.pop('_id', None)
+        session.pop('gplus_id', None)
+        session.pop('access_token', None)
         # We use a neat trick here:
         # if you use the pop() method of the dict and pass a second parameter to it (the default),
         # the method will delete the key from the dictionary if present or
