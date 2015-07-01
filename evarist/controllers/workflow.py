@@ -18,8 +18,7 @@ workflow = Blueprint('workflow', __name__,
 def home():
     # USE THIS CAREFULLY, its DANGEROUS! This is template for updating keys in all documents.
     #
-    # print mongo.update(collection=g.db.entries,doc_key='all',doc_value='notimportant',
-    #             update_key='parentdsddfs_ids',update_value=[])
+    # print mongo.add_key_value_where_none(collection=g.db.entries, key='', value='')
 
     
     # this is example code for sending emails
@@ -58,7 +57,7 @@ def home():
     else: homepage_slugset=eng_slugset
     
     # get all problem_sets
-    psets=model_problem_set.get_all(g.db)
+    psets=mongo.get_all(g.db.problem_sets)
 
     # choose those problem_sets, which slug is in homepage_slugset
     # check if all chosen slugs matched to some problem_sets, and if not - write which ones are wrong
@@ -99,7 +98,14 @@ def problem_set(problem_set_slug):
         return redirect(url_for('.home'))
 
     # load problems, definition, etc
-    model_problem_set.load_entries(problem_set,g.db)
+    mongo.load(obj=problem_set,
+                key_id='entries_ids',
+                collection=g.db.entries)
+    # get the numbers of problems or definitions
+    model_problem_set.get_numbers(problem_set=problem_set)
+    
+    # this is how we did previously:
+    # model_problem_set.load_entries(problem_set,g.db)
 
     # check if all entries loaded correctly
     if len(problem_set['entries'])!=len(problem_set['entries_ids']): 
@@ -135,7 +141,14 @@ def problem(problem_set_slug,prob_id):
 
     
     #load the entries of problem_set in order to get the number of problem
-    model_problem_set.load_entries(problem_set,g.db)
+
+    #model_problem_set.load_entries(problem_set,g.db)
+    mongo.load(obj=problem_set,
+                key_id='entries_ids',
+                collection=g.db.entries)
+    # get the numbers of problems or definitions
+    model_problem_set.get_numbers(problem_set=problem_set)
+
     # get the problem and problem's number out of problem_set
     try:
         problem, problem_number=next((entry, entry['problem_number']) for entry in problem_set['entries'] if entry.get('_id')==ObjectId(prob_id))

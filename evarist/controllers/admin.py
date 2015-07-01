@@ -34,8 +34,7 @@ def home():
     form = ProblemSetForm()
     if form.validate_on_submit():
 
-        if model_problem_set.add(author=session['username'], 
-                                 slug=form.slug.data, 
+        if model_problem_set.add(slug=form.slug.data, 
                                  title=form.title.data, 
                                  db=g.db ):
             flash('Probem set added, sir.')
@@ -43,7 +42,8 @@ def home():
             flash('Need different title or slug.')
         return redirect(url_for('admin.home'))
 
-    problem_sets=model_problem_set.get_all(g.db)
+    # problem_sets=model_problem_set.get_all(g.db)
+    problem_sets=mongo.get_all(g.db.problem_sets)
 
     problem_sets_dev=[pset for pset in problem_sets if pset['status']=='dev']
     problem_sets_stage=[pset for pset in problem_sets if pset['status']=='stage']
@@ -51,7 +51,7 @@ def home():
 
     return render_template("admin/home.html", 
                             form=form, 
-                            problem_sets=model_problem_set.get_all(g.db),
+                            problem_sets=problem_sets,
                             problem_sets_dev=problem_sets_dev,
                             problem_sets_stage=problem_sets_stage,
                             problem_sets_production=problem_sets_production)
@@ -242,16 +242,25 @@ def problem_set_edit(problem_set_slug):
         flash('No such slug.')
         return redirect(url_for('admin.home'))
 
-    model_problem_set.load_entries(problem_set,g.db)
+    # model_problem_set.load_entries(problem_set,g.db)
+    mongo.load(obj=problem_set,
+                key_id='entries_ids',
+                collection=g.db.entries)
+    # get the numbers of problems or definitions
+    model_problem_set.get_numbers(problem_set=problem_set)
+
+    
 
     edit_problem_set_form=ProblemSetForm()
     if edit_problem_set_form.validate_on_submit():
-        if model_problem_set.edit(ob_id=problem_set['_id'], 
+        if model_problem_set.edit(ob_id=problem_set['_id'],
+                                old_title=problem_set['title'], 
                                 title=edit_problem_set_form.title.data, 
                                 slug=edit_problem_set_form.slug.data, 
                                 db=g.db,
                                 status=edit_problem_set_form.status.data,
-                                old_slug=problem_set['slug']):flash ('edited')
+                                old_slug=problem_set['slug']): 
+            flash ('edited') 
         else: flash('you must change the slug to other slug, which does not exist. Sorry :)')
         return redirect(url_for('admin.problem_set_edit',
                                 problem_set_slug=edit_problem_set_form.slug.data))

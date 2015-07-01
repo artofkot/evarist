@@ -1,3 +1,16 @@
+# working with ObjectId
+#
+# from bson.objectid import ObjectId
+# print str(  g.db.users.find_one({"username":"artofkot"})["_id"]  )
+# artidhex=str(  g.db.users.find_one({"username":"artofkot"})["_id"]  )
+# print g.db.users.find_one({"_id":ObjectId(artidhex)})
+
+# Creating ObjectId
+#
+# >>> o = ObjectId()
+# >>> o == ObjectId(str(o))
+# True
+
 def add_key_value_where_none(collection, key, value):
     count=0
     for doc in collection.find():
@@ -6,6 +19,29 @@ def add_key_value_where_none(collection, key, value):
             count=count+1
             collection.update({'_id':doc['_id']}, {"$set": doc}, upsert=False)
     return count
+
+def load(obj,key_id,collection):
+    if key_id.endswith('_ids'):
+        key=key_id[:-4]
+        obj[key]=[]
+        for _id in obj[key_id]:
+            doc=collection.find_one({'_id':_id})
+            obj[key].append(doc)
+        return True
+
+    elif key_id.endswith('_id'):
+        _id=obj[key_id]
+        key=key_id[:-3]
+        obj[key]=collection.find_one({'_id':_id})
+        return True
+    
+    else: return False
+
+def get_all(collection):
+    docs=[]
+    for i in collection.find():
+        docs.append(i)
+    return docs
 
 def update(collection,doc_key,doc_value,update_key,update_value):
     count=0
@@ -20,14 +56,3 @@ def update(collection,doc_key,doc_value,update_key,update_value):
         document=collection.find_one({doc_key:doc_value})
         document[update_key]=update_value
         collection.update({doc_key:doc_value}, {"$set": document}, upsert=False)
-
-
-
-# def update_authors_email(collection,db):
-#     for doc in collection.find():
-#         user = db.users.find_one({'username':doc.get('author')})
-#         if not user:
-#             pass
-#         else:
-#             doc['authors_email']=user['email']
-#             collection.update({'_id':doc['_id']}, {"$set": doc}, upsert=False)

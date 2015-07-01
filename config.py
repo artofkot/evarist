@@ -10,9 +10,12 @@ DEBUG=False
 CLIENT_SECRETS_JSON = json.loads(os.environ.get("CLIENT_SECRETS_JSON"))
 CLIENT_ID = CLIENT_SECRETS_JSON['web']['client_id']
 
+#config for flask-babel
 BABEL_DEFAULT_LOCALE='ru'
 BABEL_DEFAULT_TIMEZONE='UTC+0300'
 
+# getting MANDRILL (email provider) username and password 
+# could be the case that its better to use gmail account
 MANDRILL_APIKEY=os.environ.get("MANDRILL_APIKEY")
 MANDRILL_USERNAME=os.environ.get("MANDRILL_USERNAME")
 
