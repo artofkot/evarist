@@ -4,9 +4,9 @@ import model_entry
 # working with ObjectId
 #
 # from bson.objectid import ObjectId
-# print str(  g.mongo.db.users.find_one({"username":"artofkot"})["_id"]  )
-# artidhex=str(  g.mongo.db.users.find_one({"username":"artofkot"})["_id"]  )
-# print g.mongo.db.users.find_one({"_id":ObjectId(artidhex)})
+# print str(  g.db.users.find_one({"username":"artofkot"})["_id"]  )
+# artidhex=str(  g.db.users.find_one({"username":"artofkot"})["_id"]  )
+# print g.db.users.find_one({"_id":ObjectId(artidhex)})
 
 # Creating ObjectId
 #
@@ -52,8 +52,8 @@ def edit(ob_id, title, slug, db, status, old_slug):
 def delete(ob_id, db):
     problem_set=db.problem_sets.find_one({"_id":ob_id})
 
-    for entry_id in problem_set['entries_ids']:
-        model_entry.delete_forever(entry_id=entry_id,problem_set_id=ob_id,db=db)
+    # for entry_id in problem_set['entries_ids']:
+    #     model_entry.delete_forever(entry_id=entry_id,problem_set_id=ob_id,db=db)
 
     db.problem_sets.remove({"_id":ob_id})
     return True

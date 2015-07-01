@@ -52,7 +52,7 @@ if not app.debug:
 # connecting to database before every request comes
 @app.before_request
 def before_request():
-    g.mongo = mongo
+    # g.user=session.get('email')
     g.db=mongo.db
     g.signin_form=SignInForm()
 
@@ -61,7 +61,7 @@ def before_request():
     
     # for accessing locale in each request
     g.locale = get_locale()
-    # g.mongo.cx  is connection object
+    # mongo.cx  is connection object
 
 # this function return language for babel
 @babel.localeselector

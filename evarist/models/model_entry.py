@@ -4,9 +4,9 @@ from bson.objectid import ObjectId
 # How to work with ObjectId:
 #
 # from bson.objectid import ObjectId
-# print str(  g.mongo.db.users.find_one({"username":"artofkot"})["_id"]  )
-# artidhex=str(  g.mongo.db.users.find_one({"username":"artofkot"})["_id"]  )
-# print g.mongo.db.users.find_one({"_id":ObjectId(artidhex)})
+# print str(  g.db.users.find_one({"username":"artofkot"})["_id"]  )
+# artidhex=str(  g.db.users.find_one({"username":"artofkot"})["_id"]  )
+# print g.db.users.find_one({"_id":ObjectId(artidhex)})
 
 
 def add(text,db,author,entry_type,problem_set_id,title=None,entry_number=None,authors_email=None):
