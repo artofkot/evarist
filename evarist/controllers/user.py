@@ -107,7 +107,7 @@ def login():
             error=error+signin_form.errors[err][0]+' '
         return render_template("user/login.html", error=error, signin_form=SignInForm())
     print current_app.config['CLIENT_ID']
-    return render_template('user/login.html', error=error, signin_form=signin_form, client_id_yep=current_app.config['CLIENT_ID']) #fb_app_id_yep=current_app.config['FB_APP_ID'])
+    return render_template('user/login.html', error=error, signin_form=signin_form, client_id_yep=current_app.config['CLIENT_ID']) 
 
 @user.route('/user/gconnect', methods=['POST'])
 def gconnect():
@@ -285,78 +285,3 @@ def logout():
         # the method will delete the key from the dictionary if present or
         # do nothing when that key is not in there.
         return redirect(url_for('workflow.home'))
-
-# @user.route('/fbconnect', methods=['POST'])
-# def fbconnect():
-#     if request.args.get('state') != session['state']:
-#         response = make_response(json.dumps('Invalid state parameter.'), 401)
-#         response.headers['Content-Type'] = 'application/json'
-#         return response
-#     access_token = request.data
-#     print "access token received %s " % access_token
-
-#     app_id = current_app.config['FB_CLIENTS_SECRETS_JSON'][
-#         'web']['app_id']
-#     app_secret = current_app.config['FB_CLIENTS_SECRETS_JSON']['web']['app_secret']
-#     url = 'https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s' % (
-#         app_id, app_secret, access_token)
-#     h = httplib2.Http()
-#     result = h.request(url, 'GET')[1]
-
-#     # Use token to get user info from API
-#     userinfo_url = "https://graph.facebook.com/v2.2/me"
-#     # strip expire tag from access token
-#     token = result.split("&")[0]
-
-
-#     url = 'https://graph.facebook.com/v2.2/me?%s' % token
-#     h = httplib2.Http()
-#     result = h.request(url, 'GET')[1]
-#     # print "url sent for API access:%s"% url
-#     # print "API JSON result: %s" % result
-#     data = json.loads(result)
-#     session['provider'] = 'facebook'
-#     session['username'] = data["name"]
-#     session['email'] = data["email"]
-#     session['facebook_id'] = data["id"]
-
-#     # The token must be stored in the session in order to properly logout, let's strip out the information before the equals sign in our token
-#     stored_token = token.split("=")[1]
-#     session['access_token'] = stored_token
-
-#     # Get user picture
-#     url = 'https://graph.facebook.com/v2.2/me/picture?%s&redirect=0&height=200&width=200' % token
-#     h = httplib2.Http()
-#     result = h.request(url, 'GET')[1]
-#     data = json.loads(result)
-
-#     session['picture'] = data["data"]["url"]
-
-#     # see if user exists
-#     user_id = getUserID(session['email'])
-#     if not user_id:
-#         user_id = createUser(session)
-#     session['user_id'] = user_id
-
-#     output = ''
-#     output += '<h1>Welcome, '
-#     output += session['username']
-
-#     output += '!</h1>'
-#     output += '<img src="'
-#     output += session['picture']
-#     output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
-
-#     flash("Now logged in as %s" % session['username'])
-#     return output
-
-
-# @user.route('/fbdisconnect')
-# def fbdisconnect():
-#     facebook_id = session['facebook_id']
-#     # The access token must me included to successfully logout
-#     access_token = session['access_token']
-#     url = 'https://graph.facebook.com/%s/permissions' % (facebook_id,access_token)
-#     h = httplib2.Http()
-#     result = h.request(url, 'DELETE')[1]
-#     return "you have been logged out"
