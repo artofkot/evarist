@@ -238,13 +238,14 @@ def problem_set_edit(problem_set_slug):
 
 
     problem_set=g.db.problem_sets.find_one({"slug": problem_set_slug})
-    if problem_set==False: 
+    if not problem_set: 
         flash('No such slug.')
         return redirect(url_for('admin.home'))
 
     # model_problem_set.load_entries(problem_set,g.db)
     mongo.load(obj=problem_set,
                 key_id='entries_ids',
+                key='entries',
                 collection=g.db.entries)
     # get the numbers of problems or definitions
     model_problem_set.get_numbers(problem_set=problem_set)

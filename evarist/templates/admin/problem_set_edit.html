@@ -75,7 +75,7 @@
               {% else %}
               <a href="{{ url_for('workflow.entry', problem_set_slug=problem_set['slug'], entry_type=entry.get('entry_type'), __id=entry.get('_id') ) }}"> general_entry </a>
               {%endif%}
-
+              tags:{{entry['tags']}}
               <br>
               {{entry['text']|safe}}
               </p>

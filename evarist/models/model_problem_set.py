@@ -1,3 +1,5 @@
+import mongo
+
 def add(title,slug,db):
     if db.problem_sets.find_one({"title": title}):
         return False
@@ -16,11 +18,25 @@ def edit(ob_id, title, slug, db, status, old_slug, old_title):
         return False
     elif old_slug!=slug and db.problem_sets.find_one({"slug": slug}):
         return False
-    db.problem_sets.update_one({"_id": ob_id}, {'$set': {'slug': slug,
-                                                  'title':title,  
-                                                  'status':status}
-                                        })
-    return True
+    else:
+        db.problem_sets.update_one({"_id": ob_id}, {'$set': {'slug': slug,
+                                                      'title':title,  
+                                                      'status':status}
+                                            })
+        
+        # update tags of entries
+        problem_set=db.problem_sets.find_one({"_id": ob_id})
+        mongo.load(obj=problem_set,
+                key_id='entries_ids',
+                collection=db.entries)
+        for entry in problem_set['entries']:
+            if old_title in entry['tags']: entry['tags'].remove(old_title)
+            if title not in entry['tags']: entry['tags'].append(title)
+            db.entries.update_one({"_id": entry['_id']}, {
+                                                            '$set': {'tags': entry['tags']} 
+                                                        })
+
+        return True
 
 def delete(ob_id, db):
     if db.problem_sets.delete_one({"_id":ob_id}):return True

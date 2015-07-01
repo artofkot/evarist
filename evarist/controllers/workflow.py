@@ -18,7 +18,7 @@ workflow = Blueprint('workflow', __name__,
 def home():
     # USE THIS CAREFULLY, its DANGEROUS! This is template for updating keys in all documents.
     #
-    # print mongo.add_key_value_where_none(collection=g.db.entries, key='', value='')
+    # print mongo.add_key_value_where_none(collection=g.db.entries, key='tags', value=[])
 
     
     # this is example code for sending emails
@@ -100,6 +100,7 @@ def problem_set(problem_set_slug):
     # load problems, definition, etc
     mongo.load(obj=problem_set,
                 key_id='entries_ids',
+                key='entries',
                 collection=g.db.entries)
     # get the numbers of problems or definitions
     model_problem_set.get_numbers(problem_set=problem_set)
@@ -145,6 +146,7 @@ def problem(problem_set_slug,prob_id):
     #model_problem_set.load_entries(problem_set,g.db)
     mongo.load(obj=problem_set,
                 key_id='entries_ids',
+                key='entries',
                 collection=g.db.entries)
     # get the numbers of problems or definitions
     model_problem_set.get_numbers(problem_set=problem_set)

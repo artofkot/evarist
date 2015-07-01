@@ -15,14 +15,12 @@ def add_key_value_where_none(collection, key, value):
     count=0
     for doc in collection.find():
         if not doc.get(key):
-            doc[key]=value
             count=count+1
-            collection.update({'_id':doc['_id']}, {"$set": doc}, upsert=False)
+            collection.update_one({'_id':doc['_id']}, {"$set": { key:value } }, upsert=False)
     return count
 
-def load(obj,key_id,collection):
+def load(obj,key_id,key,collection):
     if key_id.endswith('_ids'):
-        key=key_id[:-4]
         obj[key]=[]
         for _id in obj[key_id]:
             doc=collection.find_one({'_id':_id})
@@ -31,7 +29,6 @@ def load(obj,key_id,collection):
 
     elif key_id.endswith('_id'):
         _id=obj[key_id]
-        key=key_id[:-3]
         obj[key]=collection.find_one({'_id':_id})
         return True
     
