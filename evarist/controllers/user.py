@@ -6,7 +6,6 @@ from bson.objectid import ObjectId
 from flask import current_app, Flask, Blueprint, request, session, g, redirect, url_for, \
     abort, render_template, flash
 from contextlib import closing
-from flask.ext.pymongo import PyMongo
 from jinja2 import TemplateNotFound
 from evarist.models import model_user
 from evarist.forms import SignUpForm, SignInForm
