@@ -79,9 +79,9 @@ def home():
 def index():
     return redirect(url_for('.home'))
 
-@workflow.route('/roots')
-def roots():
-    return render_template('roots.html')
+# @workflow.route('/roots')
+# def roots():
+#     return render_template('roots.html')
 
 @workflow.route('/about')
 def about():
