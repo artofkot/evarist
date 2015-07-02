@@ -10,7 +10,6 @@ from jinja2 import TemplateNotFound
 from evarist.models import model_user
 from evarist.forms import SignUpForm, SignInForm
 
-
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 from oauth2client.client import AccessTokenCredentials
@@ -74,7 +73,6 @@ def login():
         if user:
             if model_user.check_pwd(password,user["pw_hash"],secret_key=current_app.config["SECRET_KEY"]):
                 session['_id']=str(user['_id'])
-
                 return redirect(url_for('workflow.home'))
             else:
                 error = 'Invalid password'
@@ -85,9 +83,9 @@ def login():
         for err in signin_form.errors:
             error=error+signin_form.errors[err][0]+' '
         return render_template("user/login.html", error=error, signin_form=SignInForm())
-    print current_app.config['CLIENT_ID']
     return render_template('user/login.html', error=error, signin_form=signin_form, client_id_yep=current_app.config['CLIENT_ID']) 
 
+# this POST request comes from login page if user presses gplus-sign-in button
 @user.route('/user/gconnect', methods=['POST'])
 def gconnect():
 
@@ -174,15 +172,15 @@ def gconnect():
                                 gplus_name=data['name'], 
                                 gplus_email=data['email'])
 
+    # store user's id in session
     if added_user_id:
-        print 'gplus user added'
         session['_id']=str(added_user_id)
     else:
-        print 'gplus user already was there'
         user=g.db.users.find_one({"gplus_id": gplus_id})
         session['_id']=str(user['_id'])
     
 
+    # make a response and send it back to login page
     output = ''
     output += '<h1>Welcome, '
     output += data['name']
@@ -191,14 +189,13 @@ def gconnect():
     output += data['picture']
     output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
     flash("you are now logged in as %s" % data['name'])
-    print "done!"
     return output
 
 
 
 @user.route('/user/gdisconnect')
 def gdisconnect():
-        # Only disconnect a connected user.
+    # Only disconnect a connected user.
     access_token = session['access_token']
     if access_token is None:
         response = make_response(

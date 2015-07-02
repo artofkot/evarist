@@ -49,18 +49,13 @@ if not app.debug:
 # connecting to database before every request comes
 @app.before_request
 def before_request():
-    
-
     # passing database in each request
     g.db=db
 
-    # store current user
+    # store current user dictionary in g object
     if session.get('_id'):
         g.user=g.db.users.find_one({'_id':ObjectId(session['_id'])})
         if g.user==None: g.user={}
-        if g.user.get('provider')=='gplus':
-            g.user['email']=g.user['gplus_email']
-            g.user['username']=g.user['gplus_name']
     else: g.user={}
 
     #connection in order to send emails

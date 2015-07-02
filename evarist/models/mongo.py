@@ -10,6 +10,7 @@
 # >>> o = ObjectId()
 # >>> o == ObjectId(str(o))
 # True
+from bson.objectid import ObjectId
 
 def add_key_value_where_none(collection, key, value):
     count=0
@@ -20,19 +21,19 @@ def add_key_value_where_none(collection, key, value):
     return count
 
 def load(obj,key_id,key,collection):
-    if key_id.endswith('_ids'):
+    if type(obj.get(key_id))==list:
         obj[key]=[]
         for _id in obj[key_id]:
             doc=collection.find_one({'_id':_id})
-            obj[key].append(doc)
+            if doc: obj[key].append(doc)
         return True
 
-    elif key_id.endswith('_id'):
+    else:
         _id=obj[key_id]
+        print _id
         obj[key]=collection.find_one({'_id':_id})
-        return True
-    
-    else: return False
+        if obj[key]:return True
+        else: return False
 
 def get_all(collection):
     docs=[]

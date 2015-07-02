@@ -26,14 +26,12 @@ def edit(ob_id, title, slug, db, status, old_slug, old_title):
         
         # update tags of entries
         problem_set=db.problem_sets.find_one({"_id": ob_id})
-        mongo.load(obj=problem_set,
-                key_id='entries_ids',
-                collection=db.entries)
-        for entry in problem_set['entries']:
-            if old_title in entry['tags']: entry['tags'].remove(old_title)
-            if title not in entry['tags']: entry['tags'].append(title)
-            db.entries.update_one({"_id": entry['_id']}, {
-                                                            '$set': {'tags': entry['tags']} 
+        for entry_id in problem_set['entries_ids']:
+            db.entries.update_one({"_id": entry_id}, {
+                                                            '$pull': {'tags': old_title} 
+                                                        })
+            db.entries.update_one({"_id": entry_id}, {
+                                                            '$addToSet': {'tags': title} 
                                                         })
 
         return True

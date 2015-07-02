@@ -25,7 +25,7 @@ def add(username, password, email,db, secret_key):
         return False
     else:
         pw_hash = hash_str(password,secret_key)
-        db.users.insert({"username":username, 
+        db.users.insert_one({"username":username, 
                         "pw_hash":pw_hash, 
                         "email":email,
                         "confirmed":False,
@@ -39,9 +39,7 @@ def add(username, password, email,db, secret_key):
                                    "solution_written": [],
                                    "solved": [],
                                    "can_see_other_solutions":[], 
-                                   "can_vote": [],
-                                   "upvoted":[],
-                                   "downvoted":[]
+                                   "can_vote": []
                                }
                         })
         return True
@@ -51,12 +49,18 @@ def add_gplus(gplus_id, gplus_picture,db, gplus_name, gplus_email):
                             "provider":'gplus'}):
         return False
     else:
-        u=db.users.insert_one({"provider":'gplus',
+        result=db.users.insert_one({"provider":'gplus',
                         "date":datetime.datetime.utcnow(),
                         "gplus_id":gplus_id,
                         "gplus_picture":gplus_picture,
                         "gplus_email":gplus_email,
                         "gplus_name":gplus_name,
+
+                        # след два поля для того, чтобы все время не разбирать случаи provider:'email' or provider:'gplus'
+                        "email":gplus_email, 
+                        "username":gplus_name,
+                        # их можно потом поменять/удалить
+
                         'rights':{'is_checker':False, #checkers can see and vote any solutions
                                   'is_moderator':False #moderators are checkers who also 
                                                 #can create content
@@ -66,9 +70,7 @@ def add_gplus(gplus_id, gplus_picture,db, gplus_name, gplus_email):
                                    "solution_written": [],
                                    "solved": [],
                                    "can_see_other_solutions":[], 
-                                   "can_vote": [],
-                                   "upvoted":[],
-                                   "downvoted":[]
-                               }
+                                   "can_vote": []
+                                   }
                         })
-        return u.inserted_id
+        return result.inserted_id

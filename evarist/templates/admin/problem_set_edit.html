@@ -136,9 +136,6 @@
 
                   <label for="title">Write here the number of entry after which you want this entry to pop up: </label>
                   <input type="text" class="form-control" name="entry_number" value='{{loop.index-1}}'>
-
-                  <label for="edit_title">Edit the title of entry (optional and not important): </label>
-                  <input type="text" class="form-control" name="edit_title" value='{{entry["title"]}}'>
                   
                   <div class="checkbox" style='background-color:red'>
                     <label >
@@ -189,11 +186,6 @@
 
           <label for="entry_number">Write here the number of entry after which you want this entry to pop up: </label>
           <input type="text" class="form-control" name="entry_number" value='{{problem_set["entries"] | length}}'>
-
-          <label for="title">Write here its title (optional and not important): </label>
-          <input type="text" class="form-control" name="title">
-
-          
 
         </div>
         <button type="submit" class="btn btn-default">Отправить</button>
