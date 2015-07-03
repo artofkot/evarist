@@ -307,10 +307,7 @@ def check():
     for solution in solutions:
 
         model_solution.load_discussion(g.db,solution)
-        start2=time.time()
         problem=g.db.entries.find_one({'_id':ObjectId(solution['problem_id'])})
-        flash((time.time() - start2))
-        print("-2-- %s seconds ---" % (time.time() - start2))
 
         problem_set=g.db.problem_sets.find_one({'_id':ObjectId(solution['problem_set_id'])})
         solution['problem_text']=problem['text']
