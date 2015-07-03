@@ -247,7 +247,9 @@ def problem(problem_set_slug,prob_id):
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem['_id']))
 
-    other_solutions=model_solution.get_other_solutions_on_problem_page(db=g.db,
+    other_solutions=[]
+    if g.user:
+        other_solutions=model_solution.get_other_solutions_on_problem_page(db=g.db,
                                                         user=g.user,
                                                         problem=problem,
                                                         current_solution_id=current_user_solution.get('_id'))
