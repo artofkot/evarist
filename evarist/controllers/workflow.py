@@ -30,8 +30,8 @@ def login_required(f):
 @workflow.route('/', methods=["GET", "POST"])
 def home():
     # USE THIS CAREFULLY, its DANGEROUS! This is template for updating keys in all documents.
-    #
-    # print mongo.add_key_value_where_none(collection=g.db.solutions, key='users_downvoted_ids', value=[])
+    
+    # print mongo.add_key_value_where_none(collection=g.db.entries, key='general_discussion_ids', value=[])
 
     
     # this is example code for sending emails
@@ -105,7 +105,7 @@ def about():
 def problem_set(problem_set_slug):
     # get the problem set
     problem_set=g.db.problem_sets.find_one({"slug": problem_set_slug})
-    if problem_set==False: 
+    if not problem_set: 
         flash('No such problem set.')
         return redirect(url_for('.home'))
 
@@ -167,7 +167,9 @@ def problem(problem_set_slug,prob_id):
     
 
     #load general discussion
-    mongo.load(problem,'general_discussion_ids','general_discussion',g.db.posts)
+    mongo.load(obj=problem,key_id='general_discussion_ids',key='general_discussion',collection=g.db.posts)
+    print problem.get('general_discussion_ids')
+    print problem['general_discussion']
     # load solutions
     mongo.load(problem,'solutions_ids','solutions',g.db.solutions)
 
@@ -247,16 +249,10 @@ def problem(problem_set_slug,prob_id):
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem['_id']))
 
-    other_solutions=[]
-    if g.user:
-        if problem['_id'] in g.user['problems_ids']['can_see_other_solutions'] or g.user['rights']['is_moderator'] or g.user['rights']['is_checker']:
-            for sol_id in problem['solutions_ids']:
-                if not current_user_solution.get('_id')==sol_id:
-                    solut=g.db.solutions.find_one({'_id':sol_id})
-                    if solut:
-                        mongo.load(solut,'solution_discussion_ids','discussion',g.db.posts)
-                        mongo.load(solut,'author_id','author',g.db.users)
-                        other_solutions.append(solut)
+    other_solutions=model_solution.get_other_solutions_on_problem_page(db=g.db,
+                                                        user=g.user,
+                                                        problem=problem,
+                                                        current_solution_id=current_user_solution.get('_id'))
 
     return render_template('problem.html', 
                             problem_set_slug=problem_set_slug, 
@@ -274,7 +270,7 @@ def problem(problem_set_slug,prob_id):
 @login_required
 def check():
     
-    sols=model_solution.get_solution_for_check_page(g.db,g.user)
+    sols=model_solution.get_solutions_for_check_page(g.db,g.user)
     
 
     vote_form=VoteForm()

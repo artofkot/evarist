@@ -21,7 +21,7 @@ def add_key_value_where_none(collection, key, value):
     return count
 
 def load(obj,key_id,key,collection):
-    if not obj.get(key_id): return False
+    if obj.get(key_id)==None: return False
 
     if type(obj.get(key_id))==list:
         obj[key]=[]
