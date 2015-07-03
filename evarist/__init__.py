@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-import os, sys, pymongo, re
+from bson.objectid import ObjectId
+import os, sys, pymongo, re, time
 from flask import Flask, request, session, g, redirect, url_for
 from flask.ext.babel import Babel
 from flask.ext.mail import Mail
@@ -9,6 +10,7 @@ from controllers.admin import admin
 import logging
 
 # creating an app
+
 app = Flask('evarist')
 
 # adding different parts of app
@@ -48,16 +50,24 @@ if not app.debug:
 # connecting to database before every request comes
 @app.before_request
 def before_request():
-    # g.user=session.get('email')
+    # for timing of response
+    g.start=time.time()
 
     # passing database in each request
     g.db=db
+
+    # store current user dictionary in g object
+    if session.get('_id'):
+        g.user=g.db.users.find_one({'_id':ObjectId(session['_id'])})
+        if g.user==None: g.user={}
+    else: g.user={}
 
     #connection in order to send emails
     g.mail=mail
     
     # for accessing locale in each request
     g.locale = get_locale()
+
 
     
 

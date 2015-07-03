@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from bson.objectid import ObjectId
-import os, datetime, urllib, urllib2
+import os, datetime, urllib, urllib2, pymongo
 from flask import current_app, Flask, Blueprint, request, session, g, redirect, url_for, \
     abort, render_template, flash
 from contextlib import closing
@@ -18,10 +18,12 @@ def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         
-        if not session.get('is_moderator'):
+        if g.user and (not g.user['rights']['is_moderator']):
             flash('You are not allowed to do that.')
             return redirect(url_for('workflow.home'))
-
+        if not g.user:
+            flash('You are not allowed to do that.')
+            return redirect(url_for('workflow.home'))
 
         return f(*args, **kwargs)
     return decorated_function
@@ -34,8 +36,7 @@ def home():
     form = ProblemSetForm()
     if form.validate_on_submit():
 
-        if model_problem_set.add(author=session['username'], 
-                                 slug=form.slug.data, 
+        if model_problem_set.add(slug=form.slug.data, 
                                  title=form.title.data, 
                                  db=g.db ):
             flash('Probem set added, sir.')
@@ -43,7 +44,8 @@ def home():
             flash('Need different title or slug.')
         return redirect(url_for('admin.home'))
 
-    problem_sets=model_problem_set.get_all(g.db)
+    # problem_sets=model_problem_set.get_all(g.db)
+    problem_sets=mongo.get_all(g.db.problem_sets)
 
     problem_sets_dev=[pset for pset in problem_sets if pset['status']=='dev']
     problem_sets_stage=[pset for pset in problem_sets if pset['status']=='stage']
@@ -51,7 +53,7 @@ def home():
 
     return render_template("admin/home.html", 
                             form=form, 
-                            problem_sets=model_problem_set.get_all(g.db),
+                            problem_sets=problem_sets,
                             problem_sets_dev=problem_sets_dev,
                             problem_sets_stage=problem_sets_stage,
                             problem_sets_production=problem_sets_production)
@@ -72,9 +74,6 @@ def problem_questions():
         p['problem_set']=g.db.problem_sets.find_one({'_id':p['problem_set_id']})
         p['problem']=g.db.entries.find_one({'_id':p['problem_id']})
         posts.append(p)
-
-    print posts
-
     return render_template("admin/problem_questions.html", 
                             posts=posts)
 
@@ -88,10 +87,17 @@ def users():
 @admin.route('/admin/checked_solutions', methods=["GET", "POST"])
 @admin_required
 def checked_solutions():
-    solutions=g.db.solutions.find({'checked': True})
+
+    solutions=g.db.solutions.find({'status':{ '$in': [ 'checked_correct',  'checked_incorrect' ] }})
+    solutions.sort('date',pymongo.DESCENDING)
     sols=[]
     for solution in solutions:
-        model_solution.load_discussion(g.db,solution)
+        mongo.load(solution,'solution_discussion_ids','discussion',g.db.posts)
+        if not mongo.load(solution,'author_id','author',g.db.users):
+            solution['author']={}
+            solution['author']['username']='deleted user'
+        
+
         problem=g.db.entries.find_one({'_id':ObjectId(solution['problem_id'])})
         problem_set=g.db.problem_sets.find_one({'_id':ObjectId(solution['problem_set_id'])})
         solution['problem_text']=problem['text']
@@ -101,36 +107,20 @@ def checked_solutions():
     vote_form=VoteForm()
     if vote_form.validate_on_submit():
         voted_solution=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
-        if not session['email'] in voted_solution['emails_voted']:
+        if not g.user['_id'] in (voted_solution['users_upvoted_ids'] + voted_solution['users_downvoted_ids'] ):
             if vote_form.vote.data == 'upvote': 
-                voted_solution['upvotes']=voted_solution['upvotes']+1
-                mongo.update(collection=g.db.solutions,
-                            doc_key='_id',
-                            doc_value=ObjectId(request.args['sol_id']),
-                            update_key='upvotes',
-                            update_value=voted_solution['upvotes'])
-                voted_solution['emails_voted'].append(session['email'])
-                mongo.update(collection=g.db.solutions,
-                            doc_key='_id',
-                            doc_value=ObjectId(request.args['sol_id']),
-                            update_key='emails_voted',
-                            update_value=voted_solution['emails_voted'])
+                g.db.solutions.update_one({'_id':voted_solution['_id']},
+                                            {'$addToSet':{'users_upvoted_ids':g.user['_id']}})
+                g.db.solutions.update_one({'_id':voted_solution['_id']},
+                                            {'$inc':{'upvotes':1}})
 
             if vote_form.vote.data == 'downvote':
-                voted_solution['downvotes']=voted_solution['downvotes']+1
-                mongo.update(collection=g.db.solutions,
-                            doc_key='_id',
-                            doc_value=ObjectId(request.args['sol_id']),
-                            update_key='downvotes',
-                            update_value=voted_solution['downvotes'])
-                voted_solution['emails_voted'].append(session['email'])
-                mongo.update(collection=g.db.solutions,
-                            doc_key='_id',
-                            doc_value=ObjectId(request.args['sol_id']),
-                            update_key='emails_voted',
-                            update_value=voted_solution['emails_voted'])
-
-            model_solution.update_status(g.db, voted_solution)
+                g.db.solutions.update_one({'_id':voted_solution['_id']},
+                                            {'$addToSet':{'users_downvoted_ids':g.user['_id']}})
+                g.db.solutions.update_one({'_id':voted_solution['_id']},
+                                            {'$inc':{'downvotes':1}})
+        
+            model_solution.update_everything(g.db, voted_solution['_id'])
         
         return redirect(url_for('.not_checked_solutions'))
 
@@ -141,13 +131,9 @@ def checked_solutions():
             solut=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
             model_post.add(text=solution_comment_form.feedback_to_solution.data,
                            db=g.db,
-                           author=session['username'],
-                           authors_email=session['email'],
-                           post_type='comment',
-                           parent_type='solution',
-                           parent_id=ObjectId(request.args['sol_id']),
-                           problem_id=solut['problem_id'],
-                           problem_set_id=solut['problem_set_id'])
+                           author_id=g.user.get('_id'),
+                           post_type='solution->comment',
+                           parent_id=ObjectId(request.args['sol_id']))
         
         return redirect(url_for('.not_checked_solutions'))
 
@@ -162,49 +148,37 @@ def checked_solutions():
 @admin.route('/admin/not_checked_solutions', methods=["GET", "POST"])
 @admin_required
 def not_checked_solutions():
-    solutions=g.db.solutions.find({'checked': False})
+    solutions=g.db.solutions.find({'status': 'not_checked'})
     sols=[]
     for solution in solutions:
-        model_solution.load_discussion(g.db,solution)
+        mongo.load(solution,'solution_discussion_ids','discussion',g.db.posts)
+        if not mongo.load(solution,'author_id','author',g.db.users):
+            solution['author']={}
+            solution['author']['username']='deleted user'
         problem=g.db.entries.find_one({'_id':ObjectId(solution['problem_id'])})
         problem_set=g.db.problem_sets.find_one({'_id':ObjectId(solution['problem_set_id'])})
         solution['problem_text']=problem['text']
         solution['problem_set']=problem_set['title']
         sols.append(solution)
+    sols.sort(key=lambda x: x.get('date'),reverse=True)
 
     vote_form=VoteForm()
     if vote_form.validate_on_submit():
         voted_solution=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
-        if not session['email'] in voted_solution['emails_voted']:
+        if not g.user['_id'] in (voted_solution['users_upvoted_ids'] + voted_solution['users_downvoted_ids'] ):
             if vote_form.vote.data == 'upvote': 
-                voted_solution['upvotes']=voted_solution['upvotes']+1
-                mongo.update(collection=g.db.solutions,
-                            doc_key='_id',
-                            doc_value=ObjectId(request.args['sol_id']),
-                            update_key='upvotes',
-                            update_value=voted_solution['upvotes'])
-                voted_solution['emails_voted'].append(session['email'])
-                mongo.update(collection=g.db.solutions,
-                            doc_key='_id',
-                            doc_value=ObjectId(request.args['sol_id']),
-                            update_key='emails_voted',
-                            update_value=voted_solution['emails_voted'])
+                g.db.solutions.update_one({'_id':voted_solution['_id']},
+                                            {'$addToSet':{'users_upvoted_ids':g.user['_id']}})
+                g.db.solutions.update_one({'_id':voted_solution['_id']},
+                                            {'$inc':{'upvotes':1}})
 
             if vote_form.vote.data == 'downvote':
-                voted_solution['downvotes']=voted_solution['downvotes']+1
-                mongo.update(collection=g.db.solutions,
-                            doc_key='_id',
-                            doc_value=ObjectId(request.args['sol_id']),
-                            update_key='downvotes',
-                            update_value=voted_solution['downvotes'])
-                voted_solution['emails_voted'].append(session['email'])
-                mongo.update(collection=g.db.solutions,
-                            doc_key='_id',
-                            doc_value=ObjectId(request.args['sol_id']),
-                            update_key='emails_voted',
-                            update_value=voted_solution['emails_voted'])
-
-            model_solution.update_status(g.db, voted_solution)
+                g.db.solutions.update_one({'_id':voted_solution['_id']},
+                                            {'$addToSet':{'users_downvoted_ids':g.user['_id']}})
+                g.db.solutions.update_one({'_id':voted_solution['_id']},
+                                            {'$inc':{'downvotes':1}})
+        
+            model_solution.update_everything(g.db, voted_solution['_id'])
         
         return redirect(url_for('.not_checked_solutions'))
 
@@ -215,13 +189,9 @@ def not_checked_solutions():
             solut=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
             model_post.add(text=solution_comment_form.feedback_to_solution.data,
                            db=g.db,
-                           author=session['username'],
-                           authors_email=session['email'],
-                           post_type='comment',
-                           parent_type='solution',
-                           parent_id=ObjectId(request.args['sol_id']),
-                           problem_id=solut['problem_id'],
-                           problem_set_id=solut['problem_set_id'])
+                           author_id=g.user.get('_id'),
+                           post_type='solution->comment',
+                           parent_id=ObjectId(request.args['sol_id']))
         
         return redirect(url_for('.not_checked_solutions'))
 
@@ -238,20 +208,27 @@ def problem_set_edit(problem_set_slug):
 
 
     problem_set=g.db.problem_sets.find_one({"slug": problem_set_slug})
-    if problem_set==False: 
+    if not problem_set: 
         flash('No such slug.')
         return redirect(url_for('admin.home'))
 
-    model_problem_set.load_entries(problem_set,g.db)
+    # model_problem_set.load_entries(problem_set,g.db)
+    mongo.load(problem_set,'entries_ids','entries',g.db.entries)
+    # get the numbers of problems or definitions
+    model_problem_set.get_numbers(problem_set=problem_set)
+
+    
 
     edit_problem_set_form=ProblemSetForm()
     if edit_problem_set_form.validate_on_submit():
-        if model_problem_set.edit(ob_id=problem_set['_id'], 
+        if model_problem_set.edit(ob_id=problem_set['_id'],
+                                old_title=problem_set['title'], 
                                 title=edit_problem_set_form.title.data, 
                                 slug=edit_problem_set_form.slug.data, 
                                 db=g.db,
                                 status=edit_problem_set_form.status.data,
-                                old_slug=problem_set['slug']):flash ('edited')
+                                old_slug=problem_set['slug']): 
+            flash ('edited') 
         else: flash('you must change the slug to other slug, which does not exist. Sorry :)')
         return redirect(url_for('admin.problem_set_edit',
                                 problem_set_slug=edit_problem_set_form.slug.data))
@@ -266,22 +243,22 @@ def problem_set_edit(problem_set_slug):
     edit_entry_form=EditEntryForm()
     if edit_entry_form.validate_on_submit():
         entry_type=edit_entry_form.entry_type.data
+        
         if edit_entry_form.delete_entry.data:
-            model_entry.delete_forever(entry_id=request.args['entry_id'],
+            model_entry.delete_forever(entry_id=ObjectId(request.args['entry_id']),
                                        problem_set_id=problem_set['_id'],
                                        db=g.db)
         else:
             rez=model_entry.edit(ob_id=ObjectId(request.args['entry_id']),
                              db=g.db, 
-                             title=edit_entry_form.edit_title.data,
                              text=edit_entry_form.edit_text.data,
                              entry_type=entry_type,
                              entry_number= int(edit_entry_form.entry_number.data),
                              problem_set_id=problem_set['_id'])
             if rez:
-                print flash('Entry edited, sir.')
+                flash('Entry edited, sir.')
             else:
-                print flash('Didnt work, slug or title is wrong.')
+                flash('Didnt work, slug or title is wrong.')
 
         return redirect(url_for('admin.problem_set_edit',
                                 problem_set_slug=problem_set['slug']))
@@ -290,14 +267,12 @@ def problem_set_edit(problem_set_slug):
     if entryform.validate_on_submit():
         entry_type=entryform.entry_type.data
         if model_entry.add(entry_type=entry_type, 
-                            author=session['username'],
-                            authors_email=session['email'], 
-                            title=entryform.title.data, 
+                            author_id=g.user.get('_id'),
                             db=g.db, 
                             text=entryform.text.data, 
                             problem_set_id=problem_set['_id'],
                             entry_number= int(entryform.entry_number.data)):
-            print flash('Entry added, sir.')
+            flash('Entry added, sir.')
 
         return redirect(url_for('admin.problem_set_edit',
                                 problem_set_slug=problem_set['slug']))

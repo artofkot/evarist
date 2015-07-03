@@ -33,7 +33,7 @@
 
   <div class="row"> <!-- admin link -->
     <div class="col-md-12">
-      {% if session.get("is_moderator")%}
+      {% if g.user and g.user.rights.is_moderator%}
         <p><a href="{{url_for('admin.home')}}">(go to admin's page)</a></p>
       {%endif%}
     </div>
@@ -55,7 +55,7 @@
       </p>
     </div>
     <div class="col-md-3">
-      {% if session.get("email")%}
+      {% if g.user%}
         <p><a href="{{url_for('workflow.check')}}">Cмотреть чужие решения</a></p>
       {%endif%}
     </div>
@@ -63,9 +63,10 @@
 
   <!-- <hr> -->
   
+  <div style='height:150px'></div>
+
   <div class="row"> 
     <div class="col-md-6 col-md-offset-3">
-      <h3>
         <form action=" {{url_for('workflow.home')}}" method="post">
           <div class="form-group" >
             {{ website_feedback_form.hidden_tag() }}
@@ -73,7 +74,7 @@
             <label for="feedback">  <strong> Что скажете? </strong> </label>
             <textarea class="form-control" rows="5"  name='feedback'></textarea>
             
-            {% if not 'username' in session%}
+            {% if not g.user%}
               {{website_feedback_form.email.label('Ваш email (необязательно)')}}
               <!-- oh my fucking god, u can do this -->
               {{website_feedback_form.email(class='form-control')}}
@@ -84,7 +85,6 @@
           </div>
           <button type="submit" class="btn btn-default">Отправить</button>
         </form>
-      </h3>
     </div>
   </div>
   <hr>

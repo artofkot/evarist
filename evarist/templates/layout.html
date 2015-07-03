@@ -89,7 +89,7 @@
                   {%endif%}
                 </li>
 
-                {% if "username" not in session%}
+                {% if not g.user%}
                 <li>
                   <form class="navbar-form" class="metanav" action="{{ url_for('user.login') }}" method=post>
                     <a href="{{ url_for('user.login') }}" class="btn btn-default" role="button">Login</a>
@@ -98,11 +98,13 @@
 
                 {% else %}
                 <li>
+                  {% if g.user.get('gplus_picture') %}
                   <div>
-                    <img src="{{session['picture']}}" style='height:50px;width=50px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px; vertical-align:middle '>
+                    <img src="{{g.user.get('gplus_picture')}}" style='height:50px;width=50px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px; vertical-align:middle '>
                   </div>
+                  {% endif %}
                 </li>
-                <li> <a href="{{ url_for('workflow.home') }}">{{session.username}} </a></li>
+                <li> <a href="{{ url_for('workflow.home') }}">{{g.user.username}} </a></li>
                 <li><a href="{{ url_for('user.logout') }}">Log out</a></li>
                 {% endif%}
               </ul>
