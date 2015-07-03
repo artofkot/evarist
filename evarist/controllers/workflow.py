@@ -294,7 +294,8 @@ def problem(problem_set_slug,prob_id):
 
 @workflow.route('/check', methods=["GET", "POST"])
 def check():
-    user=g.db.users.find_one({'email': session['email']})
+    user=g.db.users.find_one({'email': session.get('email')})
+    if not user: return redirect(url_for('.home'))
     if session.get("is_moderator") or session.get("is_checker"):
         solutions=g.db.solutions.find({'checked': False})
     else:
@@ -304,8 +305,13 @@ def check():
 
     sols=[]
     for solution in solutions:
+
         model_solution.load_discussion(g.db,solution)
+        start2=time.time()
         problem=g.db.entries.find_one({'_id':ObjectId(solution['problem_id'])})
+        flash((time.time() - start2))
+        print("-2-- %s seconds ---" % (time.time() - start2))
+
         problem_set=g.db.problem_sets.find_one({'_id':ObjectId(solution['problem_set_id'])})
         solution['problem_text']=problem['text']
         solution['problem_set']=problem_set['title']
