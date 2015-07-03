@@ -1,4 +1,5 @@
-import os, datetime
+# -*- coding: utf-8 -*-
+import os, datetime, time
 from bson.objectid import ObjectId
 import mongo
 
@@ -38,6 +39,78 @@ def delete(db,solution):
 
 
 
+# функция которая выдает задачи, которые пользователь может смотреть. Сначала непроверенные, потом проверенные.
+def get_solution_for_check_page(db,user):
+    # prepare for getting solutions 
+    solutions=[]
+    checked_solutions=[]
+    not_checked_solutions=[]
+    if user['rights']['is_moderator'] or user['rights']['is_checker']:
+        not_checked_solutions.extend(db.solutions.find({'status': 'not_checked'}))
+        not_checked_solutions.sort(key=lambda x: x.get('date'),reverse=True)
+        # (sort from newest to oldest)
+
+        checked_solutions.extend(db.solutions.find({'status':{ '$in': [ 'checked_correct',  'checked_incorrect' ] }}))
+        checked_solutions.sort(key=lambda x: x.get('date'),reverse=True)
+
+        solutions=not_checked_solutions + checked_solutions
+    else:
+        for idd in user['problems_ids']['can_see_other_solutions']:
+            not_checked_solutions.solutions.extend(db.solutions.find({'problem_id':ObjectId(idd), 'status': 'not_checked'}))
+            checked_solutions.solutions.extend(db.solutions.find({'problem_id':ObjectId(idd), 
+                                                                  'status':{ '$in': 
+                                                                            [ 'checked_correct',  
+                                                                            'checked_incorrect' ] }}))
+        checked_solutions.sort(key=lambda x: x.get('date'),reverse=True)
+        not_checked_solutions.sort(key=lambda x: x.get('date'),reverse=True)
+        solutions=not_checked_solutions + checked_solutions
+
+    # add to solutions some needed attributes
+    sols=[]
+    
+    for solution in solutions:
+        start1=time.time()
+        
+        # solution['discussion']=db.posts.find({'_id':{ '$in': solution['solution_discussion_ids'] }})
+        # print("-1-- %s seconds ---" % (time.time() - start1))
+        mongo.load(solution,'solution_discussion_ids','discussion',db.posts)
+        start2=time.time()
+        # print("-1-- %s seconds ---" % (time.time() - start1))
+
+        
+        # solution['author']=db.users.find_one({'_id':solution['author_id'] })
+        # if not solution['author']: 
+        #     solution['author']={}
+        #     solution['author']['username']='deleted user'
+        # print("-2-- %s seconds ---" % (time.time() - start2))
+        if not mongo.load(solution,'author_id','author',db.users):
+            solution['author']={}
+            solution['author']['username']='deleted user'
+        
+        # print("-2-- %s seconds ---" % (time.time() - start2))
+        start3=time.time()
+
+
+        mongo.load(solution,'problem_id','problem',db.entries)
+        # print("-3-- %s seconds ---" % (time.time() - start3))
+
+        start4=time.time()
+        mongo.load(solution,'problem_set_id','problem_set',db.problem_sets)
+        # problem=db.entries.find_one({'_id':ObjectId(solution['problem_id'])})
+        # problem_set=db.problem_sets.find_one({'_id':ObjectId(solution['problem_set_id'])})
+        # solution['problem_text']=problem['text']
+        # solution['problem_set_title']=problem_set['title']
+        sols.append(solution)
+        # print("-4-- %s seconds --- BASTA" % (time.time() - start4))
+
+
+
+    return sols
+
+
+
+
+
 
 
 
@@ -65,13 +138,13 @@ def can_see_other_solutions(db,solution_id):
     return did_solve(db,solution_id)
 
 # I dont use the following function yet, but this is the right way to do this update, arguments should be user and problem
-def did_solve_by_user_and_problem_ids(db,problem_id,user_id):
-    solution=db.solutions.find_one({'author_id':solution_id,
-                                    'problem_id':problem_id})
-    if solution and solution['status']=='checked_correct':
-        return True
-    else: 
-        return False
+# def did_solve_by_user_and_problem_ids(db,problem_id,user_id):
+#     solution=db.solutions.find_one({'author_id':solution_id,
+#                                     'problem_id':problem_id})
+#     if solution and solution['status']=='checked_correct':
+#         return True
+#     else: 
+#         return False
 
 
 

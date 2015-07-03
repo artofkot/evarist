@@ -91,16 +91,12 @@ def checked_solutions():
     solutions=g.db.solutions.find({'status':{ '$in': [ 'checked_correct',  'checked_incorrect' ] }})
     sols=[]
     for solution in solutions:
-        mongo.load(obj=solution,
-                    key_id='solution_discussion_ids',
-                    key='discussion',
-                    collection=g.db.posts)
-        if not mongo.load(obj=solution,
-                        key_id='author_id',
-                        key='author',
-                        collection=g.db.users):
+        mongo.load(solution,'solution_discussion_ids','discussion',g.db.posts)
+        if not mongo.load(solution,'author_id','author',g.db.users):
             solution['author']={}
             solution['author']['username']='deleted user'
+        
+
         problem=g.db.entries.find_one({'_id':ObjectId(solution['problem_id'])})
         problem_set=g.db.problem_sets.find_one({'_id':ObjectId(solution['problem_set_id'])})
         solution['problem_text']=problem['text']
@@ -154,14 +150,8 @@ def not_checked_solutions():
     solutions=g.db.solutions.find({'status': 'not_checked'})
     sols=[]
     for solution in solutions:
-        mongo.load(obj=solution,
-                    key_id='solution_discussion_ids',
-                    key='discussion',
-                    collection=g.db.posts)
-        if not mongo.load(obj=solution,
-                        key_id='author_id',
-                        key='author',
-                        collection=g.db.users):
+        mongo.load(solution,'solution_discussion_ids','discussion',g.db.posts)
+        if not mongo.load(solution,'author_id','author',g.db.users):
             solution['author']={}
             solution['author']['username']='deleted user'
         problem=g.db.entries.find_one({'_id':ObjectId(solution['problem_id'])})
@@ -221,10 +211,7 @@ def problem_set_edit(problem_set_slug):
         return redirect(url_for('admin.home'))
 
     # model_problem_set.load_entries(problem_set,g.db)
-    mongo.load(obj=problem_set,
-                key_id='entries_ids',
-                key='entries',
-                collection=g.db.entries)
+    mongo.load(problem_set,'entries_ids','entries',g.db.entries)
     # get the numbers of problems or definitions
     model_problem_set.get_numbers(problem_set=problem_set)
 

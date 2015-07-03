@@ -14,18 +14,19 @@
       <h3>Это решения, которые можно проверить, то есть проголосовать за "верно" или "неверно", и написать отзыв при необходимости (например если решение недоведено). Вы можете проверять только уже решенные вами задачи. </h3>
       <hr>
 
-      {%for solution in solutions | reverse %}
+      {%for solution in solutions %}
         <!-- solutions text, and the name of problem set -->
         <div>
           <p>
-            <em>{{solution.get('problem_set')|safe}}</em> 
+            <em>{{solution.get('problem_set')['title']|safe}}</em> 
             <br>
-            {{solution.get('problem_text')|safe}}
+            {{solution.get('problem')['text']|safe}}
           </p>
         </div>
 
         <!-- solution -->
         {{solution_macros.solution(solution=solution,inscription=gettext('Решение от %(author)s', author = solution['author']['username']))}}
+
 
         <!-- votes + form for voting-->
         <div class='row'>

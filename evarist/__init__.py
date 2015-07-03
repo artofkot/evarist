@@ -50,6 +50,9 @@ if not app.debug:
 # connecting to database before every request comes
 @app.before_request
 def before_request():
+    # for timing of response
+    g.start=time.time()
+
     # passing database in each request
     g.db=db
 

@@ -82,7 +82,7 @@ def home():
             if not app.debug: g.mail.send(Message('slug ' + slug + ' was not found on the homepage',
                                                 subject='Catched error on Evarist (production)!',
                                                 recipients=current_app.config['ADMINS']))
-            else: flash('slug ' + slug + ' was not found')
+            else: flash('Error: slug ' + slug + ' was not found!')
 
     return render_template('home.html',
                         problem_sets=problem_sets,
@@ -111,10 +111,7 @@ def problem_set(problem_set_slug):
 
 
     # load problems, definition, etc
-    mongo.load(obj=problem_set,
-                key_id='entries_ids',
-                key='entries',
-                collection=g.db.entries)
+    mongo.load(problem_set,'entries_ids','entries',g.db.entries)
     # get the numbers of problems or definitions
     model_problem_set.get_numbers(problem_set=problem_set)
     
@@ -157,10 +154,7 @@ def problem(problem_set_slug,prob_id):
     #next 3 queries are done so that we know the number of the problem in probem set
 
     #load the entries of problem_set in order to get the number of problem
-    mongo.load(obj=problem_set,
-                key_id='entries_ids',
-                key='entries',
-                collection=g.db.entries)
+    mongo.load(problem_set,'entries_ids','entries',g.db.entries)
     # get the numbers of problems or definitions
     model_problem_set.get_numbers(problem_set=problem_set)
 
@@ -173,16 +167,9 @@ def problem(problem_set_slug,prob_id):
     
 
     #load general discussion
-    mongo.load(obj=problem,
-                key_id='general_discussion_ids',
-                key='general_discussion',
-                collection=g.db.posts)
-    
+    mongo.load(problem,'general_discussion_ids','general_discussion',g.db.posts)
     # load solutions
-    mongo.load(obj=problem,
-                key_id='solutions_ids',
-                key='solutions',
-                collection=g.db.solutions)
+    mongo.load(problem,'solutions_ids','solutions',g.db.solutions)
 
     # get the current_user_solution, if its written
     try: 
@@ -286,37 +273,9 @@ def problem(problem_set_slug,prob_id):
 @workflow.route('/check', methods=["GET", "POST"])
 @login_required
 def check():
-    if not g.user:
-        flash('Please, log in first')
-        return redirect(url_for('.check'))
-
-    # prepare for getting solutions 
-    if g.user['rights']['is_moderator'] or g.user['rights']['is_checker']:
-        solutions=g.db.solutions.find({'status': 'not_checked'})
-    else:
-        solutions=[]
-        for idd in g.user['problems_ids']['can_see_other_solutions']:
-            solutions.extend(g.db.solutions.find({'problem_id':ObjectId(idd), 'checked': False}))
-
-    # get the solutions that user can see
-    sols=[]
-    for solution in solutions:
-        mongo.load(obj=solution,
-                key_id='solution_discussion_ids',
-                key='discussion',
-                collection=g.db.posts)
-        if not mongo.load(obj=solution,
-                        key_id='author_id',
-                        key='author',
-                        collection=g.db.users):
-            solution['author']={}
-            solution['author']['username']='deleted user'
-
-        problem=g.db.entries.find_one({'_id':ObjectId(solution['problem_id'])})
-        problem_set=g.db.problem_sets.find_one({'_id':ObjectId(solution['problem_set_id'])})
-        solution['problem_text']=problem['text']
-        solution['problem_set']=problem_set['title']
-        sols.append(solution)
+    
+    sols=model_solution.get_solution_for_check_page(g.db,g.user)
+    
 
     vote_form=VoteForm()
     if vote_form.validate_on_submit():
