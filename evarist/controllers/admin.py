@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from bson.objectid import ObjectId
-import os, datetime, urllib, urllib2
+import os, datetime, urllib, urllib2, pymongo
 from flask import current_app, Flask, Blueprint, request, session, g, redirect, url_for, \
     abort, render_template, flash
 from contextlib import closing
@@ -89,6 +89,7 @@ def users():
 def checked_solutions():
 
     solutions=g.db.solutions.find({'status':{ '$in': [ 'checked_correct',  'checked_incorrect' ] }})
+    solutions.sort('date',pymongo.DESCENDING)
     sols=[]
     for solution in solutions:
         mongo.load(solution,'solution_discussion_ids','discussion',g.db.posts)
@@ -159,6 +160,7 @@ def not_checked_solutions():
         solution['problem_text']=problem['text']
         solution['problem_set']=problem_set['title']
         sols.append(solution)
+    sols.sort(key=lambda x: x.get('date'),reverse=True)
 
     vote_form=VoteForm()
     if vote_form.validate_on_submit():

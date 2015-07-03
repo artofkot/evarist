@@ -168,8 +168,6 @@ def problem(problem_set_slug,prob_id):
 
     #load general discussion
     mongo.load(obj=problem,key_id='general_discussion_ids',key='general_discussion',collection=g.db.posts)
-    print problem.get('general_discussion_ids')
-    print problem['general_discussion']
     # load solutions
     mongo.load(problem,'solutions_ids','solutions',g.db.solutions)
 
