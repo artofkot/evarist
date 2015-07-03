@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from bson.objectid import ObjectId
-import os, sys, pymongo, re
+import os, sys, pymongo, re, time
 from flask import Flask, request, session, g, redirect, url_for
 from flask.ext.babel import Babel
 from flask.ext.mail import Mail
@@ -10,6 +10,7 @@ from controllers.admin import admin
 import logging
 
 # creating an app
+
 app = Flask('evarist')
 
 # adding different parts of app
@@ -63,6 +64,7 @@ def before_request():
     
     # for accessing locale in each request
     g.locale = get_locale()
+
 
     
 

@@ -22,19 +22,12 @@
           </div>
 
 
-          {% if solution['is_right'] %}
-            <div class="blog-post">
-              <p class="blog-post-meta"><strong>Решение от {{solution['author']}}.</strong> 
-              <strong style='color:green'> Проверено, правильное.</strong> </p>
-              <pre>{{ solution['text'] }}</pre>
-            </div>
-          {%else%}
-            <div class="blog-post">
-              <p class="blog-post-meta"><strong>Решение от {{solution['author']}}.</strong> 
-              </p>
-              <pre>{{ solution['text'] }}</pre>
-            </div>
-          {%endif%}
+          
+          <div class="blog-post">
+            <p class="blog-post-meta"><strong>Решение от {{solution['author']['username']}}.</strong> 
+            </p>
+            <pre>{{ solution['text'] }}</pre>
+          </div>
           
           <div class='row'>
             <div class="col-md-4 col-md-offset-1">

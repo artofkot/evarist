@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import os, json
 
-ADMINS = ['artofkot@gmail.com','alexej.levin@gmail.com ']
+APPLICATION_NAME = "Evarist"
+
 MONGO_URI=os.environ.get("MONGO_URI")
 SECRET_KEY = os.environ.get("LISTKI_SECRET_KEY")
 DEBUG=False
@@ -29,4 +30,4 @@ MAIL_USERNAME = MANDRILL_USERNAME
 MAIL_PASSWORD = MANDRILL_APIKEY
 MAIL_DEFAULT_SENDER = ('Evarist',MANDRILL_USERNAME)
 
-APPLICATION_NAME = "Evarist"
+ADMINS = ['artofkot@gmail.com','alexej.levin@gmail.com']

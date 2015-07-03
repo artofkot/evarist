@@ -11,7 +11,7 @@ from bson.objectid import ObjectId
 
 def add(text,db,author_id,entry_type,problem_set_id,entry_number):
     problem_set=db.problem_sets.find_one({"_id":problem_set_id})
-    if entry_type=='problem': #then it will have field solutions
+    if entry_type=='problem': #then it will have field solutions_ids
         ob_id=db.entries.insert_one({'text':text,
                                 'author_id':author_id,
                                 'date':datetime.datetime.utcnow(),
@@ -45,14 +45,9 @@ def edit(ob_id, text, db, entry_type, problem_set_id, entry_number):
                                 {"$set": {'text':text,
                                             'entry_type':entry_type}})
 
-    # problem_set=db.problem_sets.find_one({"_id":problem_set_id})
-    # if not problem_set.get('entries_ids'):
-    #     problem_set['entries_ids']=[]
-    # problem_set['entries_ids'].remove(ob_id)
-    # problem_set['entries_ids'].insert(entry_number,ob_id)
-    # db.problem_sets.update_one({"_id":problem_set_id}, {"$set": problem_set}, upsert=False)
     db.problem_sets.update_one({"_id":problem_set_id}, 
                                     {"$pull": {'entries_ids':ob_id }})
+
     db.problem_sets.update_one({"_id":problem_set_id}, 
                                 {"$push": {'entries_ids':{
                                                         '$each':[ob_id],
@@ -66,9 +61,10 @@ def edit(ob_id, text, db, entry_type, problem_set_id, entry_number):
 
 def delete_forever(entry_id,problem_set_id,db):
     r=db.entries.delete_one({"_id":entry_id})
-    r=db.problem_sets.update_one({"_id":problem_set_id}, 
+    db.problem_sets.update_one({"_id":problem_set_id}, 
                                     {"$pull": {'entries_ids':entry_id }})
 
-    return True   
+    if r: return True
+    else: return False
 
     

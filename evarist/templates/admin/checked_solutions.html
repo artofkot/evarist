@@ -22,15 +22,16 @@
           </div>
 
 
-          {% if solution['is_right'] %}
+          {% if solution['status']=='checked_correct' %}
             <div class="blog-post">
-              <p class="blog-post-meta"><strong>Решение от {{solution['author']}}.</strong> 
+              <p class="blog-post-meta"><strong>Решение от {{solution['author']['username']}}.</strong> 
               <strong style='color:green'> Проверено, правильное.</strong> </p>
               <pre>{{ solution['text'] }}</pre>
             </div>
           {%else%}
             <div class="blog-post">
-              <p class="blog-post-meta"><strong>Решение от {{solution['author']}}.</strong> 
+              <p class="blog-post-meta"><strong>Решение от {{solution['author']['username']}}.</strong> 
+              <strong style='color:red'> Проверено, неправильное.</strong>
               </p>
               <pre>{{ solution['text'] }}</pre>
             </div>

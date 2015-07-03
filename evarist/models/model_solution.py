@@ -16,7 +16,7 @@ def add(text,db,author_id,problem_id,problem_set_id):
                                'status': 'not_checked' # can be later changed to 'checked_correct' or 'checked_incorrect'
                                })
     ob_id=res.inserted_id
-    print ob_id
+
     # UPDATE OTHER DATABASES
     db.entries.update_one({"_id": problem_id}, 
                             {'$addToSet': {'solutions_ids': ob_id} })
@@ -63,6 +63,15 @@ def can_vote(db,solution_id):
 
 def can_see_other_solutions(db,solution_id):
     return did_solve(db,solution_id)
+
+# I dont use the following function yet, but this is the right way to do this update, arguments should be user and problem
+def did_solve_by_user_and_problem_ids(db,problem_id,user_id):
+    solution=db.solutions.find_one({'author_id':solution_id,
+                                    'problem_id':problem_id})
+    if solution and solution['status']=='checked_correct':
+        return True
+    else: 
+        return False
 
 
 

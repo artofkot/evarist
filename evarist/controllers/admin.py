@@ -21,7 +21,9 @@ def admin_required(f):
         if g.user and (not g.user['rights']['is_moderator']):
             flash('You are not allowed to do that.')
             return redirect(url_for('workflow.home'))
-
+        if not g.user:
+            flash('You are not allowed to do that.')
+            return redirect(url_for('workflow.home'))
 
         return f(*args, **kwargs)
     return decorated_function
@@ -72,9 +74,6 @@ def problem_questions():
         p['problem_set']=g.db.problem_sets.find_one({'_id':p['problem_set_id']})
         p['problem']=g.db.entries.find_one({'_id':p['problem_id']})
         posts.append(p)
-
-    print posts
-
     return render_template("admin/problem_questions.html", 
                             posts=posts)
 
@@ -96,6 +95,12 @@ def checked_solutions():
                     key_id='solution_discussion_ids',
                     key='discussion',
                     collection=g.db.posts)
+        if not mongo.load(obj=solution,
+                        key_id='author_id',
+                        key='author',
+                        collection=g.db.users):
+            solution['author']={}
+            solution['author']['username']='deleted user'
         problem=g.db.entries.find_one({'_id':ObjectId(solution['problem_id'])})
         problem_set=g.db.problem_sets.find_one({'_id':ObjectId(solution['problem_set_id'])})
         solution['problem_text']=problem['text']
@@ -146,13 +151,19 @@ def checked_solutions():
 @admin.route('/admin/not_checked_solutions', methods=["GET", "POST"])
 @admin_required
 def not_checked_solutions():
-    solutions=g.db.solutions.find({'checked': False})
+    solutions=g.db.solutions.find({'status': 'not_checked'})
     sols=[]
     for solution in solutions:
         mongo.load(obj=solution,
                     key_id='solution_discussion_ids',
                     key='discussion',
                     collection=g.db.posts)
+        if not mongo.load(obj=solution,
+                        key_id='author_id',
+                        key='author',
+                        collection=g.db.users):
+            solution['author']={}
+            solution['author']['username']='deleted user'
         problem=g.db.entries.find_one({'_id':ObjectId(solution['problem_id'])})
         problem_set=g.db.problem_sets.find_one({'_id':ObjectId(solution['problem_set_id'])})
         solution['problem_text']=problem['text']
@@ -256,9 +267,9 @@ def problem_set_edit(problem_set_slug):
                              entry_number= int(edit_entry_form.entry_number.data),
                              problem_set_id=problem_set['_id'])
             if rez:
-                print flash('Entry edited, sir.')
+                flash('Entry edited, sir.')
             else:
-                print flash('Didnt work, slug or title is wrong.')
+                flash('Didnt work, slug or title is wrong.')
 
         return redirect(url_for('admin.problem_set_edit',
                                 problem_set_slug=problem_set['slug']))
@@ -272,7 +283,7 @@ def problem_set_edit(problem_set_slug):
                             text=entryform.text.data, 
                             problem_set_id=problem_set['_id'],
                             entry_number= int(entryform.entry_number.data)):
-            print flash('Entry added, sir.')
+            flash('Entry added, sir.')
 
         return redirect(url_for('admin.problem_set_edit',
                                 problem_set_slug=problem_set['slug']))
