@@ -51,7 +51,7 @@ def signup():
                         username=signup_form.username.data,
                         db=g.db,
                         secret_key=current_app.config["SECRET_KEY"]):
-            flash('We sent you an email, please visit the confirmation link.')
+            flash('Hey, thanks for signing up! We sent you an email, please visit the confirmation link.')
             send_confirmation_link(signup_form.email.data)
         else: 
             flash('Such email already exists')
@@ -104,9 +104,6 @@ def login():
         if user:
             if model_user.check_pwd(password,user["pw_hash"],secret_key=current_app.config["SECRET_KEY"]):
                 session['_id']=str(user['_id'])
-                if not user.get('confirmed'):
-                    flash('Your account was not confirmed, please visit the link we sent you on email.')
-                    send_confirmation_link(user['email'])
                 return redirect(url_for('workflow.home'))
 
 
