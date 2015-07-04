@@ -8,8 +8,9 @@ from flask import current_app, Flask, Blueprint, request, session, g, redirect, 
 from contextlib import closing
 from jinja2 import TemplateNotFound
 from evarist.models import model_user
+from evarist.models.token import generate_confirmation_token, confirm_token
 from evarist.forms import SignUpForm, SignInForm
-
+from flask.ext.mail import Message
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 from oauth2client.client import AccessTokenCredentials
@@ -20,6 +21,16 @@ import requests
 
 user = Blueprint('user', __name__,
                         template_folder='templates')
+
+def send_confirmation_link(email):
+    token = generate_confirmation_token(email)
+    confirm_url = url_for('user.confirm_email', token=token, _external=True)
+    html = render_template('user/activate.html', confirm_url=confirm_url)
+    g.mail.send(Message(html = render_template('user/activate.html', confirm_url=confirm_url),
+                        subject='Please confirm your email',
+                        recipients=[email]))
+
+    return redirect(url_for('workflow.home'))
 
 
 @user.route('/user/signup', methods=['GET', 'POST'])
@@ -40,7 +51,8 @@ def signup():
                         username=signup_form.username.data,
                         db=g.db,
                         secret_key=current_app.config["SECRET_KEY"]):
-            return redirect(url_for('user.login'))
+            flash('We sent you an email, please visit the confirmation link.')
+            send_confirmation_link(signup_form.email.data)
         else: 
             flash('Such email already exists')
             return redirect(url_for('user.signup'))
@@ -52,6 +64,25 @@ def signup():
         return render_template("user/signup.html", error=error, signup_form=SignUpForm())
 
     return render_template("user/signup.html", error=error, signup_form=signup_form)
+
+@user.route('/confirm/<token>')
+def confirm_email(token):
+    try:
+        email = confirm_token(token)
+    except:
+        flash('The confirmation link is invalid or has expired.')
+    user = g.db.users.find_one({'email':email, 'provider':'email'})
+    if user:
+        if user.get('confirmed'):
+            flash('Account already confirmed. Please login.')
+        else:
+            g.db.users.update_one({"_id": user['_id']}, 
+                                {'$set': {'confirmed': True} })
+            session['_id']=str(user['_id'])
+            flash('You have confirmed your account. Thanks!', 'success')
+    else: flash('Such email does not exist in our database.')
+    return redirect(url_for('workflow.home'))
+
 
 @user.route('/user/login', methods=['GET', 'POST'])
 def login():
@@ -73,7 +104,12 @@ def login():
         if user:
             if model_user.check_pwd(password,user["pw_hash"],secret_key=current_app.config["SECRET_KEY"]):
                 session['_id']=str(user['_id'])
+                if not user.get('confirmed'):
+                    flash('Your account was not confirmed, please visit the link we sent you on email.')
+                    send_confirmation_link(user['email'])
                 return redirect(url_for('workflow.home'))
+
+
             else:
                 error = 'Invalid password'
         else:

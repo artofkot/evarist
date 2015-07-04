@@ -59,8 +59,16 @@ def before_request():
     # store current user dictionary in g object
     if session.get('_id'):
         g.user=g.db.users.find_one({'_id':ObjectId(session['_id'])})
-        if g.user==None: g.user={}
-    else: g.user={}
+        if g.user==None: 
+            session.pop('_id', None)
+            session.pop('gplus_id', None)
+            session.pop('access_token', None)
+            g.user={}
+    else:
+        session.pop('_id', None) 
+        session.pop('gplus_id', None)
+        session.pop('access_token', None)
+        g.user={}
 
     #connection in order to send emails
     g.mail=mail
