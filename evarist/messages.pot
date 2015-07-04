@@ -16,16 +16,3 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
-
-#: templates/check.html:27 templates/check.html:33
-#, python-format
-msgid "Решение от %(author)s"
-msgstr "Solution by %(author)s"
-
-#: templates/home.html:17
-msgid "Эварист"
-msgstr "Evarist"
-
-#: templates/home.html:21
-msgid "Учимся думать красиво."
-msgstr "A place on the internet to learn math"
