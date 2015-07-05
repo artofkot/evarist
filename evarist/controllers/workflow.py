@@ -109,6 +109,10 @@ def problem_set(problem_set_slug):
         flash('No such problem set.')
         return redirect(url_for('.home'))
 
+    if not problem_set['status']=='production':
+        flash('This problem set is not ready yet.')
+        return redirect(url_for('.home'))
+
 
     # load problems, definition, etc
     mongo.load(problem_set,'entries_ids','entries',g.db.entries)
@@ -148,6 +152,10 @@ def problem(problem_set_slug,prob_id):
     problem_set=g.db.problem_sets.find_one({"slug": problem_set_slug})
     if problem_set==False: 
         flash('No such problem set.')
+        return redirect(url_for('.home'))
+
+    if not problem_set['status']=='production':
+        flash('This problem set is not ready yet.')
         return redirect(url_for('.home'))
 
 
@@ -193,17 +201,20 @@ def problem(problem_set_slug,prob_id):
     if vote_form.validate_on_submit():
         voted_solution=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
         if not g.user['_id'] in (voted_solution['users_upvoted_ids'] + voted_solution['users_downvoted_ids'] ):
+            if g.user['rights']['is_checker']: vote_weight=2
+            else: vote_weight=1
+
             if vote_form.vote.data == 'upvote': 
                 g.db.solutions.update_one({'_id':voted_solution['_id']},
                                             {'$addToSet':{'users_upvoted_ids':g.user['_id']}})
                 g.db.solutions.update_one({'_id':voted_solution['_id']},
-                                            {'$inc':{'upvotes':1}})
+                                            {'$inc':{'upvotes':vote_weight}})
 
             if vote_form.vote.data == 'downvote':
                 g.db.solutions.update_one({'_id':voted_solution['_id']},
                                             {'$addToSet':{'users_downvoted_ids':g.user['_id']}})
                 g.db.solutions.update_one({'_id':voted_solution['_id']},
-                                            {'$inc':{'downvotes':1}})
+                                            {'$inc':{'downvotes':vote_weight}})
         
             model_solution.update_everything(g.db, voted_solution['_id'])
 
@@ -275,17 +286,19 @@ def check():
     if vote_form.validate_on_submit():
         voted_solution=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
         if not g.user['_id'] in (voted_solution['users_upvoted_ids'] + voted_solution['users_downvoted_ids'] ):
+            if g.user['rights']['is_checker']: vote_weight=2
+            else: vote_weight=1
             if vote_form.vote.data == 'upvote': 
                 g.db.solutions.update_one({'_id':voted_solution['_id']},
                                             {'$addToSet':{'users_upvoted_ids':g.user['_id']}})
                 g.db.solutions.update_one({'_id':voted_solution['_id']},
-                                            {'$inc':{'upvotes':1}})
+                                            {'$inc':{'upvotes':vote_weight}})
 
             if vote_form.vote.data == 'downvote':
                 g.db.solutions.update_one({'_id':voted_solution['_id']},
                                             {'$addToSet':{'users_downvoted_ids':g.user['_id']}})
                 g.db.solutions.update_one({'_id':voted_solution['_id']},
-                                            {'$inc':{'downvotes':1}})
+                                            {'$inc':{'downvotes':vote_weight}})
         
             model_solution.update_everything(g.db, voted_solution['_id'])
 

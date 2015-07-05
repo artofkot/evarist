@@ -108,17 +108,20 @@ def checked_solutions():
     if vote_form.validate_on_submit():
         voted_solution=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
         if not g.user['_id'] in (voted_solution['users_upvoted_ids'] + voted_solution['users_downvoted_ids'] ):
+            if g.user['rights']['is_checker']: vote_weight=2
+            else: vote_weight=1
+
             if vote_form.vote.data == 'upvote': 
                 g.db.solutions.update_one({'_id':voted_solution['_id']},
                                             {'$addToSet':{'users_upvoted_ids':g.user['_id']}})
                 g.db.solutions.update_one({'_id':voted_solution['_id']},
-                                            {'$inc':{'upvotes':1}})
+                                            {'$inc':{'upvotes':vote_weight}})
 
             if vote_form.vote.data == 'downvote':
                 g.db.solutions.update_one({'_id':voted_solution['_id']},
                                             {'$addToSet':{'users_downvoted_ids':g.user['_id']}})
                 g.db.solutions.update_one({'_id':voted_solution['_id']},
-                                            {'$inc':{'downvotes':1}})
+                                            {'$inc':{'downvotes':vote_weight}})
         
             model_solution.update_everything(g.db, voted_solution['_id'])
         
@@ -166,17 +169,20 @@ def not_checked_solutions():
     if vote_form.validate_on_submit():
         voted_solution=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
         if not g.user['_id'] in (voted_solution['users_upvoted_ids'] + voted_solution['users_downvoted_ids'] ):
+            if g.user['rights']['is_checker']: vote_weight=2
+            else: vote_weight=1
+
             if vote_form.vote.data == 'upvote': 
                 g.db.solutions.update_one({'_id':voted_solution['_id']},
                                             {'$addToSet':{'users_upvoted_ids':g.user['_id']}})
                 g.db.solutions.update_one({'_id':voted_solution['_id']},
-                                            {'$inc':{'upvotes':1}})
+                                            {'$inc':{'upvotes':vote_weight}})
 
             if vote_form.vote.data == 'downvote':
                 g.db.solutions.update_one({'_id':voted_solution['_id']},
                                             {'$addToSet':{'users_downvoted_ids':g.user['_id']}})
                 g.db.solutions.update_one({'_id':voted_solution['_id']},
-                                            {'$inc':{'downvotes':1}})
+                                            {'$inc':{'downvotes':vote_weight}})
         
             model_solution.update_everything(g.db, voted_solution['_id'])
         
