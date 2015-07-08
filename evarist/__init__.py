@@ -11,7 +11,7 @@ import logging
 
 # creating an app
 
-app = Flask('evarist')
+app = Flask(__name__)
 
 # adding different parts of app
 app.config.from_object('config')
