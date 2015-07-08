@@ -95,3 +95,22 @@ a:hover {
 a:active {
     text-decoration: underline;
 }
+
+#particles {
+  overflow: visible;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%; 
+  width: 100%;
+  z-index: 0;
+}
+
+.on_particles {
+  position: relative; 
+  top:0;
+  left:0;
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+}
