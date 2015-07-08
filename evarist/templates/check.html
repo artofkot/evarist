@@ -1,3 +1,8 @@
+{% import 'macros/solutions.html' as solution_macros %}
+{% import 'macros/forms.html' as form_macros %}
+{% import 'macros/posts.html' as post_macros %}
+
+
 {% extends "layout.html" %}
 {% block head %}
 {% endblock %}
@@ -5,110 +10,69 @@
 
   <div class="row">
     <div class="col-md-6 col-md-offset-3">
-      <h3>Это решения, которые можно проверить, то есть проголосовать за "верно" или "неверно", и написать отзыв при необходимости (например если решение недоведено). Вы можете проверять только уже решенные вами задачи. </h3>
       
-    
-        {%for solution in solutions | reverse %}
-          <hr>
-          <div style='height:50px'>
+      <h3>Это решения, которые можно проверить, то есть проголосовать за "верно" или "неверно", и написать отзыв при необходимости (например если решение недоведено). Вы можете проверять только уже решенные вами задачи. </h3>
+      <hr>
+
+      {%for solution in solutions | reverse %}
+        <!-- solutions text, and the name of problem set -->
+        <div>
+          <p>
+            <em>{{solution.get('problem_set')|safe}}</em> 
+            <br>
+            {{solution.get('problem_text')|safe}}
+          </p>
+        </div>
+
+        <!-- solution -->
+        {{solution_macros.solution(solution=solution,inscription=gettext('Решение от %(author)s', author = solution['author']))}}
+
+        <!-- votes + form for voting-->
+        <div class='row'>
+          <!-- votes -->
+          <div class="col-md-4 col-md-offset-1">
+            {{solution_macros.display_votes(solution)}}
           </div>
 
-          <div>
-            <p>
-              <em>{{solution.get('problem_set')|safe}}</em>
-              <br>
-              {{solution.get('problem_text')|safe}}
-            </p>
-          </div>
-
-
-          {% if solution['is_right'] %}
-            <div class="blog-post">
-              <p class="blog-post-meta"><strong>{{gettext('Решение от %(author)s', author = solution['author'])}}.</strong> 
-              <strong style='color:green'> Проверено, правильное.</strong> </p>
-              <pre>{{ solution['text'] }}</pre>
-            </div>
+          <!-- vote form -->
+          <div class="col-md-4 col-md-offset-2">
+          {%if session['email'] not in solution.get('emails_voted')%}
+            <form action="{{request.path}}?sol_id={{solution['_id']}}" method="post">
+              {{ vote_form.hidden_tag() }}
+              {{ form_macros.vote_for_solution_form() }}
+            </form>
           {%else%}
-            <div class="blog-post">
-              <p class="blog-post-meta"><strong>{{gettext('Решение от %(author)s', author = solution['author'])}}.</strong> 
-              </p>
-              <pre>{{ solution['text'] }}</pre>
-            </div>
+            <p><strong style='color:green'> Вы уже проголосовали.</strong></p>
           {%endif%}
-          
-          <div class='row'>
-            <div class="col-md-4 col-md-offset-1">
-              <p>{{solution.get("upvotes")}} верно </p>
-              <p>{{solution.get('downvotes')}} неверно</p>
-            </div>
-            <div class="col-md-4 col-md-offset-2">
-              {%if session['email'] not in solution.get('emails_voted')%}
-                <form action=" {{url_for('.check', sol_id=solution['_id'])}}" method="post">
-                  
-                  {{ vote_form.hidden_tag() }}
-                  
-                    <div class="form-group" >
-                      <div class="radio">
-                        <label>
-                          <input type="radio" name="vote" id="optionsRadios1" value="upvote" >
-                          верно
-                        </label>
-                      </div>
-                      <div class="radio">
-                        <label>
-                          <input type="radio" name="vote" id="optionsRadios2" value="downvote">
-                          неверно
-                        </label>
-                      </div>
-                    </div>
-                    <button type="submit" class="btn btn-xs btn-default">Проголосовать</button>
-                  
-                  <!--  Template for disabled and checked radio button
-
-                  <div class="radio disabled">
-                    <label>
-                      <input type="radio" name="test" id="optionsRadios3" value="option3" disabled checked>
-                      Option three is disabled
-                    </label>
-                  </div> -->
-                  
-                </form>
-              {%else%}
-                <p><strong style='color:green'> Вы уже проголосовали.</strong></p>
-              {%endif%}
-            </div>
           </div>
-          
-          
+        </div>
+        
+        <div style='height:14px'></div>
 
+        <!-- comment form -->
+        <form action=" {{url_for('.check', sol_id=solution['_id'])}}" method="post">
+          {{ solution_comment_form.hidden_tag() }}
+          {{ form_macros.comment_form(name_of_textarea="feedback_to_solution", name_of_the_button="Оставить комментарий") }}
+        </form>
 
-          <form action=" {{url_for('.check', sol_id=solution['_id'])}}" method="post">
-            <div class="form-group" >
-              {{ solution_comment_form.hidden_tag() }}
-              <label for="feedback_to_solution">  <strong> Комментировать: </strong> </label>
-              <textarea class="form-control" rows="2"  name='feedback_to_solution'></textarea>
-            </div>
-            <button type="submit" class="btn btn-default">Отправить</button>
-          </form>
-          
-          <div style='height:5px'></div>
+        <div style='height:5px'></div>
 
-          {% if solution.get('discussion')%}
-            <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#collapseId{{loop.index}}" aria-expanded="true" aria-controls="collapseId{{loop.index}}">
-              спрятать комментарии
-            </button>
-            <div class="collapse in" aria-expanded="true" id="collapseId{{loop.index}}">
-              {% for post in solution['discussion'] | reverse %}
-                <div class="blog-post">
-                    <p class="blog-post-meta">{{post['date'].day}}/{{post['date'].month}}/{{post['date'].year}} by {{post['author']}}</p>
-                    <pre>{{ post['text'] }}</pre>
-                </div>
-              {% endfor %}
-            </div>
-          {% endif %}
+        <!-- displaying comments if they exist -->
+        {% if solution.get('discussion')%}
+          <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#collapse_Id_{{loop.index}}" aria-expanded="true" aria-controls="collapse_Id_{{loop.index}}">
+            спрятать комментарии
+          </button>
+          <div class="collapse in" aria-expanded="true" id="collapse_Id_{{loop.index}}">
+            {% for post in solution['discussion'] | reverse %}
+              {{ post_macros.post(post) }}
+            {% endfor %}
+          </div>
+        {% endif %}
 
-        {%endfor%}
-
+        <div style='height:50px'>
+        </div>
+        <hr>
+      {%endfor%}
 
     </div>
   </div>

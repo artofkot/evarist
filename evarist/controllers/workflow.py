@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 
 from bson.objectid import ObjectId
-import os, datetime, urllib, urllib2
+import os, time, datetime, urllib, urllib2
 from flask import current_app, Flask, Blueprint, request, session, g, redirect, url_for, \
     abort, render_template, flash
 from contextlib import closing
-from flask.ext.pymongo import PyMongo
+from flask.ext.mail import Message
+from evarist import models
 from evarist.models import model_problem_set, model_entry, model_post, model_solution, mongo
 from evarist.forms import WebsiteFeedbackForm, CommentForm, SolutionForm, FeedbackToSolutionForm, EditSolutionForm, VoteForm
 
@@ -15,9 +16,17 @@ workflow = Blueprint('workflow', __name__,
 
 @workflow.route('/', methods=["GET", "POST"])
 def home():
-    # USE THIS CAREFULLY! This is template for updating keys in all documents.
-    # mongo.update(collection=g.db.problem_sets,doc_key='all',doc_value='notimportant',
-    #             update_key='status',update_value='dev')
+    # USE THIS CAREFULLY, its DANGEROUS! This is template for updating keys in all documents.
+    #
+    # print mongo.update(collection=g.db.entries,doc_key='all',doc_value='notimportant',
+    #             update_key='parentdsddfs_ids',update_value=[])
+
+    
+    # this is example code for sending emails
+    #
+    # msg = Message("Hello",
+    #               recipients=["artofkot@gmail.com"])
+    # g.mail.send(msg)
 
     website_feedback_form=WebsiteFeedbackForm()
     if website_feedback_form.validate_on_submit():
@@ -36,29 +45,30 @@ def home():
                         problem_id=None,
                         problem_set_id=None)
         flash('Thank you for your feedback!')
-        return redirect(url_for('.home'))
+        return redirect(url_for('workflow.home'))
 
-    psets=model_problem_set.get_all(g.db)
-    problem_sets=[]
-
-    rus_set=['mnozhestva','otobrazhenia','kombinatorika','podstanovki',
+    
+    # this is how we manually choose which problem_sets to display on homepage
+    rus_slugset=['mnozhestva','otobrazhenia','kombinatorika','podstanovki',
             'indukcia', 'binom-newtona','teoriya-graphov-1', 
             'podstanovki-2','delimost', 'algoritm-evklida', 'otnoshenia',
              'sravneniya','integers-praktika', 'teoriya-graphov-2', 'teoriya-grup', 'gomomorphismy']
-    eng_set=['sets','group-theory']
-    if g.locale == 'ru':
-        page_set=rus_set
-    else:
-        page_set=eng_set
+    eng_slugset=['sets','group-theory']
+    if g.locale == 'ru': homepage_slugset=rus_slugset
+    else: homepage_slugset=eng_slugset
     
-    for slug in page_set:
+    # get all problem_sets
+    psets=model_problem_set.get_all(g.db)
+
+    # choose those problem_sets, which slug is in homepage_slugset
+    # check if all chosen slugs matched to some problem_sets, and if not - write which ones are wrong
+    problem_sets=[]
+    for slug in homepage_slugset:
         try:
             pset= next(pset for pset in psets if pset['slug']==slug)
             problem_sets.append(pset)
         except StopIteration:
             flash('slug ' + slug + ' was not found')
-        
-
 
     return render_template('home.html',
                         problem_sets=problem_sets,
@@ -69,9 +79,9 @@ def home():
 def index():
     return redirect(url_for('.home'))
 
-@workflow.route('/roots')
-def roots():
-    return render_template('roots.html')
+# @workflow.route('/roots')
+# def roots():
+#     return render_template('roots.html')
 
 @workflow.route('/about')
 def about():
@@ -81,57 +91,66 @@ def about():
 def problem_set(problem_set_slug):
 
 
-    problem_set=model_problem_set.get_by_slug(problem_set_slug, g.db)
+
+    # get the problem set
+    problem_set=g.db.problem_sets.find_one({"slug": problem_set_slug})
     if problem_set==False: 
         flash('No such problem set.')
         return redirect(url_for('.home'))
 
-
+    # load problems, definition, etc
     model_problem_set.load_entries(problem_set,g.db)
+
+    # check if all entries loaded correctly
+    if len(problem_set['entries'])!=len(problem_set['entries_ids']): 
+        flash('Some entry was not found!')
 
     return render_template('problem_set.html', 
                             problem_set=problem_set)
 
 @workflow.route('/problem_sets/<problem_set_slug>/<entry_type>/<__id>/', methods=["GET", "POST"])
 def entry(problem_set_slug,entry_type,__id):
-    problem_set=model_problem_set.get_by_slug(problem_set_slug, g.db)
+
+    # get the problem set of entry
+    problem_set=g.db.problem_sets.find_one({"slug": problem_set_slug})
     if problem_set==False: 
         flash('No such problem set.')
         return redirect(url_for('.home'))   
 
+    # get the entry
     entry=g.db.entries.find_one({"_id":ObjectId(__id)})
 
     return render_template('entry.html', 
                             problem_set=problem_set, 
                             entry=entry)
 
-# @workflow.route('/problem_sets/<problem_set_slug>/problem/<int:problem_number>/', methods=["GET", "POST"])
 @workflow.route('/problem_sets/<problem_set_slug>/problem/<prob_id>/', methods=["GET", "POST"])
 def problem(problem_set_slug,prob_id):
-    # problem_number=int(request.args['problem_number'])
-    problem_set=model_problem_set.get_by_slug(problem_set_slug, g.db)
+
+    # get the problem_set
+    problem_set=g.db.problem_sets.find_one({"slug": problem_set_slug})
     if problem_set==False: 
         flash('No such problem set.')
         return redirect(url_for('.home'))
 
-
-    #get the problem_set
+    
+    #load the entries of problem_set in order to get the number of problem
     model_problem_set.load_entries(problem_set,g.db)
-
-    # get the problem out of problem_set  -  OLD, when we tried to use numbers of problems in url
+    # get the problem and problem's number out of problem_set
     try:
         problem, problem_number=next((entry, entry['problem_number']) for entry in problem_set['entries'] if entry.get('_id')==ObjectId(prob_id))
     except StopIteration:
         flash('No such problem in this problem_set.')
         return redirect(url_for('workflow.problem_set',problem_set_slug=problem_set_slug))
-
     
     
-
     #load general discussion
     model_entry.load_posts(problem,g.db)
-    # load solutions
+    
+    # load solutions !!"!ФЫЩЫЛВАЩВЫАЩЫВА" ЫВАЫВ ИСПРАВЬ!!!!!!!!!
     model_entry.load_solution(problem,g.db,session.get('username'),session.get('email'))
+    current_user_solution=problem.get('solution')
+
     #TODO load comments to solutions
 
     general_comment_form=CommentForm()
@@ -248,7 +267,6 @@ def problem(problem_set_slug,prob_id):
 
     g.other_solutions=[]
     if 'email' in session:
-        print str(session.get('is_checker')) +'!!!!'
         if problem['_id'] in user['problems_ids']['can_see_other_solutions'] or session.get("is_moderator") or session.get("is_checker"):
             for sol_id in problem['solutions_ids']:
                 if not currentuser_solution_id==sol_id:
@@ -256,7 +274,7 @@ def problem(problem_set_slug,prob_id):
                     if solut:
                         model_solution.load_discussion(g.db,solut)
                         g.other_solutions.append(solut)
-
+    other_solutions=g.other_solutions
 
 
 
@@ -269,7 +287,9 @@ def problem(problem_set_slug,prob_id):
                             solution_comment_form=solution_comment_form,
                             solution_form=solution_form,
                             edit_solution_form=edit_solution_form,
-                            vote_form=vote_form)
+                            vote_form=vote_form,
+                            other_solutions=other_solutions,
+                            current_user_solution=current_user_solution)
 
 
 @workflow.route('/check', methods=["GET", "POST"])

@@ -4,9 +4,9 @@ import model_entry
 # working with ObjectId
 #
 # from bson.objectid import ObjectId
-# print str(  g.mongo.db.users.find_one({"username":"artofkot"})["_id"]  )
-# artidhex=str(  g.mongo.db.users.find_one({"username":"artofkot"})["_id"]  )
-# print g.mongo.db.users.find_one({"_id":ObjectId(artidhex)})
+# print str(  g.db.users.find_one({"username":"artofkot"})["_id"]  )
+# artidhex=str(  g.db.users.find_one({"username":"artofkot"})["_id"]  )
+# print g.db.users.find_one({"_id":ObjectId(artidhex)})
 
 # Creating ObjectId
 #
@@ -37,13 +37,6 @@ def get_all(db):
     prlist.reverse()
     return prlist
 
-def get_by_slug(problem_set_slug, db):
-    a=db.problem_sets.find_one({"slug": problem_set_slug})
-    if a:
-        return a
-    else:
-        return False
-
 def edit(ob_id, title, slug, db, status, old_slug):
     # if db.problem_sets.find_one({"title": title}):
     #     return False
@@ -59,8 +52,8 @@ def edit(ob_id, title, slug, db, status, old_slug):
 def delete(ob_id, db):
     problem_set=db.problem_sets.find_one({"_id":ob_id})
 
-    for entry_id in problem_set['entries_ids']:
-        model_entry.delete_forever(entry_id=entry_id,problem_set_id=ob_id,db=db)
+    # for entry_id in problem_set['entries_ids']:
+    #     model_entry.delete_forever(entry_id=entry_id,problem_set_id=ob_id,db=db)
 
     db.problem_sets.remove({"_id":ob_id})
     return True
@@ -69,14 +62,20 @@ def load_entries(problem_set,db):
     problem_set['entries']=[]
     problem_counter=0
     definition_counter=0
-    if problem_set.get('entries_ids'):
-        for ob_id in problem_set['entries_ids']:
-            entry=db.entries.find_one({'_id':ob_id})
-            if entry:
-                problem_set['entries'].append(entry)
-                if entry['entry_type']=='problem': #then set the number of this problem
-                    problem_counter=problem_counter+1
-                    problem_set['entries'][-1]['problem_number']= problem_counter
-                if entry['entry_type']=='definition': #then set the number of this definition
-                    definition_counter=definition_counter+1
-                    problem_set['entries'][-1]['definition_number']= definition_counter
+    if not problem_set.get('entries_ids'): return False
+
+    # load entries accorfing to entries_ids
+    for ob_id in problem_set['entries_ids']:
+        entry=db.entries.find_one({'_id':ob_id})
+        if not entry: continue
+        
+        # get the number of problem or definition
+        problem_set['entries'].append(entry)
+        if entry['entry_type']=='problem': #then set the number of this problem
+            problem_counter=problem_counter+1
+            problem_set['entries'][-1]['problem_number']= problem_counter
+        if entry['entry_type']=='definition': #then set the number of this definition
+            definition_counter=definition_counter+1
+            problem_set['entries'][-1]['definition_number']= definition_counter
+
+    return True

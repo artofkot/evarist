@@ -6,7 +6,6 @@ import os, datetime, urllib, urllib2
 from flask import current_app, Flask, Blueprint, request, session, g, redirect, url_for, \
     abort, render_template, flash
 from contextlib import closing
-from flask.ext.pymongo import PyMongo
 from functools import wraps
 from evarist.forms import ProblemSetForm, EntryForm, EditEntryForm, ProblemSetDelete, VoteForm, FeedbackToSolutionForm
 from evarist.models import model_problem_set, model_entry, mongo, model_post, model_solution
@@ -238,7 +237,7 @@ def not_checked_solutions():
 def problem_set_edit(problem_set_slug):
 
 
-    problem_set=model_problem_set.get_by_slug(problem_set_slug, g.db)
+    problem_set=g.db.problem_sets.find_one({"slug": problem_set_slug})
     if problem_set==False: 
         flash('No such slug.')
         return redirect(url_for('admin.home'))

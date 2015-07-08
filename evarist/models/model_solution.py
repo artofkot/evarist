@@ -23,15 +23,7 @@ def add(text,db,author,problem_id,problem_set_id,authors_email=None):
     problem['solutions_ids'].append(ob_id)
     db.entries.update({"_id":problem_id}, {"$set": problem}, upsert=False)
 
-    user=db.users.find_one({'username':author})
-    if not user.get('problems_ids'):
-        user['problems_ids']={
-                            "solution_written":[], #either unchecked ot not correct
-                            'can_see_other_solutions':[], #all true if checker or moderator
-                            "solved":[],
-                            'can_vote':[] #all true if checker or moderator
-                            } 
-
+    user=db.users.find_one({'email':authors_email})
     user['problems_ids']['solution_written'].append(problem['_id'])
     db.users.update({"_id":user['_id']}, {"$set": user}, upsert=False)
 
@@ -46,8 +38,8 @@ def delete(db,solution):
                 doc_key='_id',doc_value=solution["problem_id"],
                 update_key='solutions_ids',
                 update_value=problem['solutions_ids'])
-
-
+    
+    # UPDATE OTHER DATABASES
 
 
 def load_discussion(db,solution):
@@ -61,17 +53,25 @@ def load_discussion(db,solution):
 
 def update_status(db,solution):
     if solution['upvotes']>=2:
-        mongo.update(collection=db.solutions,doc_key='_id',doc_value=ObjectId(solution['_id']),
-                update_key='is_right',
-                update_value=True)
-        mongo.update(collection=db.solutions,doc_key='_id',doc_value=ObjectId(solution['_id']),
-                update_key='checked',
-                update_value=True)
+        mongo.update(collection=db.solutions,
+                    doc_key='_id',
+                    doc_value=ObjectId(solution['_id']),
+                    update_key='is_right',
+                    update_value=True)
+        mongo.update(collection=db.solutions,
+                    doc_key='_id',
+                    doc_value=ObjectId(solution['_id']),
+                    update_key='checked',
+                    update_value=True)
         user=db.users.find_one({'username':solution['author']})
-        user['problems_ids']['can_see_other_solutions'].append(solution['problem_id'])
-        user['problems_ids']['solved'].append(solution['problem_id'])
-        mongo.update(collection=db.users,doc_key='username',doc_value=user['username'],
-                update_key='problems_ids',
-                update_value=user['problems_ids'])
+        if solution['problem_id'] not in user['problems_ids']['can_see_other_solutions']:
+            user['problems_ids']['can_see_other_solutions'].append(solution['problem_id'])
+        if solution['problem_id'] not in user['problems_ids']['solved']:
+            user['problems_ids']['solved'].append(solution['problem_id'])
+        mongo.update(collection=db.users,
+                    doc_key='username',
+                    doc_value=user['username'],
+                    update_key='problems_ids',
+                    update_value=user['problems_ids'])
         return 1
     return 0

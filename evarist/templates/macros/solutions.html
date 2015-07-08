@@ -1,0 +1,25 @@
+{% import 'macros/forms.html' as form_macros %}
+
+
+
+{% macro solution(solution, inscription) -%}
+
+<div class="blog-post">
+  <p class="blog-post-meta"><strong>{{inscription}}</strong> 
+  {% if solution['is_right'] %}
+    <strong style='color:green'> Проверено, правильное.</strong>
+  {% endif %}
+  </p>
+  <pre>{{ solution['text'] }}</pre>
+</div>
+
+{%- endmacro %}
+
+
+
+{% macro display_votes(solution) -%}
+
+<p>{{solution.get("upvotes")}} верно </p>
+<p>{{solution.get('downvotes')}} неверно</p>
+
+{%- endmacro %}

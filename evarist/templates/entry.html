@@ -1,3 +1,5 @@
+{% import 'macros/entries.html' as entry_macros %}
+
 {% extends "layout.html" %}
 {% block head %}
    <title></title>
@@ -6,17 +8,7 @@
 
   <div class="row">
     <div class="col-md-6 col-md-offset-2">
-      <div>
-        <p>
-        {% if entry.get('entry_type')=='problem' %}
-          Задача.
-        {% elif entry.get('entry_type')=='definition' %}
-          ∆ Определение.
-        {%endif%}
-        <br>
-        {{entry['text']|safe}}
-        </p>
-      </div>
+      {{entry_macros.entry(entry, entry_type=entry.get('entry_type'))}}
     </div>
   </div>
 
