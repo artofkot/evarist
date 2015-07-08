@@ -30,8 +30,6 @@ body {
   /*text-align: justify;*/
 }
 
-
-
 pre {
   background-color: white;
 }
@@ -68,7 +66,8 @@ background_pic {
   padding: 30px 15px;
   margin-bottom: 30px;
   color: inherit;
-  /*background-color: white;*/
+  background-color: white;
+  background: none;
   /*background: url(transparent-edges-box.svg);*/
   margin-top: 0px;
   margin-bottom: 0px;
