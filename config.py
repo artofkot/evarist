@@ -5,6 +5,7 @@ APPLICATION_NAME = "Evarist"
 
 MONGO_URI=os.environ.get("MONGO_URI")
 SECRET_KEY = os.environ.get("LISTKI_SECRET_KEY")
+#next one is for email confirmation
 SECURITY_PASSWORD_SALT=os.environ.get("SECURITY_PASSWORD_SALT")
 DEBUG=False
 
