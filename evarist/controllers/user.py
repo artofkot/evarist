@@ -229,7 +229,7 @@ def gconnect():
 @user.route('/user/gdisconnect')
 def gdisconnect():
     # Only disconnect a connected user.
-    access_token = session['access_token']
+    access_token = session.get('access_token')
     if access_token is None:
         response = make_response(
             json.dumps('Current user not connected.'), 401)
