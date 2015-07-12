@@ -181,7 +181,7 @@ def problem(problem_set_slug,prob_id):
 
     # get the current_user_solution, if its written
     try: 
-        current_user_solution= next(sol for sol in problem['solutions'] if sol['author_id']==g.user.get('_id'))
+        current_user_solution= next(sol for sol in problem['solutions'] if sol.get('author_id')==g.user.get('_id'))
         mongo.load(current_user_solution,'solution_discussion_ids','discussion',g.db.posts)
     except StopIteration: 
         current_user_solution={}
