@@ -55,7 +55,6 @@ class ProblemSetDelete(Form):
     delete=BooleanField('delete', validators=[Required()])
 
 class EntryForm(Form):
-    title= TextField('title')
     text= TextField('text', validators=[Required()])
     entry_type=TextField('entry_type')
     entry_number=TextField('entry_number')
@@ -63,6 +62,5 @@ class EntryForm(Form):
 class EditEntryForm(Form):
     entry_type=TextField('entry_type')
     entry_number=TextField('entry_number')
-    edit_title= TextField('edit_title')
     edit_text= TextField('edit_text', validators=[Required()])
     delete_entry=BooleanField('delete_entry')
