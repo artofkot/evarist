@@ -96,6 +96,10 @@ a:active {
     text-decoration: underline;
 }
 
+a:visited {
+  color:#0b0080; /*wikipedia's color*/
+}
+
 #particles {
   overflow: visible;
   position: fixed;
