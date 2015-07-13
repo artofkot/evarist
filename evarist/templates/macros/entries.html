@@ -1,27 +1,8 @@
 {% macro entry(entry,number=None,entry_type=None) -%}
-
-{% if number %}
   <p>
-  {% if entry.get('entry_type')=='problem' %}
-    Задача {{number}}.
-  {% elif entry.get('entry_type')=='definition' %}
-    ∆ Определение {{number}}.
-  {%endif%}
+  {% if entry.get('entry_type')=='problem' %} Задача
+  {% elif entry.get('entry_type')=='definition' %} ∆ Определение {%endif%}
+  {% if number %} {{number}}{%endif%}.
   {{entry['text']|safe}}
   </p>
-
-{% else %}
-  <p>
-  {% if entry.get('entry_type')=='problem' %}
-    Задача.
-  {% elif entry.get('entry_type')=='definition' %}
-    ∆ Определение.
-  {%endif%}
-  {{entry['text']|safe}}
-  </p>
-
-{% endif %}
-
-
-
 {%- endmacro %}
