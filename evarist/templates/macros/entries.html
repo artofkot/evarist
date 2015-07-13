@@ -1,8 +1,10 @@
 {% macro entry(entry,number=None,entry_type=None) -%}
+  <h4>
+    {% if entry.get('entry_type')=='problem' %} Задача
+    {% elif entry.get('entry_type')=='definition' %} ∆ Определение{%endif%}
+    {% if number %} {{number}}{%endif%}.
+  </h4>
   <p>
-  {% if entry.get('entry_type')=='problem' %} Задача
-  {% elif entry.get('entry_type')=='definition' %} ∆ Определение {%endif%}
-  {% if number %} {{number}}{%endif%}.
-  {{entry['text']|safe}}
+    {{entry['text']|safe}}
   </p>
 {%- endmacro %}

@@ -66,5 +66,3 @@ def delete_forever(entry_id,problem_set_id,db):
 
     if r: return True
     else: return False
-
-    

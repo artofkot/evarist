@@ -2,20 +2,19 @@
 {% import 'macros/forms.html' as form_macros %}
 {% import 'macros/posts.html' as post_macros %}
 
-
 {% extends "layout.html" %}
 {% block head %}
 {% endblock %}
 {% block body %}
 
   <div class="row">
-    <div class="col-md-6 col-md-offset-3">
+    <div class="col-md-8 col-md-offset-2">
       
       <h3>Это решения, которые можно проверить, то есть проголосовать за "верно" или "неверно", и написать отзыв при необходимости (например если решение недоведено). Вы можете проверять только уже решенные вами задачи. </h3>
+
       <hr>
 
       {%for solution in solutions%}
-
 
         <!-- solutions text, and the name of problem set -->
         <div>
