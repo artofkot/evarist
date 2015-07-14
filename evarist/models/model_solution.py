@@ -48,14 +48,14 @@ def get_other_solutions_on_problem_page(db,user,problem,current_solution_id):
 
     if current_solution_id in problem['solutions_ids']:
         sol_ids= problem['solutions_ids'].remove(current_solution_id)
-    else:sol_ids= problem['solutions_ids']
+    else: sol_ids= problem['solutions_ids']
     
     soluts=db.solutions.find({'_id':{ '$in': sol_ids }})
-    soluts.sort('date',pymongo.DESCENDING)
     for solut in soluts:
         mongo.load(solut,'solution_discussion_ids','discussion',db.posts)
         mongo.load(solut,'author_id','author',db.users)
         other_solutions.append(solut)
+    other_solutions.sort(key=lambda x: x.get('date'),reverse=True)  
     return other_solutions
 
 

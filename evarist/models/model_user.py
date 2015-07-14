@@ -26,21 +26,21 @@ def add(username, password, email,db, secret_key):
     else:
         pw_hash = hash_str(password,secret_key)
         db.users.insert_one({"username":username, 
-                        "pw_hash":pw_hash, 
-                        "email":email,
-                        "confirmed":False,
-                        'provider':'email',
-                        "date":datetime.datetime.utcnow(),
-                        'rights':{'is_checker':False, #checkers can see and vote any solutions
-                                  'is_moderator':False #moderators are checkers who also 
-                                                        #can create content
-                                 },
-                        "problems_ids": { #множества идут в порядке убывания тут
-                                   "solution_written": [],
-                                   "solved": [],
-                                   "can_see_other_solutions":[], 
-                                   "can_vote": []
-                               }
+                            "pw_hash":pw_hash, 
+                            "email":email,
+                            "confirmed":False,
+                            'provider':'email',
+                            "date":datetime.datetime.utcnow(),
+                            'rights':{'is_checker':False, #checkers can see and vote any solutions
+                                      'is_moderator':False #moderators are checkers who also 
+                                                            #can create content
+                                     },
+                            "problems_ids": { #множества идут в порядке убывания тут
+                                       "solution_written": [],
+                                       "solved": [],
+                                       "can_see_other_solutions":[], 
+                                       "can_vote": []
+                                   }
                         })
         return True
 
