@@ -48,14 +48,14 @@ def get_other_solutions_on_problem_page(db,user,problem,current_solution_id):
 
     if current_solution_id in problem['solutions_ids']:
         sol_ids= problem['solutions_ids'].remove(current_solution_id)
-    else:sol_ids= problem['solutions_ids']
+    else: sol_ids= problem['solutions_ids']
     
     soluts=db.solutions.find({'_id':{ '$in': sol_ids }})
-    soluts.sort('date',pymongo.DESCENDING)
     for solut in soluts:
         mongo.load(solut,'solution_discussion_ids','discussion',db.posts)
         mongo.load(solut,'author_id','author',db.users)
         other_solutions.append(solut)
+    other_solutions.sort(key=lambda x: x.get('date'),reverse=True)  
     return other_solutions
 
 
@@ -73,7 +73,7 @@ def get_solutions_for_check_page(db,user):
         checked_solutions.sort(key=lambda x: x.get('date'),reverse=True)  
     else:
         for idd in user['problems_ids']['can_see_other_solutions']:
-            not_checked_solutions.solutions.extend(db.solutions.find({'problem_id':ObjectId(idd), 'status': 'not_checked'}))
+            not_checked_solutions.extend(db.solutions.find({'problem_id':ObjectId(idd), 'status': 'not_checked'}))
             checked_solutions.solutions.extend(db.solutions.find({'problem_id':ObjectId(idd), 
                                                                   'status':{ '$in': 
                                                                             [ 'checked_correct',  
@@ -93,8 +93,6 @@ def get_solutions_for_check_page(db,user):
         mongo.load(solution,'problem_id','problem',db.entries)
         mongo.load(solution,'problem_set_id','problem_set',db.problem_sets)
         sols.append(solution)
-
-
 
     return sols
 

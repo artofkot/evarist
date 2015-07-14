@@ -12,16 +12,7 @@ div.transbox {
   /*color:white;*/
 }
 
-.box-sh {
-    -moz-box-shadow:     0 0 50px rgba(255,255,255,1);
-    -webkit-box-shadow:  0 0 50px rgba(255,255,255,1);
-    box-shadow:          0 0 50px rgba(255,255,255,1);
-    background-color: white;
-    /*position:relative;*/
-}
-
 body {
-  /*background-image: url(https://download.unsplash.com/photo-1434235017538-99f45ef0b451);*/
   padding-top: 70px; /* for the navbar and a lil more */
   font-family: 'Computer Modern Bright';
   font-size: 18px;
@@ -52,10 +43,10 @@ footer {
   color: #f5f5f5; /*fix this.*/
 }
 
-background_pic {
-  /*background-image: url(https://download.unsplash.com/photo-1428342109953-409d2876cdab); /*eagle*/
-  /*background-image: url(https://download.unsplash.com/photo-1434323197752-16d745928e51); /*boy*/
-  /*background-image: url(https://download.unsplash.com/photo-1434235017538-99f45ef0b451); /*stars*/
+background_pic{
+  /*background-image: url(https://download.unsplash.com/photo-1428342109953-409d2876cdab);*/ /*eagle*/
+/*  background-image: url(https://download.unsplash.com/photo-1434323197752-16d745928e51);*/ /*boy*/
+  /*background-image: url(https://download.unsplash.com/photo-1434235017538-99f45ef0b451);*/ /*stars*/
   background-repeat: no-repeat;
   /*background-attachment: fixed;*/
   background-position: center top; 
@@ -63,14 +54,12 @@ background_pic {
 }
 
 .jumbotron {
-  padding: 30px 15px;
-  margin-bottom: 30px;
-  color: inherit;
-  background-color: white;
-  background: none;
-  /*background: url(transparent-edges-box.svg);*/
+  /*padding: 30px 15px;*/
+/*  padding-right: 0px;
+  padding-left: 0px;*/
   margin-top: 0px;
   margin-bottom: 0px;
+  background-color: white;
 }
 
 /* unvisited link */
@@ -94,23 +83,4 @@ a:hover {
 /* selected link */
 a:active {
     text-decoration: underline;
-}
-
-#particles {
-  overflow: visible;
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100%; 
-  width: 100%;
-  z-index: 0;
-}
-
-.on_particles {
-  position: relative; 
-  top:0;
-  left:0;
-  height: 100%;
-  width: 100%;
-  z-index: 1;
 }
