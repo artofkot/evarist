@@ -47,9 +47,13 @@ if not app.debug:
     mail_handler.setLevel(logging.ERROR)
     app.logger.addHandler(mail_handler)
 
+
+
 # connecting to database before every request comes
 @app.before_request
 def before_request():
+
+
     # for timing of response
     g.start=time.time()
 
