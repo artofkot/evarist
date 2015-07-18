@@ -33,3 +33,6 @@ MAIL_PASSWORD = MANDRILL_APIKEY
 MAIL_DEFAULT_SENDER = ('Evarist',MANDRILL_USERNAME)
 
 ADMINS = ['artofkot@gmail.com','alexej.levin@gmail.com']
+
+# for picture upload
+CLOUDINARY_URL=os.environ.get("CLOUDINARY_URL")

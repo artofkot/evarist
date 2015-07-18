@@ -335,3 +335,23 @@ def lang_ru():
     session['lang']='ru'
     pa=request.args['pa']
     return redirect(pa)
+
+
+from cloudinary.uploader import upload
+from cloudinary.utils import cloudinary_url
+
+@workflow.route('/upl', methods=['GET', 'POST'])
+def upload_file():
+    upload_result = None
+    thumbnail_url1 = None
+    thumbnail_url2 = None
+    CLOUDINARY_URL='cloudinary://815324659179368:lHO42FBDftrJyCIRZ3x5OhLy_ew@artofkot'
+    if request.method == 'POST':
+        file = request.files['file']
+        if file:
+            upload_result = upload(file,api_key='815324659179368',api_secret='lHO42FBDftrJyCIRZ3x5OhLy_ew',cloud_name='artofkot')
+            thumbnail_url1, options = cloudinary_url(upload_result['public_id'], format = "jpg", crop = "scale", width = 100, height = 100)
+            thumbnail_url2, options = cloudinary_url(upload_result['public_id'], format = "jpg", crop = "fill", width = 200, height = 100, radius = 20, effect = "sepia")
+    return render_template('upload_form.html', upload_result = upload_result, thumbnail_url1 = thumbnail_url1, thumbnail_url2 = thumbnail_url2)
+
+
