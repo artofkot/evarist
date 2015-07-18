@@ -1,6 +1,7 @@
 import re
+from flask import flash, g, request, redirect, url_for
 from flask.ext.wtf import Form
-from wtforms.fields import TextField, PasswordField, BooleanField
+from wtforms.fields import TextField, PasswordField, BooleanField, FileField
 from wtforms.validators import Required, Email, Regexp
 
 #regexs for usernames and passwords and emails
@@ -16,8 +17,22 @@ def valid_username(username):
 # def valid_email(email):
 #     return not email or EMAIL_RE.match(email)
 
+def flash_errors(form):
+    for field, errors in form.errors.items():
+        for error in errors:
+            flash(u"Error in the %s field - %s" % (
+                getattr(form, field).label.text,
+                error
+            ))
+
+def trigger_flash_error(form,endpoint,**kwargs):
+    if request.method == 'POST' and not form.validate_on_submit():
+        flash_errors(form)
+        return redirect(url_for(endpoint,**kwargs))
+
 class SolutionForm(Form):
-    solution = TextField('solution', validators=[Required()])
+    solution = TextField('solution', validators=[])
+    image = FileField('image')
 
 class EditSolutionForm(Form):
     edited_solution = TextField('edited_solution', validators=[Required()])

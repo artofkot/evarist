@@ -14,6 +14,9 @@
   {% endif %}
   </p>
   <pre>{{ solution['text'] }}</pre>
+  {% if solution.get('image_url') %}
+    <img src="{{solution.get('image_url')}}" alt='responsive image'>
+  {% endif %}
 </div>
 
 {%- endmacro %}
