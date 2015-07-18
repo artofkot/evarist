@@ -39,3 +39,12 @@
   </div>
   <button type="submit" class="btn btn-default"><!-- Отправить -->{{name_of_the_button}}</button>
 {%- endmacro %}
+
+{% macro solution_form(name_of_textarea, name_of_the_button) -%}
+  <div class="form-group" >
+    <!-- <label for="feedback_to_solution">  <strong> Комментировать: </strong> </label> -->
+    <textarea class="form-control" rows="2"  name='{{name_of_textarea}}'></textarea>
+    <input type="file" name="image">
+  </div>
+  <button type="submit" class="btn btn-default"><!-- Отправить -->{{name_of_the_button}}</button>
+{%- endmacro %}

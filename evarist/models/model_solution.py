@@ -4,7 +4,7 @@ from bson.objectid import ObjectId
 import mongo
 import pymongo
 
-def add(text,db,author_id,problem_id,problem_set_id):
+def add(text,db,author_id,problem_id,problem_set_id,image_url):
     res=db.solutions.insert_one({'text':text,
                                'author_id':author_id,
                                'problem_id':problem_id,
@@ -14,6 +14,7 @@ def add(text,db,author_id,problem_id,problem_set_id):
                                'upvotes':0,
                                'downvotes':0,
                                'users_upvoted_ids':[],
+                               'image_url':image_url,
                                'users_downvoted_ids':[],
                                'status': 'not_checked' # can be later changed to 'checked_correct' or 'checked_incorrect'
                                })
@@ -47,9 +48,10 @@ def get_other_solutions_on_problem_page(db,user,problem,current_solution_id):
         return other_solutions
 
     if current_solution_id in problem['solutions_ids']:
-        sol_ids= problem['solutions_ids'].remove(current_solution_id)
-    else: sol_ids= problem['solutions_ids']
+        problem['solutions_ids'].remove(current_solution_id)
+    sol_ids= problem['solutions_ids']
     
+
     soluts=db.solutions.find({'_id':{ '$in': sol_ids }})
     for solut in soluts:
         mongo.load(solut,'solution_discussion_ids','discussion',db.posts)

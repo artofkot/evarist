@@ -10,7 +10,7 @@ from flask.ext.mail import Message
 from evarist import models
 from functools import wraps
 from evarist.models import model_problem_set, model_entry, model_post, model_solution, mongo
-from evarist.forms import WebsiteFeedbackForm, CommentForm, SolutionForm, FeedbackToSolutionForm, EditSolutionForm, VoteForm
+from evarist.forms import WebsiteFeedbackForm, CommentForm, SolutionForm, FeedbackToSolutionForm, EditSolutionForm, VoteForm, trigger_flash_error
 
 workflow = Blueprint('workflow', __name__,
                         template_folder='templates')
@@ -237,18 +237,28 @@ def problem(problem_set_slug,prob_id):
 
     solution_form=SolutionForm()
     if solution_form.validate_on_submit():
+
+        file=request.files[solution_form.image.name]
+        image_url=None
+        if file:
+            upload_result = upload(file)
+            image_url=upload_result['url'] 
         model_solution.add(text=solution_form.solution.data,
                            db=g.db,
                            author_id=g.user['_id'],
                            problem_id=problem['_id'],
-                           problem_set_id=problem_set['_id'])
-
+                           problem_set_id=problem_set['_id'],
+                           image_url=image_url)
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem['_id']))
+    trigger_flash_error(solution_form,'workflow.problem',
+                        problem_set_slug=problem_set_slug,
+                        prob_id=problem['_id'])
 
     edit_solution_form=EditSolutionForm()
     if edit_solution_form.validate_on_submit():
+        print "YAYA"
         if edit_solution_form.delete_solution.data:
             model_solution.delete(db=g.db,solution=current_user_solution)
         else:
@@ -349,7 +359,7 @@ def upload_file():
     if request.method == 'POST':
         file = request.files['file']
         if file:
-            upload_result = upload(file,api_key='815324659179368',api_secret='lHO42FBDftrJyCIRZ3x5OhLy_ew',cloud_name='artofkot')
+            upload_result = upload(file)
             thumbnail_url1, options = cloudinary_url(upload_result['public_id'], format = "jpg", crop = "scale", width = 100, height = 100)
             thumbnail_url2, options = cloudinary_url(upload_result['public_id'], format = "jpg", crop = "fill", width = 200, height = 100, radius = 20, effect = "sepia")
     return render_template('upload_form.html', upload_result = upload_result, thumbnail_url1 = thumbnail_url1, thumbnail_url2 = thumbnail_url2)
