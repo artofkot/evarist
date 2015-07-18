@@ -11,6 +11,8 @@ from evarist import models
 from functools import wraps
 from evarist.models import model_problem_set, model_entry, model_post, model_solution, mongo
 from evarist.forms import WebsiteFeedbackForm, CommentForm, SolutionForm, FeedbackToSolutionForm, EditSolutionForm, VoteForm, trigger_flash_error
+from cloudinary.uploader import upload
+from cloudinary.utils import cloudinary_url
 
 workflow = Blueprint('workflow', __name__,
                         template_folder='templates')
@@ -345,10 +347,6 @@ def lang_ru():
     session['lang']='ru'
     pa=request.args['pa']
     return redirect(pa)
-
-
-from cloudinary.uploader import upload
-from cloudinary.utils import cloudinary_url
 
 @workflow.route('/upl', methods=['GET', 'POST'])
 def upload_file():
