@@ -239,7 +239,6 @@ def problem(problem_set_slug,prob_id):
 
     solution_form=SolutionForm()
     if solution_form.validate_on_submit():
-
         file=request.files[solution_form.image.name]
         image_url=None
         if file:
@@ -254,13 +253,9 @@ def problem(problem_set_slug,prob_id):
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem['_id']))
-    trigger_flash_error(solution_form,'workflow.problem',
-                        problem_set_slug=problem_set_slug,
-                        prob_id=problem['_id'])
 
     edit_solution_form=EditSolutionForm()
     if edit_solution_form.validate_on_submit():
-        print "YAYA"
         if edit_solution_form.delete_solution.data:
             model_solution.delete(db=g.db,solution=current_user_solution)
         else:
@@ -269,7 +264,7 @@ def problem(problem_set_slug,prob_id):
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem['_id']))
-
+    
     other_solutions=[]
     if g.user:
         other_solutions=model_solution.get_other_solutions_on_problem_page(db=g.db,
