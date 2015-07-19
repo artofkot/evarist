@@ -230,7 +230,7 @@ def problem(problem_set_slug,prob_id):
         if solution_comment_form.feedback_to_solution.data:
             model_post.add(text=solution_comment_form.feedback_to_solution.data,
                            db=g.db,
-                           author_id=g.user['__id'],
+                           author_id=g.user['_id'],
                            post_type='solution->comment',
                            parent_id=ObjectId(request.args['sol_id']))
         return redirect(url_for('.problem', 
@@ -264,7 +264,7 @@ def problem(problem_set_slug,prob_id):
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem['_id']))
-    
+
     other_solutions=[]
     if g.user:
         other_solutions=model_solution.get_other_solutions_on_problem_page(db=g.db,
