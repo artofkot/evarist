@@ -111,7 +111,10 @@ def problem_set(problem_set_slug):
         flash('No such problem set.')
         return redirect(url_for('.home'))
 
-    if not problem_set['status']=='production':
+
+    is_moder=False
+    if g.user: is_moder=g.user['rights']['is_moderator']
+    if (not problem_set['status']=='production') and (not is_moder):
         flash('This problem set is not ready yet.')
         return redirect(url_for('.home'))
 
@@ -156,7 +159,9 @@ def problem(problem_set_slug,prob_id):
         flash('No such problem set.')
         return redirect(url_for('.home'))
 
-    if not problem_set['status']=='production':
+    is_moder=False
+    if g.user: is_moder=g.user['rights']['is_moderator']
+    if (not problem_set['status']=='production') and (not is_moder):
         flash('This problem set is not ready yet.')
         return redirect(url_for('.home'))
 
