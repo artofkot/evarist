@@ -68,6 +68,7 @@ def before_request():
             session.pop('gplus_id', None)
             session.pop('access_token', None)
             g.user={}
+
     else:
         session.pop('_id', None) 
         session.pop('gplus_id', None)

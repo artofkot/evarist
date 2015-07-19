@@ -139,10 +139,6 @@ def can_see_other_solutions(db,solution_id):
 
 
 
-
-
-
-
 def update_status(db,solution_id):
     solution=db.solutions.find_one({'_id':solution_id})
     new_status=get_status(solution)
@@ -155,10 +151,10 @@ def update_who_solved(db,solution_id):
     solution=db.solutions.find_one({'_id':solution_id})
     if did_solve(db,solution_id):
         db.users.update_one({"_id": solution['author_id']}, 
-                            {'$addToSet': {'problems_ids.solved': solution_id} })
+                            {'$addToSet': {'problems_ids.solved': solution['problem_id']} })
     else:
         db.users.update_one({"_id": solution['author_id']}, 
-                            {'$pull': {'problems_ids.solved': solution_id} })
+                            {'$pull': {'problems_ids.solved': solution['problem_id']} })
 
     return 1
 
@@ -166,10 +162,10 @@ def update_who_can_see_other_solutions(db,solution_id):
     solution=db.solutions.find_one({'_id':solution_id})
     if can_see_other_solutions(db,solution_id):
         db.users.update_one({"_id": solution['author_id']}, 
-                            {'$addToSet': {'problems_ids.can_see_other_solutions': solution_id} })
+                            {'$addToSet': {'problems_ids.can_see_other_solutions': solution['problem_id']} })
     else:
         db.users.update_one({"_id": solution['author_id']}, 
-                            {'$pull': {'problems_ids.can_see_other_solutions': solution_id} })
+                            {'$pull': {'problems_ids.can_see_other_solutions': solution['problem_id']} })
 
     return 1
 
@@ -177,10 +173,10 @@ def update_who_can_vote(db,solution_id):
     solution=db.solutions.find_one({'_id':solution_id})
     if can_vote(db,solution_id):
         db.users.update_one({"_id": solution['author_id']}, 
-                            {'$addToSet': {'problems_ids.can_vote': solution_id} })
+                            {'$addToSet': {'problems_ids.can_vote': solution['problem_id']} })
     else:
         db.users.update_one({"_id": solution['author_id']}, 
-                            {'$pull': {'problems_ids.can_vote': solution_id} })
+                            {'$pull': {'problems_ids.can_vote': solution['problem_id']} })
 
     return 1
 
