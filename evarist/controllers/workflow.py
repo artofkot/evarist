@@ -292,7 +292,7 @@ def problem(problem_set_slug,prob_id):
 @workflow.route('/check', methods=["GET", "POST"])
 @login_required
 def check():
-    sols=model_solution.get_solutions_for_check_page(g.db,g.user)
+    (not_checked_sols,checked_sols)=model_solution.get_solutions_for_check_page(g.db,g.user)
 
     vote_form=VoteForm()
     if vote_form.validate_on_submit():
@@ -332,7 +332,9 @@ def check():
 
 
     return render_template("check.html", 
-                            solutions=sols,
+                            solutions=not_checked_sols+checked_sols,
+                            not_checked_solutions=not_checked_sols,
+                            checked_solutions=checked_sols,
                             vote_form=vote_form,
                             solution_comment_form=solution_comment_form)
 

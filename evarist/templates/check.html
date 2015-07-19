@@ -11,72 +11,142 @@
   <div class="row">
     <div class="col-md-6 col-md-offset-3">
       
-      <h3>Это решения, которые можно проверить, то есть проголосовать за "верно" или "неверно", и написать отзыв при необходимости (например если решение недоведено). Вы можете проверять только уже решенные вами задачи. </h3>
+
+      <p>Здесь находятся решения ко всем задачам, которые вы уже решили. Решив какую-либо задачу, вы получаете право смотреть и проверять другие решения этой задачи, и эта страница сделана для удобства этого процесса. Проверить решение можно проголосовав за "верно" или "неверно", и написать отзыв при необходимости (например если решение недоведено).</p>
+      <!-- <h3>Это решения, которые можно проверить, то есть проголосовать за "верно" или "неверно", и написать отзыв при необходимости (например если решение недоведено). Вы можете проверять только уже решенные вами задачи. </h3> -->
       <hr>
+    </div>
+  </div>
 
-      {%for solution in solutions%}
-
-
-        <!-- solutions text, and the name of problem set -->
-        <div>
-          <p>
-            <em>{{solution.get('problem_set')['title']|safe}}</em> 
-            <br>
-            {{solution.get('problem')['text']|safe}}
-          </p>
-        </div>
-
-        <!-- solution -->
-        {{solution_macros.solution(solution=solution,inscription=gettext('Решение от %(author)s', author = solution['author']['username']))}}
-
-
-        <!-- votes + form for voting-->
-        <div class='row'>
-          <!-- votes -->
-          <div class="col-md-4 col-md-offset-1">
-            {{solution_macros.display_votes(solution)}}
+  <div class="row">
+    
+    <div class="col-md-6 col-md-offset-0">
+      <h3>Непроверенные задачи:</h3>
+      {%for solution in not_checked_solutions%}
+          <!-- solutions text, and the name of problem set -->
+          <div>
+            <p>
+              <em>{{solution.get('problem_set')['title']|safe}}</em> 
+              <br>
+              {{solution.get('problem')['text']|safe}}
+            </p>
           </div>
 
-          <!-- vote form -->
-          <div class="col-md-4 col-md-offset-2">
-          {%if g.user.get('_id') not in (  solution['users_upvoted_ids']|list + solution['users_downvoted_ids']|list )%}
-            <form action="{{request.path}}?sol_id={{solution['_id']}}" method="post">
-              {{ vote_form.hidden_tag() }}
-              {{ form_macros.vote_for_solution_form() }}
-            </form>
-          {%else%}
-            <p><strong style='color:green'> Вы уже проголосовали.</strong></p>
-          {%endif%}
+          <!-- solution -->
+          {{solution_macros.solution(solution=solution,inscription=gettext('Решение от %(author)s', author = solution['author']['username']))}}
+
+
+          <!-- votes + form for voting-->
+          <div class='row'>
+            <!-- votes -->
+            <div class="col-md-4 col-md-offset-1">
+              {{solution_macros.display_votes(solution)}}
+            </div>
+
+            <!-- vote form -->
+            <div class="col-md-4 col-md-offset-2">
+            {%if g.user.get('_id') not in (  solution['users_upvoted_ids']|list + solution['users_downvoted_ids']|list )%}
+              <form action="{{request.path}}?sol_id={{solution['_id']}}" method="post">
+                {{ vote_form.hidden_tag() }}
+                {{ form_macros.vote_for_solution_form() }}
+              </form>
+            {%else%}
+              <p><strong style='color:green'> Вы уже проголосовали.</strong></p>
+            {%endif%}
+            </div>
           </div>
-        </div>
-        
-        <div style='height:14px'></div>
+          
+          <div style='height:14px'></div>
 
-        <!-- comment form -->
-        <form action=" {{url_for('.check', sol_id=solution['_id'])}}" method="post">
-          {{ solution_comment_form.hidden_tag() }}
-          {{ form_macros.comment_form(name_of_textarea="feedback_to_solution", name_of_the_button="Оставить комментарий") }}
-        </form>
+          <!-- comment form -->
+          <form action=" {{url_for('.check', sol_id=solution['_id'])}}" method="post">
+            {{ solution_comment_form.hidden_tag() }}
+            {{ form_macros.comment_form(name_of_textarea="feedback_to_solution", name_of_the_button="Оставить комментарий") }}
+          </form>
 
-        <div style='height:5px'></div>
+          <div style='height:5px'></div>
 
-        <!-- displaying comments if they exist -->
-        {% if solution.get('discussion')%}
-          <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#collapse_Id_{{loop.index}}" aria-expanded="true" aria-controls="collapse_Id_{{loop.index}}">
-            спрятать комментарии
-          </button>
-          <div class="collapse in" aria-expanded="true" id="collapse_Id_{{loop.index}}">
-            {% for post in solution['discussion'] | reverse %}
-              {{ post_macros.post(post) }}
-            {% endfor %}
+          <!-- displaying comments if they exist -->
+          {% if solution.get('discussion')%}
+            <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#collapse_Id_{{loop.index}}" aria-expanded="true" aria-controls="collapse_Id_{{loop.index}}">
+              спрятать комментарии
+            </button>
+            <div class="collapse in" aria-expanded="true" id="collapse_Id_{{loop.index}}">
+              {% for post in solution['discussion'] | reverse %}
+                {{ post_macros.post(post) }}
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <div style='height:50px'>
           </div>
-        {% endif %}
-
-        <div style='height:50px'>
-        </div>
-        <hr>
+          <hr>
+      
       {%endfor%}
+    </div>
 
+    <div class="col-md-6 col-md-offset-0">
+      <h3>Проверенные задачи:</h3>
+      {%for solution in checked_solutions%}
+          <!-- solutions text, and the name of problem set -->
+          <div>
+            <p>
+              <em>{{solution.get('problem_set')['title']|safe}}</em> 
+              <br>
+              {{solution.get('problem')['text']|safe}}
+            </p>
+          </div>
+
+          <!-- solution -->
+          {{solution_macros.solution(solution=solution,inscription=gettext('Решение от %(author)s', author = solution['author']['username']))}}
+
+
+          <!-- votes + form for voting-->
+          <div class='row'>
+            <!-- votes -->
+            <div class="col-md-4 col-md-offset-1">
+              {{solution_macros.display_votes(solution)}}
+            </div>
+
+            <!-- vote form -->
+            <div class="col-md-4 col-md-offset-2">
+            {%if g.user.get('_id') not in (  solution['users_upvoted_ids']|list + solution['users_downvoted_ids']|list )%}
+              <form action="{{request.path}}?sol_id={{solution['_id']}}" method="post">
+                {{ vote_form.hidden_tag() }}
+                {{ form_macros.vote_for_solution_form() }}
+              </form>
+            {%else%}
+              <p><strong style='color:green'> Вы уже проголосовали.</strong></p>
+            {%endif%}
+            </div>
+          </div>
+          
+          <div style='height:14px'></div>
+
+          <!-- comment form -->
+          <form action=" {{url_for('.check', sol_id=solution['_id'])}}" method="post">
+            {{ solution_comment_form.hidden_tag() }}
+            {{ form_macros.comment_form(name_of_textarea="feedback_to_solution", name_of_the_button="Оставить комментарий") }}
+          </form>
+
+          <div style='height:5px'></div>
+
+          <!-- displaying comments if they exist -->
+          {% if solution.get('discussion')%}
+            <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#collapse_Id_{{loop.index}}" aria-expanded="true" aria-controls="collapse_Id_{{loop.index}}">
+              спрятать комментарии
+            </button>
+            <div class="collapse in" aria-expanded="true" id="collapse_Id_{{loop.index}}">
+              {% for post in solution['discussion'] | reverse %}
+                {{ post_macros.post(post) }}
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <div style='height:50px'>
+          </div>
+          <hr>
+      {%endfor%}  
     </div>
   </div>
 

@@ -82,21 +82,30 @@ def get_solutions_for_check_page(db,user):
                                                                             'checked_incorrect' ] }}))
         checked_solutions.sort(key=lambda x: x.get('date'),reverse=True)
         not_checked_solutions.sort(key=lambda x: x.get('date'),reverse=True)    
-    solutions=not_checked_solutions + checked_solutions
 
 
     # add to solutions some needed attributes
-    sols=[]
-    for solution in solutions:     
+    not_checked_sols=[]
+    checked_sols=[]
+    for solution in not_checked_solutions:     
         mongo.load(solution,'solution_discussion_ids','discussion',db.posts)
         if not mongo.load(solution,'author_id','author',db.users):
             solution['author']={}
             solution['author']['username']='deleted user'
         mongo.load(solution,'problem_id','problem',db.entries)
         mongo.load(solution,'problem_set_id','problem_set',db.problem_sets)
-        sols.append(solution)
+        not_checked_sols.append(solution)
+    
+    for solution in checked_solutions:     
+        mongo.load(solution,'solution_discussion_ids','discussion',db.posts)
+        if not mongo.load(solution,'author_id','author',db.users):
+            solution['author']={}
+            solution['author']['username']='deleted user'
+        mongo.load(solution,'problem_id','problem',db.entries)
+        mongo.load(solution,'problem_set_id','problem_set',db.problem_sets)
+        checked_sols.append(solution)
 
-    return sols
+    return (not_checked_sols,checked_sols)
 
 
 
