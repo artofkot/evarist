@@ -76,7 +76,7 @@ def get_solutions_for_check_page(db,user):
     else:
         for idd in user['problems_ids']['can_see_other_solutions']:
             not_checked_solutions.extend(db.solutions.find({'problem_id':ObjectId(idd), 'status': 'not_checked'}))
-            checked_solutions.solutions.extend(db.solutions.find({'problem_id':ObjectId(idd), 
+            checked_solutions.extend(db.solutions.find({'problem_id':ObjectId(idd), 
                                                                   'status':{ '$in': 
                                                                             [ 'checked_correct',  
                                                                             'checked_incorrect' ] }}))
