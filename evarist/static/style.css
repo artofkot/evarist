@@ -20,6 +20,10 @@ div.transbox {
     /*position:relative;*/
 }
 
+textarea.form-control {
+  border: 1px solid #cccccc;
+}
+
 body {
   /*background-image: url(https://download.unsplash.com/photo-1434235017538-99f45ef0b451);*/
   padding-top: 70px; /* for the navbar and a lil more */
