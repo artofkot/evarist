@@ -183,6 +183,8 @@ def problem(problem_set_slug,prob_id):
 
     #load general discussion
     mongo.load(obj=problem,key_id='general_discussion_ids',key='general_discussion',collection=g.db.posts)
+    for post in problem['general_discussion']:
+        mongo.load(post,'author','author_id',g.db.users)
     # load solutions
     mongo.load(problem,'solutions_ids','solutions',g.db.solutions)
 
@@ -190,6 +192,8 @@ def problem(problem_set_slug,prob_id):
     try: 
         current_user_solution= next(sol for sol in problem['solutions'] if sol.get('author_id')==g.user.get('_id'))
         mongo.load(current_user_solution,'solution_discussion_ids','discussion',g.db.posts)
+        for post in current_user_solution['discussion']:
+            mongo.load(post,'author','author_id',g.db.users)
     except StopIteration: 
         current_user_solution={}
 
@@ -355,7 +359,6 @@ def upload_file():
     upload_result = None
     thumbnail_url1 = None
     thumbnail_url2 = None
-    CLOUDINARY_URL='cloudinary://815324659179368:lHO42FBDftrJyCIRZ3x5OhLy_ew@artofkot'
     if request.method == 'POST':
         file = request.files['file']
         if file:

@@ -55,6 +55,8 @@ def get_other_solutions_on_problem_page(db,user,problem,current_solution_id):
     soluts=db.solutions.find({'_id':{ '$in': sol_ids }})
     for solut in soluts:
         mongo.load(solut,'solution_discussion_ids','discussion',db.posts)
+        for post in solut['discussion']:
+            mongo.load(post, 'author_id','author',db.users)
         mongo.load(solut,'author_id','author',db.users)
         other_solutions.append(solut)
     other_solutions.sort(key=lambda x: x.get('date'),reverse=True)  
@@ -89,6 +91,8 @@ def get_solutions_for_check_page(db,user):
     checked_sols=[]
     for solution in not_checked_solutions:     
         mongo.load(solution,'solution_discussion_ids','discussion',db.posts)
+        for post in solution['discussion']:
+            mongo.load(post, 'author_id','author',db.users)
         if not mongo.load(solution,'author_id','author',db.users):
             solution['author']={}
             solution['author']['username']='deleted user'
@@ -98,6 +102,9 @@ def get_solutions_for_check_page(db,user):
     
     for solution in checked_solutions:     
         mongo.load(solution,'solution_discussion_ids','discussion',db.posts)
+        for post in solution['discussion']:
+            mongo.load(post, 'author_id','author',db.users)
+
         if not mongo.load(solution,'author_id','author',db.users):
             solution['author']={}
             solution['author']['username']='deleted user'
