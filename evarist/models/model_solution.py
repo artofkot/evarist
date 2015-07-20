@@ -66,30 +66,22 @@ def get_other_solutions_on_problem_page(db,user,problem,current_solution_id):
 # функция которая выдает задачи, которые пользователь может смотреть. Сначала непроверенные, потом проверенные.
 def get_solutions_for_check_page(db,user):
     # prepare for getting solutions 
-    checked_solutions=[]
-    not_checked_solutions=[]
+    solutions=[]
     if user['rights']['is_moderator'] or user['rights']['is_checker']:
         # (sort from newest to oldest)
-        not_checked_solutions=db.solutions.find({'status': 'not_checked'},
-                                                sort=[('date', pymongo.DESCENDING)])
-        checked_solutions=db.solutions.find({'status':{ '$in': [ 'checked_correct',  'checked_incorrect' ] }},
-                                                    sort=[('date', pymongo.DESCENDING)]  )
+        solutions=db.solutions.find({'author_id':{'$ne':user['_id']}},
+                                sort=[('date', pymongo.DESCENDING)])
     else:
         for idd in user['problems_ids']['can_see_other_solutions']:
-            not_checked_solutions.extend(db.solutions.find({'problem_id':ObjectId(idd), 'status': 'not_checked'}))
-            checked_solutions.extend(db.solutions.find({'problem_id':ObjectId(idd), 
-                                                                  'status':{ '$in': 
-                                                                            [ 'checked_correct',  
-                                                                            'checked_incorrect' ] }}))
+            solutions.extend(db.solutions.find({'problem_id':ObjectId(idd)}))
         # (sort from newest to oldest)
-        checked_solutions.sort(key=lambda x: x.get('date'),reverse=True)
-        not_checked_solutions.sort(key=lambda x: x.get('date'),reverse=True)    
+        solutions.sort(key=lambda x: x.get('date'),reverse=True)   
 
 
     # add to solutions some needed attributes
     not_checked_sols=[]
     checked_sols=[]
-    for solution in not_checked_solutions:     
+    for solution in solutions:     
         mongo.load(solution,'solution_discussion_ids','discussion',db.posts)
         for post in solution['discussion']:
             mongo.load(post, 'author_id','author',db.users)
@@ -98,37 +90,23 @@ def get_solutions_for_check_page(db,user):
             solution['author']['username']='deleted user'
         mongo.load(solution,'problem_id','problem',db.entries)
         mongo.load(solution,'problem_set_id','problem_set',db.problem_sets)
-        not_checked_sols.append(solution)
-    
-    for solution in checked_solutions:     
-        mongo.load(solution,'solution_discussion_ids','discussion',db.posts)
-        for post in solution['discussion']:
-            mongo.load(post, 'author_id','author',db.users)
-
-        if not mongo.load(solution,'author_id','author',db.users):
-            solution['author']={}
-            solution['author']['username']='deleted user'
-        mongo.load(solution,'problem_id','problem',db.entries)
-        mongo.load(solution,'problem_set_id','problem_set',db.problem_sets)
-        checked_sols.append(solution)
+        
+        if solution.get('status') =='not_checked':
+            not_checked_sols.append(solution)
+        else:
+            checked_sols.append(solution)
 
     return (not_checked_sols,checked_sols)
 
 def get_solutions_for_my_solutions_page(db,user):
     # prepare for getting solutions 
-    checked_solutions=[]
-    not_checked_solutions=[]
-    not_checked_solutions=db.solutions.find({'status': 'not_checked',
-                                             'author_id': user['_id']},
+    solutions=db.solutions.find({'author_id': user['_id']},
                                             sort=[('date', pymongo.DESCENDING)])
-    checked_solutions=db.solutions.find({'status':{ '$in': [ 'checked_correct',  'checked_incorrect' ] },
-                                         'author_id': user['_id']},
-                                        sort=[('date', pymongo.DESCENDING)]  )
 
     # add to solutions some needed attributes
     not_checked_sols=[]
     checked_sols=[]
-    for solution in not_checked_solutions:     
+    for solution in solutions:     
         mongo.load(solution,'solution_discussion_ids','discussion',db.posts)
         for post in solution['discussion']:
             mongo.load(post, 'author_id','author',db.users)
@@ -137,19 +115,11 @@ def get_solutions_for_my_solutions_page(db,user):
             solution['author']['username']='deleted user'
         mongo.load(solution,'problem_id','problem',db.entries)
         mongo.load(solution,'problem_set_id','problem_set',db.problem_sets)
-        not_checked_sols.append(solution)
-    
-    for solution in checked_solutions:     
-        mongo.load(solution,'solution_discussion_ids','discussion',db.posts)
-        for post in solution['discussion']:
-            mongo.load(post, 'author_id','author',db.users)
-
-        if not mongo.load(solution,'author_id','author',db.users):
-            solution['author']={}
-            solution['author']['username']='deleted user'
-        mongo.load(solution,'problem_id','problem',db.entries)
-        mongo.load(solution,'problem_set_id','problem_set',db.problem_sets)
-        checked_sols.append(solution)
+        
+        if solution.get('status')=='not_checked':
+            not_checked_sols.append(solution)
+        else:
+            checked_sols.append(solution)
 
     return (not_checked_sols,checked_sols)
 
