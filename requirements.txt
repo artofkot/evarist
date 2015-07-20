@@ -32,3 +32,4 @@ Werkzeug==0.10.4
 WTForms==2.0.2
 Flask-Bcrypt==0.6.2
 cloudinary==1.1.2
+Flask-DebugToolbar==0.10.0
