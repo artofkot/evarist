@@ -342,6 +342,41 @@ def check():
                             vote_form=vote_form,
                             solution_comment_form=solution_comment_form)
 
+@workflow.route('/my_solutions', methods=["GET", "POST"])
+@login_required
+def my_solutions():
+    (not_checked_sols,checked_sols)=model_solution.get_solutions_for_my_solutions_page(g.db,g.user)
+    solution_comment_form=FeedbackToSolutionForm()
+    if solution_comment_form.validate_on_submit():
+        if solution_comment_form.feedback_to_solution.data:
+            solut=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
+            model_post.add(text=solution_comment_form.feedback_to_solution.data,
+                           db=g.db,
+                           author_id=g.user['_id'],
+                           post_type='solution->comment',
+                           parent_id=ObjectId(request.args['sol_id']))
+        
+        return redirect(url_for('.my_solutions'))
+
+    edit_solution_form=EditSolutionForm()
+    if edit_solution_form.validate_on_submit():
+        solut=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
+        if edit_solution_form.delete_solution.data:
+            model_solution.delete(db=g.db,solution=solut)
+        else:
+            g.db.solutions.update_one({"_id":solut['_id']},
+                                        {'$set':{'text':edit_solution_form.edited_solution.data} })
+        return redirect(url_for('.my_solutions'))
+
+
+    return render_template("my_solutions.html", 
+                            solutions=not_checked_sols+checked_sols,
+                            not_checked_solutions=not_checked_sols,
+                            checked_solutions=checked_sols,
+                            solution_comment_form=solution_comment_form,
+                            edit_solution_form=edit_solution_form)
+
+
 @workflow.route('/lang/en', methods=["GET", "POST"])
 def lang_en():
     session['lang']='en'

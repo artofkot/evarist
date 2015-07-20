@@ -1,0 +1,133 @@
+{% import 'macros/solutions.html' as solution_macros %}
+{% import 'macros/forms.html' as form_macros %}
+{% import 'macros/posts.html' as post_macros %}
+
+
+{% extends "layout.html" %}
+{% block head %}
+{% endblock %}
+{% block body %}
+
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <p>Здесь вы можете смотреть, исправлять и комментировать  ваши решения.</p>
+      <hr>
+    </div>
+  </div>
+
+  <div class="row">
+    
+    <div class="col-md-6 col-md-offset-0">
+      <h3>Непроверенные задачи:</h3>
+      {%for solution in not_checked_solutions%}
+          <!-- solutions text, and the name of problem set -->
+          <div>
+            <p>
+              <em>{{solution.get('problem_set')['title']|safe}}</em> 
+              <br>
+              {{solution.get('problem')['text']|safe}}
+            </p>
+          </div>
+
+          <!-- solution -->
+          {{solution_macros.solution(solution=solution,inscription=gettext('Решение от %(author)s', author = solution['author']['username']))}}
+          {{solution_macros.display_votes(solution)}}
+          
+          <!-- edit solution form -->
+          <button class="btn btn-default" type="button" data-toggle="collapse" data-target="#collapse_Id_edit_{{loop.index}}" aria-expanded="false" aria-controls="collapsId">
+            Исправить решение
+          </button>
+          <div class="collapse" id="collapse_Id_edit_{{loop.index}}">
+            <form action=" {{url_for('workflow.my_solution', sol_id=solution['_id'])}}" method="post">
+              {{ edit_solution_form.hidden_tag() }}
+              {{form_macros.edit_solution_form(solution)}}
+            </form>
+          </div>    
+
+          <div style='height:15px'></div>
+
+          <!-- comment form -->
+          <form action=" {{url_for('.my_solutions', sol_id=solution['_id'])}}" method="post">
+            {{ solution_comment_form.hidden_tag() }}
+            {{ form_macros.comment_form(name_of_textarea="feedback_to_solution", name_of_the_button="Оставить комментарий") }}
+          </form>
+
+          <div style='height:5px'></div>
+
+          <!-- displaying comments if they exist -->
+          {% if solution.get('discussion')%}
+            <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#collapse_Id_{{loop.index}}" aria-expanded="true" aria-controls="collapse_Id_{{loop.index}}">
+              спрятать комментарии
+            </button>
+            <div class="collapse in" aria-expanded="true" id="collapse_Id_{{loop.index}}">
+              {% for post in solution['discussion'] | reverse %}
+                {{ post_macros.post(post) }}
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <div style='height:50px'>
+          </div>
+          <hr>
+      
+      {%endfor%}
+    </div>
+
+    <div class="col-md-6 col-md-offset-0">
+      <h3>Проверенные задачи:</h3>
+      {%for solution in checked_solutions%}
+          <!-- solutions text, and the name of problem set -->
+          <div>
+            <p>
+              <em>{{solution.get('problem_set')['title']|safe}}</em> 
+              <br>
+              {{solution.get('problem')['text']|safe}}
+            </p>
+          </div>
+
+          <!-- solution -->
+          {{solution_macros.solution(solution=solution,inscription=gettext('Решение от %(author)s', author = solution['author']['username']))}}
+
+          {{solution_macros.display_votes(solution)}}
+          
+          <!-- edit solution form -->
+          <button class="btn btn-default" type="button" data-toggle="collapse" data-target="#collapse_Idd_edit_{{loop.index}}" aria-expanded="false" aria-controls="collapsId">
+            Исправить решение
+          </button>
+          <div class="collapse" id="collapse_Idd_edit_{{loop.index}}">
+            <form action=" {{url_for('workflow.my_solutions', sol_id=solution['_id'])}}" method="post">
+              {{ edit_solution_form.hidden_tag() }}
+              {{form_macros.edit_solution_form(solution)}}
+            </form>
+          </div>    
+          
+          <div style='height:15px'></div>
+
+          <!-- comment form -->
+          <form action=" {{url_for('.my_solutions', sol_id=solution['_id'])}}" method="post">
+            {{ solution_comment_form.hidden_tag() }}
+            {{ form_macros.comment_form(name_of_textarea="feedback_to_solution", name_of_the_button="Оставить комментарий") }}
+          </form>
+
+          <div style='height:5px'></div>
+
+          <!-- displaying comments if they exist -->
+          {% if solution.get('discussion')%}
+            <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#collapse_Id_{{loop.index}}" aria-expanded="true" aria-controls="collapse_Id_{{loop.index}}">
+              спрятать комментарии
+            </button>
+            <div class="collapse in" aria-expanded="true" id="collapse_Id_{{loop.index}}">
+              {% for post in solution['discussion'] | reverse %}
+                {{ post_macros.post(post) }}
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <div style='height:50px'>
+          </div>
+          <hr>
+      {%endfor%}  
+    </div>
+  </div>
+
+{% endblock %}
