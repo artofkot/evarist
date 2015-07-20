@@ -269,7 +269,8 @@ def problem(problem_set_slug,prob_id):
             model_solution.delete(db=g.db,solution=current_user_solution)
         else:
             g.db.solutions.update_one({"_id":current_user_solution['_id']},
-                                        {'$set':{'text':edit_solution_form.edited_solution.data} })
+                                        {'$set':{'text':edit_solution_form.edited_solution.data,
+                                                'date':datetime.datetime.utcnow()} })
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem['_id']))
@@ -365,7 +366,8 @@ def my_solutions():
             model_solution.delete(db=g.db,solution=solut)
         else:
             g.db.solutions.update_one({"_id":solut['_id']},
-                                        {'$set':{'text':edit_solution_form.edited_solution.data} })
+                                        {'$set':{'text':edit_solution_form.edited_solution.data,
+                                        'date':datetime.datetime.utcnow()} })
         return redirect(url_for('.my_solutions'))
 
 
