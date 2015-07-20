@@ -361,6 +361,7 @@ def my_solutions():
 
     edit_solution_form=EditSolutionForm()
     if edit_solution_form.validate_on_submit():
+        print edit_solution_form.edited_solution.data + '\n\n'
         solut=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
         if edit_solution_form.delete_solution.data:
             model_solution.delete(db=g.db,solution=solut)
