@@ -63,6 +63,10 @@ def before_request():
     # store current user dictionary in g object
     if session.get('_id'):
         g.user=g.db.users.find_one({'_id':ObjectId(session['_id'])})
+        
+        # for loggin other users :)
+        # g.user=g.db.users.find_one({'_id':ObjectId('55fdsdf22')})
+        
         if g.user==None: 
             session.pop('_id', None)
             session.pop('gplus_id', None)
