@@ -381,13 +381,15 @@ def my_solutions():
 def lang_en():
     session['lang']='en'
     pa=request.args['pa']
-    return redirect(pa)
+    # return redirect(pa)
+    return redirect(url_for('.home'))
 
 @workflow.route('/leng/ru', methods=["GET", "POST"])
 def lang_ru():
     session['lang']='ru'
     pa=request.args['pa']
-    return redirect(pa)
+    # return redirect(pa)
+    return redirect(url_for('.home'))
 
 @workflow.route('/upl', methods=['GET', 'POST'])
 def upload_file():
