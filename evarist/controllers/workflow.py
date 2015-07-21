@@ -233,7 +233,6 @@ def problem(problem_set_slug,prob_id):
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem['_id']))
 
-
     solution_comment_form=FeedbackToSolutionForm()
     if solution_comment_form.validate_on_submit():
         if solution_comment_form.feedback_to_solution.data:
@@ -274,6 +273,10 @@ def problem(problem_set_slug,prob_id):
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem['_id']))
+    # trigger_flash_error(edit_solution_form,'workflow.problem', 
+    #                             problem_set_slug=problem_set_slug,
+    #                             prob_id=problem['_id'])
+
 
     other_solutions=[]
     if g.user:
@@ -370,6 +373,7 @@ def my_solutions():
                                         {'$set':{'text':edit_solution_form.edited_solution.data,
                                         'date':datetime.datetime.utcnow()} })
         return redirect(url_for('.my_solutions'))
+    # trigger_flash_error(edit_solution_form,'workflow.my_solutions')
 
 
     return render_template("my_solutions.html", 
