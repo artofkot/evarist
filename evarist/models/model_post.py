@@ -22,3 +22,19 @@ def add(text,db,author_id,post_type,parent_id):
         pass
 
     return True
+
+def delete(db, post):
+    if not db.posts.delete_one({"_id":post['_id']}):return False
+
+    if post['post_type']=='entry->general_discussion':
+        db.entries.update_one({"_id": post['parent_id']}, 
+                            {'$pull': {'general_discussion_ids': post['_id']} })
+
+    if post['post_type']=='solution->comment':
+        db.solutions.update_one({"_id": post['parent_id']}, 
+                            {'$pull': {'solution_discussion_ids': post['_id']} })
+
+    if post['post_type']=='feedback':
+        pass
+
+    return True

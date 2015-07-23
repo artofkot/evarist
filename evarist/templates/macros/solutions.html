@@ -7,10 +7,10 @@
 <div class="blog-post">
   <p class="blog-post-meta"><strong>{{inscription}}</strong> 
   {% if solution['status']=='checked_correct' %}
-    <strong style='color:green'> Проверено, правильное.</strong>
+    <strong style='color:#E78798'> Проверено, правильное.</strong>
   {% endif %}
   {% if solution['status']=='checked_incorrect' %}
-    <strong style='color:red'> Проверено, неправильное.</strong>
+    <strong style='color:#FF9966'> Проверено, надо доработать.</strong>
   {% endif %}
   </p>
   <pre>{{ solution['text'] }}</pre>
