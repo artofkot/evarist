@@ -26,7 +26,7 @@ def add(username, password, email,db, secret_key):
     else:
         pw_hash = hash_str(password,secret_key)
         db.users.insert_one({"username":username,
-                            'carma': 1, 
+                            'karma': 1, 
                             "pw_hash":pw_hash, 
                             "email":email,
                             "confirmed":False,
@@ -51,7 +51,7 @@ def add_gplus(gplus_id, gplus_picture,db, gplus_name, gplus_email):
         return False
     else:
         result=db.users.insert_one({"provider":'gplus',
-                        'carma': 1,
+                        'karma': 1,
                         "date":datetime.datetime.utcnow(),
                         "gplus_id":gplus_id,
                         "gplus_picture":gplus_picture,
