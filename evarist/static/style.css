@@ -5,6 +5,7 @@ div.transbox {
 }
 
 div.solution {
+  white-space: pre-wrap;
   border:solid 1px;
   border-color: black; 
   border-radius: 10px; 
@@ -12,8 +13,9 @@ div.solution {
 }
 
 div.comment {
+  white-space: pre-wrap;
   border:solid 1px;
-  border-color: #777; 
+  border-color: #A9A7A7; 
   border-radius: 5px; 
   padding: 5px;
 }
