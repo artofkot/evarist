@@ -5,9 +5,17 @@ div.transbox {
 }
 
 div.solution {
-  border:solid 1px gray; 
+  border:solid 1px;
+  border-color: black; 
   border-radius: 10px; 
   padding: 10px;
+}
+
+div.comment {
+  border:solid 1px;
+  border-color: #777; 
+  border-radius: 5px; 
+  padding: 5px;
 }
 
 .problem_set {
