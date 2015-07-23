@@ -133,10 +133,10 @@
 
           <!-- displaying comments if they exist -->
           {% if solution.get('discussion')%}
-            <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#collapse_Id_{{loop.index}}" aria-expanded="true" aria-controls="collapse_Id_{{loop.index}}">
+            <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#collapse_Idd_{{loop.index}}" aria-expanded="true" aria-controls="collapse_Idd_{{loop.index}}">
               спрятать комментарии
             </button>
-            <div class="collapse in" aria-expanded="true" id="collapse_Id_{{loop.index}}">
+            <div class="collapse in" aria-expanded="true" id="collapse_Idd_{{loop.index}}">
               {% for post in solution['discussion'] | reverse %}
                 {{ post_macros.post(post) }}
               {% endfor %}
