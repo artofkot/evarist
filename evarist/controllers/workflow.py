@@ -62,11 +62,8 @@ def home():
 
     
     # this is how we manually choose which problem_sets to display on homepage
-    rus_slugset=['mnozhestva','otobrazhenia','kombinatorika','podstanovki',
-            'indukcia', 'binom-newtona','teoriya-graphov-1', 
-            'podstanovki-2','delimost', 'algoritm-evklida', 'otnoshenia',
-             'sravneniya','integers-praktika', 'teoriya-graphov-2', 'teoriya-grup', 'gomomorphismy']
-    eng_slugset=['sets','group-theory']
+    rus_slugset=model_problem_set.rus_slugset
+    eng_slugset=model_problem_set.eng_slugset
     if g.locale == 'ru': homepage_slugset=rus_slugset
     else: homepage_slugset=eng_slugset
     

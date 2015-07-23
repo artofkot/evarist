@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os, datetime, time
 from bson.objectid import ObjectId
-import mongo
+import mongo, model_problem_set
 import pymongo
 
 def add(text,db,author_id,problem_id,problem_set_id,image_url):
@@ -81,7 +81,10 @@ def get_solutions_for_check_page(db,user):
     # add to solutions some needed attributes
     not_checked_sols=[]
     checked_sols=[]
-    for solution in solutions:     
+    for solution in solutions:
+        slug=db.problem_sets.find_one({'_id':solution['problem_set_id']})['slug']
+        if not slug in model_problem_set.slugset:
+            continue     
         mongo.load(solution,'solution_discussion_ids','discussion',db.posts)
         for post in solution['discussion']:
             mongo.load(post, 'author_id','author',db.users)
