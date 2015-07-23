@@ -9,7 +9,6 @@
 {% endblock %}
 {% block body %}
 
-
   <div class="row">
     <div class="col-md-6 col-md-offset-2">
       <a href="{{url_for('workflow.problem_set',problem_set_slug=problem_set_slug)}}">Обратно к уроку</a>
@@ -35,9 +34,9 @@
         {% if not current_user_solution %}
           <strong class="text-center"> Ваше решение </strong>
           <!-- this is form for writing solution -->
-          <form action=" {{url_for('workflow.problem', problem_set_slug=problem_set_slug, prob_id=problem['_id'])}}" method="post">
+          <form action=" {{url_for('workflow.problem', problem_set_slug=problem_set_slug, prob_id=problem['_id'])}}" method="post" enctype="multipart/form-data">
             {{ solution_form.hidden_tag() }}
-            {{ form_macros.comment_form(name_of_textarea="solution",name_of_the_button="Отправить") }}
+            {{ form_macros.solution_form(name_of_textarea="solution",name_of_the_button="Отправить") }}
           </form>
 
         {% elif current_user_solution%}
@@ -139,7 +138,7 @@
       <!-- comment form -->
       {% if g.user %}
       <p>
-        <form action=" {{url_for('workflow.problem', problem_set_slug=problem_set_slug, prob_id=problem['_id'])}}" method="post">
+        <form action=" {{url_for('workflow.problem', problem_set_slug=problem_set_slug, prob_id=problem['_id'])}}" method="post" >
           {{ general_comment_form.hidden_tag() }}
           {{ form_macros.comment_form(name_of_textarea="text",name_of_the_button="Отправить") }}
         </form>

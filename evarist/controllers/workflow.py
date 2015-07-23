@@ -10,7 +10,9 @@ from flask.ext.mail import Message
 from evarist import models
 from functools import wraps
 from evarist.models import model_problem_set, model_entry, model_post, model_solution, mongo
-from evarist.forms import WebsiteFeedbackForm, CommentForm, SolutionForm, FeedbackToSolutionForm, EditSolutionForm, VoteForm
+from evarist.forms import WebsiteFeedbackForm, CommentForm, SolutionForm, FeedbackToSolutionForm, EditSolutionForm, VoteForm, trigger_flash_error
+from cloudinary.uploader import upload
+from cloudinary.utils import cloudinary_url
 
 workflow = Blueprint('workflow', __name__,
                         template_folder='templates')
@@ -109,7 +111,10 @@ def problem_set(problem_set_slug):
         flash('No such problem set.')
         return redirect(url_for('.home'))
 
-    if not problem_set['status']=='production':
+
+    is_moder=False
+    if g.user: is_moder=g.user['rights']['is_moderator']
+    if (not problem_set['status']=='production') and (not is_moder):
         flash('This problem set is not ready yet.')
         return redirect(url_for('.home'))
 
@@ -154,7 +159,9 @@ def problem(problem_set_slug,prob_id):
         flash('No such problem set.')
         return redirect(url_for('.home'))
 
-    if not problem_set['status']=='production':
+    is_moder=False
+    if g.user: is_moder=g.user['rights']['is_moderator']
+    if (not problem_set['status']=='production') and (not is_moder):
         flash('This problem set is not ready yet.')
         return redirect(url_for('.home'))
 
@@ -176,13 +183,17 @@ def problem(problem_set_slug,prob_id):
 
     #load general discussion
     mongo.load(obj=problem,key_id='general_discussion_ids',key='general_discussion',collection=g.db.posts)
+    for post in problem['general_discussion']:
+        mongo.load(post,'author_id','author',g.db.users)
     # load solutions
     mongo.load(problem,'solutions_ids','solutions',g.db.solutions)
 
     # get the current_user_solution, if its written
     try: 
-        current_user_solution= next(sol for sol in problem['solutions'] if sol['author_id']==g.user.get('_id'))
+        current_user_solution= next(sol for sol in problem['solutions'] if sol.get('author_id')==g.user.get('_id'))
         mongo.load(current_user_solution,'solution_discussion_ids','discussion',g.db.posts)
+        for post in current_user_solution['discussion']:
+            mongo.load(post,'author_id','author',g.db.users)
     except StopIteration: 
         current_user_solution={}
 
@@ -228,7 +239,7 @@ def problem(problem_set_slug,prob_id):
         if solution_comment_form.feedback_to_solution.data:
             model_post.add(text=solution_comment_form.feedback_to_solution.data,
                            db=g.db,
-                           author_id=g.user['__id'],
+                           author_id=g.user['_id'],
                            post_type='solution->comment',
                            parent_id=ObjectId(request.args['sol_id']))
         return redirect(url_for('.problem', 
@@ -237,12 +248,17 @@ def problem(problem_set_slug,prob_id):
 
     solution_form=SolutionForm()
     if solution_form.validate_on_submit():
+        file=request.files[solution_form.image.name]
+        image_url=None
+        if file:
+            upload_result = upload(file)
+            image_url=upload_result['url'] 
         model_solution.add(text=solution_form.solution.data,
                            db=g.db,
                            author_id=g.user['_id'],
                            problem_id=problem['_id'],
-                           problem_set_id=problem_set['_id'])
-
+                           problem_set_id=problem_set['_id'],
+                           image_url=image_url)
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem['_id']))
@@ -253,7 +269,8 @@ def problem(problem_set_slug,prob_id):
             model_solution.delete(db=g.db,solution=current_user_solution)
         else:
             g.db.solutions.update_one({"_id":current_user_solution['_id']},
-                                        {'$set':{'text':edit_solution_form.edited_solution.data} })
+                                        {'$set':{'text':edit_solution_form.edited_solution.data,
+                                                'date':datetime.datetime.utcnow()} })
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem['_id']))
@@ -280,7 +297,7 @@ def problem(problem_set_slug,prob_id):
 @workflow.route('/check', methods=["GET", "POST"])
 @login_required
 def check():
-    sols=model_solution.get_solutions_for_check_page(g.db,g.user)
+    (not_checked_sols,checked_sols)=model_solution.get_solutions_for_check_page(g.db,g.user)
 
     vote_form=VoteForm()
     if vote_form.validate_on_submit():
@@ -320,18 +337,74 @@ def check():
 
 
     return render_template("check.html", 
-                            solutions=sols,
+                            solutions=not_checked_sols+checked_sols,
+                            not_checked_solutions=not_checked_sols,
+                            checked_solutions=checked_sols,
                             vote_form=vote_form,
                             solution_comment_form=solution_comment_form)
+
+@workflow.route('/my_solutions', methods=["GET", "POST"])
+@login_required
+def my_solutions():
+    (not_checked_sols,checked_sols)=model_solution.get_solutions_for_my_solutions_page(g.db,g.user)
+    solution_comment_form=FeedbackToSolutionForm()
+    if solution_comment_form.validate_on_submit():
+        if solution_comment_form.feedback_to_solution.data:
+            solut=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
+            model_post.add(text=solution_comment_form.feedback_to_solution.data,
+                           db=g.db,
+                           author_id=g.user['_id'],
+                           post_type='solution->comment',
+                           parent_id=ObjectId(request.args['sol_id']))
+        
+        return redirect(url_for('.my_solutions'))
+
+    edit_solution_form=EditSolutionForm()
+    if edit_solution_form.validate_on_submit():
+        print edit_solution_form.edited_solution.data + '\n\n'
+        solut=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
+        if edit_solution_form.delete_solution.data:
+            model_solution.delete(db=g.db,solution=solut)
+        else:
+            g.db.solutions.update_one({"_id":solut['_id']},
+                                        {'$set':{'text':edit_solution_form.edited_solution.data,
+                                        'date':datetime.datetime.utcnow()} })
+        return redirect(url_for('.my_solutions'))
+
+
+    return render_template("my_solutions.html", 
+                            solutions=not_checked_sols+checked_sols,
+                            not_checked_solutions=not_checked_sols,
+                            checked_solutions=checked_sols,
+                            solution_comment_form=solution_comment_form,
+                            edit_solution_form=edit_solution_form)
+
 
 @workflow.route('/lang/en', methods=["GET", "POST"])
 def lang_en():
     session['lang']='en'
     pa=request.args['pa']
-    return redirect(pa)
+    # return redirect(pa)
+    return redirect(url_for('.home'))
 
 @workflow.route('/leng/ru', methods=["GET", "POST"])
 def lang_ru():
     session['lang']='ru'
     pa=request.args['pa']
-    return redirect(pa)
+    # return redirect(pa)
+    return redirect(url_for('.home'))
+
+@workflow.route('/upl', methods=['GET', 'POST'])
+def upload_file():
+    upload_result = None
+    thumbnail_url1 = None
+    thumbnail_url2 = None
+    if request.method == 'POST':
+        file = request.files['file']
+        if file:
+            upload_result = upload(file)
+            thumbnail_url1, options = cloudinary_url(upload_result['public_id'], format = "jpg", crop = "scale", width = 100, height = 100)
+            thumbnail_url2, options = cloudinary_url(upload_result['public_id'], format = "jpg", crop = "fill", width = 200, height = 100, radius = 20, effect = "sepia")
+    return render_template('upload_form.html', upload_result = upload_result, thumbnail_url1 = thumbnail_url1, thumbnail_url2 = thumbnail_url2)
+
+

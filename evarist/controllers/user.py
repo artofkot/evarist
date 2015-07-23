@@ -30,7 +30,7 @@ def send_confirmation_link(email):
                         subject='Please confirm your email',
                         recipients=[email]))
 
-    return redirect(url_for('workflow.home'))
+    
 
 
 @user.route('/user/signup', methods=['GET', 'POST'])
@@ -53,6 +53,7 @@ def signup():
                         secret_key=current_app.config["SECRET_KEY"]):
             flash('Hey, thanks for signing up! We sent you an email, please visit the confirmation link.')
             send_confirmation_link(signup_form.email.data)
+            return redirect(url_for('workflow.home'))
         else: 
             flash('Such email already exists')
             return redirect(url_for('user.signup'))
@@ -165,7 +166,7 @@ def gconnect():
 
     # Verify that the access token is used for the intended user.
     gplus_id = credentials.id_token['sub']
-    if result['user_id'] != gplus_id:
+    if result.get('user_id') != gplus_id:
         response = make_response(
             json.dumps("Token's user ID doesn't match given user ID."), 401)
         response.headers['Content-Type'] = 'application/json'

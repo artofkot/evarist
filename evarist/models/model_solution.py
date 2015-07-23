@@ -4,7 +4,7 @@ from bson.objectid import ObjectId
 import mongo
 import pymongo
 
-def add(text,db,author_id,problem_id,problem_set_id):
+def add(text,db,author_id,problem_id,problem_set_id,image_url):
     res=db.solutions.insert_one({'text':text,
                                'author_id':author_id,
                                'problem_id':problem_id,
@@ -14,6 +14,7 @@ def add(text,db,author_id,problem_id,problem_set_id):
                                'upvotes':0,
                                'downvotes':0,
                                'users_upvoted_ids':[],
+                               'image_url':image_url,
                                'users_downvoted_ids':[],
                                'status': 'not_checked' # can be later changed to 'checked_correct' or 'checked_incorrect'
                                })
@@ -47,57 +48,80 @@ def get_other_solutions_on_problem_page(db,user,problem,current_solution_id):
         return other_solutions
 
     if current_solution_id in problem['solutions_ids']:
-        sol_ids= problem['solutions_ids'].remove(current_solution_id)
-    else:sol_ids= problem['solutions_ids']
+        problem['solutions_ids'].remove(current_solution_id)
+    sol_ids= problem['solutions_ids']
     
+
     soluts=db.solutions.find({'_id':{ '$in': sol_ids }})
-    soluts.sort('date',pymongo.DESCENDING)
     for solut in soluts:
         mongo.load(solut,'solution_discussion_ids','discussion',db.posts)
+        for post in solut['discussion']:
+            mongo.load(post, 'author_id','author',db.users)
         mongo.load(solut,'author_id','author',db.users)
         other_solutions.append(solut)
+    other_solutions.sort(key=lambda x: x.get('date'),reverse=True)  
     return other_solutions
 
 
 # функция которая выдает задачи, которые пользователь может смотреть. Сначала непроверенные, потом проверенные.
 def get_solutions_for_check_page(db,user):
     # prepare for getting solutions 
-    checked_solutions=[]
-    not_checked_solutions=[]
+    solutions=[]
     if user['rights']['is_moderator'] or user['rights']['is_checker']:
-        not_checked_solutions.extend(db.solutions.find({'status': 'not_checked'}))
-        not_checked_solutions.sort(key=lambda x: x.get('date'),reverse=True)
         # (sort from newest to oldest)
-
-        checked_solutions.extend(db.solutions.find({'status':{ '$in': [ 'checked_correct',  'checked_incorrect' ] }}))
-        checked_solutions.sort(key=lambda x: x.get('date'),reverse=True)  
+        solutions=db.solutions.find({'author_id':{'$ne':user['_id']}},
+                                sort=[('date', pymongo.DESCENDING)])
     else:
         for idd in user['problems_ids']['can_see_other_solutions']:
-            not_checked_solutions.solutions.extend(db.solutions.find({'problem_id':ObjectId(idd), 'status': 'not_checked'}))
-            checked_solutions.solutions.extend(db.solutions.find({'problem_id':ObjectId(idd), 
-                                                                  'status':{ '$in': 
-                                                                            [ 'checked_correct',  
-                                                                            'checked_incorrect' ] }}))
-        checked_solutions.sort(key=lambda x: x.get('date'),reverse=True)
-        not_checked_solutions.sort(key=lambda x: x.get('date'),reverse=True)    
-    solutions=not_checked_solutions + checked_solutions
+            solutions.extend(db.solutions.find({'problem_id':ObjectId(idd)}))
+        # (sort from newest to oldest)
+        solutions.sort(key=lambda x: x.get('date'),reverse=True)   
 
 
     # add to solutions some needed attributes
-    sols=[]
+    not_checked_sols=[]
+    checked_sols=[]
     for solution in solutions:     
         mongo.load(solution,'solution_discussion_ids','discussion',db.posts)
+        for post in solution['discussion']:
+            mongo.load(post, 'author_id','author',db.users)
         if not mongo.load(solution,'author_id','author',db.users):
             solution['author']={}
             solution['author']['username']='deleted user'
         mongo.load(solution,'problem_id','problem',db.entries)
         mongo.load(solution,'problem_set_id','problem_set',db.problem_sets)
-        sols.append(solution)
+        
+        if solution.get('status') =='not_checked':
+            not_checked_sols.append(solution)
+        else:
+            checked_sols.append(solution)
 
+    return (not_checked_sols,checked_sols)
 
+def get_solutions_for_my_solutions_page(db,user):
+    # prepare for getting solutions 
+    solutions=db.solutions.find({'author_id': user['_id']},
+                                            sort=[('date', pymongo.DESCENDING)])
 
-    return sols
+    # add to solutions some needed attributes
+    not_checked_sols=[]
+    checked_sols=[]
+    for solution in solutions:     
+        mongo.load(solution,'solution_discussion_ids','discussion',db.posts)
+        for post in solution['discussion']:
+            mongo.load(post, 'author_id','author',db.users)
+        if not mongo.load(solution,'author_id','author',db.users):
+            solution['author']={}
+            solution['author']['username']='deleted user'
+        mongo.load(solution,'problem_id','problem',db.entries)
+        mongo.load(solution,'problem_set_id','problem_set',db.problem_sets)
+        
+        if solution.get('status')=='not_checked':
+            not_checked_sols.append(solution)
+        else:
+            checked_sols.append(solution)
 
+    return (not_checked_sols,checked_sols)
 
 
 
@@ -139,10 +163,6 @@ def can_see_other_solutions(db,solution_id):
 
 
 
-
-
-
-
 def update_status(db,solution_id):
     solution=db.solutions.find_one({'_id':solution_id})
     new_status=get_status(solution)
@@ -155,10 +175,10 @@ def update_who_solved(db,solution_id):
     solution=db.solutions.find_one({'_id':solution_id})
     if did_solve(db,solution_id):
         db.users.update_one({"_id": solution['author_id']}, 
-                            {'$addToSet': {'problems_ids.solved': solution_id} })
+                            {'$addToSet': {'problems_ids.solved': solution['problem_id']} })
     else:
         db.users.update_one({"_id": solution['author_id']}, 
-                            {'$pull': {'problems_ids.solved': solution_id} })
+                            {'$pull': {'problems_ids.solved': solution['problem_id']} })
 
     return 1
 
@@ -166,10 +186,10 @@ def update_who_can_see_other_solutions(db,solution_id):
     solution=db.solutions.find_one({'_id':solution_id})
     if can_see_other_solutions(db,solution_id):
         db.users.update_one({"_id": solution['author_id']}, 
-                            {'$addToSet': {'problems_ids.can_see_other_solutions': solution_id} })
+                            {'$addToSet': {'problems_ids.can_see_other_solutions': solution['problem_id']} })
     else:
         db.users.update_one({"_id": solution['author_id']}, 
-                            {'$pull': {'problems_ids.can_see_other_solutions': solution_id} })
+                            {'$pull': {'problems_ids.can_see_other_solutions': solution['problem_id']} })
 
     return 1
 
@@ -177,10 +197,10 @@ def update_who_can_vote(db,solution_id):
     solution=db.solutions.find_one({'_id':solution_id})
     if can_vote(db,solution_id):
         db.users.update_one({"_id": solution['author_id']}, 
-                            {'$addToSet': {'problems_ids.can_vote': solution_id} })
+                            {'$addToSet': {'problems_ids.can_vote': solution['problem_id']} })
     else:
         db.users.update_one({"_id": solution['author_id']}, 
-                            {'$pull': {'problems_ids.can_vote': solution_id} })
+                            {'$pull': {'problems_ids.can_vote': solution['problem_id']} })
 
     return 1
 

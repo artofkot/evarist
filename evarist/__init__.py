@@ -47,9 +47,13 @@ if not app.debug:
     mail_handler.setLevel(logging.ERROR)
     app.logger.addHandler(mail_handler)
 
+
+
 # connecting to database before every request comes
 @app.before_request
 def before_request():
+
+
     # for timing of response
     g.start=time.time()
 
@@ -59,11 +63,16 @@ def before_request():
     # store current user dictionary in g object
     if session.get('_id'):
         g.user=g.db.users.find_one({'_id':ObjectId(session['_id'])})
+        
+        # for loggin other users :)
+        # g.user=g.db.users.find_one({'_id':ObjectId('55fdsdf22')})
+        
         if g.user==None: 
             session.pop('_id', None)
             session.pop('gplus_id', None)
             session.pop('access_token', None)
             g.user={}
+
     else:
         session.pop('_id', None) 
         session.pop('gplus_id', None)

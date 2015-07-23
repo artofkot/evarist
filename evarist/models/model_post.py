@@ -15,7 +15,7 @@ def add(text,db,author_id,post_type,parent_id):
                             {'$addToSet': {'general_discussion_ids': ob_id} })
 
     if post_type=='solution->comment':
-        db.solutionss.update_one({"_id": parent_id}, 
+        db.solutions.update_one({"_id": parent_id}, 
                             {'$addToSet': {'solution_discussion_ids': ob_id} })
 
     if post_type=='feedback':

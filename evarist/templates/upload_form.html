@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block head %}
+  <title></title>
+  <script src="/js/jquery-2.0.1.min.js"></script>
+  <link rel="stylesheet" href="/js/redactor/redactor.css" />
+  <script src="/js/redactor/redactor.js"></script>
+  
+  <script type="text/javascript">
+  $(function()
+  {
+  $('#content').redactor();
+  });
+  </script>
+
+
+{% endblock %}
+{% block body %}
+
+
+<h1>Upload new Image</h1>
+<form action="" method="post" enctype="multipart/form-data">
+  <p>
+  <input type="file" name="file">
+  <input type="submit" value="Upload">
+  </p>
+</form>
+{% if upload_result %}
+  <h3>Upload API Result</h3>
+  <div>{{ upload_result }}</div>
+  <h3>Thumbnails:</h3>
+  <div><a href="{{thumbnail_url1}}">{{thumbnail_url1}}</a></div>
+  <img src="{{ thumbnail_url1 }}"/>
+  <div><a href="{{thumbnail_url2}}">{{thumbnail_url2}}</a></div>
+  <img src="{{ thumbnail_url2 }}"/>
+  <h3>Original:</h3>
+  <img src="{{ upload_result['url'] }}"/>
+{% endif %}
+
+
+
+  <textarea id="content" name="content"></textarea>
+
+
+{%endblock%}

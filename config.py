@@ -5,6 +5,7 @@ APPLICATION_NAME = "Evarist"
 
 MONGO_URI=os.environ.get("MONGO_URI")
 SECRET_KEY = os.environ.get("LISTKI_SECRET_KEY")
+#next one is for email confirmation
 SECURITY_PASSWORD_SALT=os.environ.get("SECURITY_PASSWORD_SALT")
 DEBUG=False
 
@@ -32,3 +33,6 @@ MAIL_PASSWORD = MANDRILL_APIKEY
 MAIL_DEFAULT_SENDER = ('Evarist',MANDRILL_USERNAME)
 
 ADMINS = ['artofkot@gmail.com','alexej.levin@gmail.com']
+
+# for picture upload
+CLOUDINARY_URL=os.environ.get("CLOUDINARY_URL")
