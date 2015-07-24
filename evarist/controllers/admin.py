@@ -7,7 +7,7 @@ from flask import current_app, Flask, Blueprint, request, session, g, redirect, 
     abort, render_template, flash
 from contextlib import closing
 from functools import wraps
-from evarist.forms import ProblemSetForm, EntryForm, EditEntryForm, ProblemSetDelete, VoteForm, FeedbackToSolutionForm
+from evarist.forms import ProblemSetForm, EntryForm, EditEntryForm, ProblemSetDelete, VoteForm, FeedbackToSolutionForm, EditCommentForm
 from evarist.models import model_problem_set, model_entry, mongo, model_post, model_solution
 
 admin = Blueprint('admin', __name__,
@@ -289,3 +289,39 @@ def problem_set_edit(problem_set_slug):
                             edit_problem_set_form=edit_problem_set_form,
                             delete_problem_set_form=delete_problem_set_form,
                             edit_entry_form=edit_entry_form)
+
+#CRUD comments
+@admin.route('/admin/posts/', methods=["GET", "POST"])
+@admin_required
+def posts():
+    posts_db=g.db.posts.find(sort=[('date', pymongo.DESCENDING)])
+    posts=[]
+    for post in posts_db:
+        mongo.load(post,'author_id','author',g.db.users)
+        posts.append(post)
+
+    edit_comment_form=EditCommentForm()
+    if edit_comment_form.validate_on_submit():
+        
+        post=g.db.posts.find_one({'_id':ObjectId(request.args['post_id'])})
+        print post
+
+        if edit_comment_form.delete_comment.data:
+            model_post.delete(db=g.db,post=post)
+        else:
+            g.db.posts.update_one({"_id":post['_id']},
+                                        {'$set':{'text':edit_comment_form.text.data,
+                                        'date':datetime.datetime.utcnow()} })
+        return redirect(url_for('admin.posts'))
+   
+
+    return render_template('admin/posts.html',
+                            edit_comment_form=edit_comment_form, 
+                            posts=posts)    
+
+
+
+
+
+
+

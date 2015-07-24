@@ -9,7 +9,7 @@
 
   <div class="row">
     <div class="col-md-8 col-md-offset-2">
-      <p>Здесь находятся решения ко всем задачам, которые вы уже решили. Решив какую-либо задачу, вы получаете право смотреть и проверять другие решения этой задачи, и эта страница сделана для удобства этого процесса. Проверить решение можно проголосовав за "верно" или "неверно", и написать отзыв при необходимости (например если решение недоведено).</p>
+      <p>Здесь находятся решения ко всем задачам, которые вы уже решили. Решив какую-либо задачу, вы получаете право смотреть и проверять другие решения этой задачи, и эта страница сделана для удобства этого процесса. Проверив решение можно проголосовать за "верно" или "неверно", и написать отзыв при необходимости (например если решение не доведено).</p>
       <!-- <h3>Это решения, которые можно проверить, то есть проголосовать за "верно" или "неверно", и написать отзыв при необходимости (например если решение недоведено). Вы можете проверять только уже решенные вами задачи. </h3> -->
       <hr>
     </div>
@@ -130,10 +130,10 @@
 
           <!-- displaying comments if they exist -->
           {% if solution.get('discussion')%}
-            <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#collapse_Id_{{loop.index}}" aria-expanded="true" aria-controls="collapse_Id_{{loop.index}}">
+            <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#collapse_Idd_{{loop.index}}" aria-expanded="true" aria-controls="collapse_Idd_{{loop.index}}">
               спрятать комментарии
             </button>
-            <div class="collapse in" aria-expanded="true" id="collapse_Id_{{loop.index}}">
+            <div class="collapse in" aria-expanded="true" id="collapse_Idd_{{loop.index}}">
               {% for post in solution['discussion'] | reverse %}
                 {{ post_macros.post(post) }}
               {% endfor %}

@@ -62,11 +62,8 @@ def home():
 
     
     # this is how we manually choose which problem_sets to display on homepage
-    rus_slugset=['mnozhestva','otobrazhenia','kombinatorika','podstanovki',
-            'indukcia', 'binom-newtona','teoriya-graphov-1', 
-            'podstanovki-2','delimost', 'algoritm-evklida', 'otnoshenia',
-             'sravneniya','integers-praktika', 'teoriya-graphov-2', 'teoriya-grup', 'gomomorphismy']
-    eng_slugset=['sets','group-theory']
+    rus_slugset=model_problem_set.rus_slugset
+    eng_slugset=model_problem_set.eng_slugset
     if g.locale == 'ru': homepage_slugset=rus_slugset
     else: homepage_slugset=eng_slugset
     
@@ -233,7 +230,6 @@ def problem(problem_set_slug,prob_id):
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem['_id']))
 
-
     solution_comment_form=FeedbackToSolutionForm()
     if solution_comment_form.validate_on_submit():
         if solution_comment_form.feedback_to_solution.data:
@@ -274,6 +270,10 @@ def problem(problem_set_slug,prob_id):
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem['_id']))
+    # trigger_flash_error(edit_solution_form,'workflow.problem', 
+    #                             problem_set_slug=problem_set_slug,
+    #                             prob_id=problem['_id'])
+
 
     other_solutions=[]
     if g.user:
@@ -361,7 +361,6 @@ def my_solutions():
 
     edit_solution_form=EditSolutionForm()
     if edit_solution_form.validate_on_submit():
-        print edit_solution_form.edited_solution.data + '\n\n'
         solut=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
         if edit_solution_form.delete_solution.data:
             model_solution.delete(db=g.db,solution=solut)
@@ -370,6 +369,7 @@ def my_solutions():
                                         {'$set':{'text':edit_solution_form.edited_solution.data,
                                         'date':datetime.datetime.utcnow()} })
         return redirect(url_for('.my_solutions'))
+    # trigger_flash_error(edit_solution_form,'workflow.my_solutions')
 
 
     return render_template("my_solutions.html", 
@@ -394,17 +394,17 @@ def lang_ru():
     # return redirect(pa)
     return redirect(url_for('.home'))
 
-@workflow.route('/upl', methods=['GET', 'POST'])
-def upload_file():
-    upload_result = None
-    thumbnail_url1 = None
-    thumbnail_url2 = None
-    if request.method == 'POST':
-        file = request.files['file']
-        if file:
-            upload_result = upload(file)
-            thumbnail_url1, options = cloudinary_url(upload_result['public_id'], format = "jpg", crop = "scale", width = 100, height = 100)
-            thumbnail_url2, options = cloudinary_url(upload_result['public_id'], format = "jpg", crop = "fill", width = 200, height = 100, radius = 20, effect = "sepia")
-    return render_template('upload_form.html', upload_result = upload_result, thumbnail_url1 = thumbnail_url1, thumbnail_url2 = thumbnail_url2)
+# @workflow.route('/upl', methods=['GET', 'POST'])
+# def upload_file():
+#     upload_result = None
+#     thumbnail_url1 = None
+#     thumbnail_url2 = None
+#     if request.method == 'POST':
+#         file = request.files['file']
+#         if file:
+#             upload_result = upload(file)
+#             thumbnail_url1, options = cloudinary_url(upload_result['public_id'], format = "jpg", crop = "scale", width = 100, height = 100)
+#             thumbnail_url2, options = cloudinary_url(upload_result['public_id'], format = "jpg", crop = "fill", width = 200, height = 100, radius = 20, effect = "sepia")
+#     return render_template('upload_form.html', upload_result = upload_result, thumbnail_url1 = thumbnail_url1, thumbnail_url2 = thumbnail_url2)
 
 

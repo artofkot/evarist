@@ -58,6 +58,10 @@ class SignInForm(Form):
 class CommentForm(Form):
     text = TextField('text', validators=[Required()])
 
+class EditCommentForm(Form):
+    text = TextField('text', validators=[Required()])
+    delete_comment=BooleanField('delete_comment')
+
 class FeedbackToSolutionForm(Form):
     feedback_to_solution = TextField('feedback_to_solution', validators=[Required()])
 

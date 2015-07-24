@@ -2,7 +2,7 @@
 
   <div class="blog-post">
     <p class="blog-post-meta">{{post['date'].day}}/{{post['date'].month}}/{{post['date'].year}} by {{post.get('author')['username']}} </p> 
-    <pre>{{post['text']}}</pre>
+    <div class='comment'>{{post['text']}}</div>
   </div>
 
 {%- endmacro %}

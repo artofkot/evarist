@@ -4,6 +4,22 @@ div.transbox {
   filter: alpha(opacity=30);*/ /* For IE8 and earlier */
 }
 
+div.solution {
+  white-space: pre-wrap;
+  border:solid 1px;
+  border-color: black; 
+  border-radius: 10px; 
+  padding: 10px;
+}
+
+div.comment {
+  white-space: pre-wrap;
+  border:solid 1px;
+  border-color: #A9A7A7; 
+  border-radius: 5px; 
+  padding: 5px;
+}
+
 .problem_set {
   /*background-color: black;*/
   /*background: rgb(0, 0, 0); *//* Fall-back for browsers that don't support rgba */

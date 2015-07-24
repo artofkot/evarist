@@ -9,10 +9,12 @@
     <strong style='color:green'> Проверено, правильное.</strong>
   {% endif %}
   {% if solution['status']=='checked_incorrect' %}
-    <strong style='color:red'> Проверено, неправильное.</strong>
+    <strong style='color:#E78798'> Проверено, надо доработать.</strong>
   {% endif %}
   </p>
-  <pre>{{ solution['text'] }}</pre>
+  <div class='solution'>
+    {{ solution['text'] }}
+  </div>
   {% if solution.get('image_url') %}
     <img src="{{solution.get('image_url')}}" class="img-responsive" alt='responsive image'>
   {% endif %}
