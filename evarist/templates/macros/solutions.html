@@ -15,10 +15,11 @@
   </p>
   <div class='solution'>
     {{ solution['text'] }}
-  </div>
-  {% if solution.get('image_url') %}
+    {% if solution.get('image_url') %}
     <img src="{{solution.get('image_url')}}" class="img-responsive" alt='responsive image'>
-  {% endif %}
+    {% endif %}
+  </div>
+  
 </div>
 
 {%- endmacro %}
