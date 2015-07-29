@@ -9,8 +9,9 @@ from controllers.workflow import workflow
 from controllers.admin import admin
 import logging
 
-# creating an app
+from evarist.models_mongoengine import db, User
 
+# creating an app
 app = Flask(__name__)
 
 # adding different parts of app
@@ -19,10 +20,15 @@ app.register_blueprint(user)
 app.register_blueprint(workflow)
 app.register_blueprint(admin)
 
-# connecting to mongodb
+#connecting to database, Mongoengine
+
+
+db.init_app(app)
+
+# connecting to mongodb via pymongo
 client = pymongo.MongoClient(app.config['MONGO_URI'])
 settings=pymongo.uri_parser.parse_uri(app.config['MONGO_URI'])
-db = client[settings['database']]
+dbpymongo = client[settings['database']]
 
 # for translation
 babel = Babel(app)
@@ -58,7 +64,7 @@ def before_request():
     g.start=time.time()
 
     # passing database in each request
-    g.db=db
+    g.db=dbpymongo
 
     # store current user dictionary in g object
     if session.get('_id'):
@@ -107,6 +113,7 @@ def get_locale():
     # header the browser transmits.  We support de/fr/en in this
     # example.  The best match wins.
     # return request.accept_languages.best_match(['ru', 'en'])
+
 
 # for timezone
 #
