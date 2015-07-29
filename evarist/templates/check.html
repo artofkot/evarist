@@ -22,15 +22,14 @@
       {%for solution in not_checked_solutions%}
           <!-- solutions text, and the name of problem set -->
           <div>
+            <h5>{{solution.get('problem_set')['title']|safe}}</h5> 
             <p>
-              <em>{{solution.get('problem_set')['title']|safe}}</em> 
-              <br>
               {{solution.get('problem')['text']|safe}}
             </p>
           </div>
 
           <!-- solution -->
-          {{solution_macros.solution(solution=solution,inscription=gettext('Решение от %(author)s', author = solution['author']['username']))}}
+          {{solution_macros.solution(solution=solution,inscription=gettext('Решение от <strong>%(author)s</strong>', author = solution['author']['username']))}}
 
 
           <!-- votes + form for voting-->
@@ -95,8 +94,7 @@
           </div>
 
           <!-- solution -->
-          {{solution_macros.solution(solution=solution,inscription=gettext('Решение от %(author)s', author = solution['author']['username']))}}
-
+          {{solution_macros.solution(solution=solution,inscription=gettext('Решение от <strong>%(author)s</strong>', author = solution['author']['username']))}}
 
           <!-- votes + form for voting-->
           <div class='row'>
