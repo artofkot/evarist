@@ -25,6 +25,7 @@ app.register_blueprint(admin)
 
 db.init_app(app)
 
+
 # connecting to mongodb via pymongo
 client = pymongo.MongoClient(app.config['MONGO_URI'])
 settings=pymongo.uri_parser.parse_uri(app.config['MONGO_URI'])

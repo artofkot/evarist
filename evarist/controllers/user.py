@@ -18,6 +18,8 @@ import httplib2, json, uuid, hashlib, string, random
 from flask import make_response
 import requests
 
+from evarist.models_mongoengine import EmailUser
+
 
 user = Blueprint('user', __name__,
                         template_folder='templates')
@@ -35,7 +37,6 @@ def send_confirmation_link(email):
 
 @user.route('/user/signup', methods=['GET', 'POST'])
 def signup():
-
     if g.user:
         flash('Please log out first')
         return redirect(url_for('workflow.home'))
