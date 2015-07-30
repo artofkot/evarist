@@ -11,8 +11,7 @@
     <strong style='color:#E78798'> Проверено, надо доработать.</strong>
   {% endif %}
   </p>
-  <div class='solution'>
-    {{ solution['text'] }}
+  <div class='solution'>{{ solution['text'] }} <!-- no newline, because white-space: pre-wrap -->
     {% if solution.get('image_url') %}
     <img src="{{solution.get('image_url')}}" class="img-responsive" alt='responsive image'>
     {% endif %}

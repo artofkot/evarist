@@ -27,7 +27,7 @@
           ∆ Определение {{entry.get('definition_number')}}.</a> <!-- that Delta is really badass... -->
         {%endif%}
         {{entry['text']|safe}}
-        <a class="btn btn-s btn-primary pull-right" href="{{ url_for('workflow.problem', problem_set_slug=problem_set['slug'], prob_id=entry.get('_id') ) }}" >Я решил!</a> 
+        <a class="btn btn-s btn-default pull-right" href="{{ url_for('workflow.problem', problem_set_slug=problem_set['slug'], prob_id=entry.get('_id') ) }}" >Я решил!</a> 
         </p>
         <br>
       {% endfor %}
