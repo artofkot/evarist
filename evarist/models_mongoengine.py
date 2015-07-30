@@ -14,10 +14,10 @@ class User(db.Document):
     karma= db.IntField(default=1)
     rights = db.EmbeddedDocumentField('Rights', default=Rights())
 
-    problems_solution_written=db.ListField(db.ReferenceField('Problem'))
-    problems_solved=db.ListField(db.ReferenceField('Problem'))
-    problems_can_see_other_solutions=db.ListField(db.ReferenceField('Problem'))
-    problems_can_vote=db.ListField(db.ReferenceField('Problem'))
+    problems_solution_written=db.ListField(db.ReferenceField('Content_block'))
+    problems_solved=db.ListField(db.ReferenceField('Content_block'))
+    problems_can_see_other_solutions=db.ListField(db.ReferenceField('Content_block'))
+    problems_can_vote=db.ListField(db.ReferenceField('Content_block'))
 
     meta = {'allow_inheritance': True}
 
@@ -50,28 +50,39 @@ class Content_block(db.Document):
     problem_set= db.ReferenceField('Problem_set')
     author= db.ReferenceField('User')
     general_discussion=db.ListField(db.ReferenceField('Comment'))
+    number_in_problem_set=db.IntField()
+
+    old_id = db.StringField()
 
     meta = {'allow_inheritance': True}
-
-class Problem(Content_block):
     type_ = db.StringField(max_length=64, default='problem', choices=('problem', 'definition', 'general_content_block'))
     solutions=db.ListField(db.ReferenceField('Solution'))
- 
-class Definition(Content_block):
-    type_ = db.StringField(max_length=64, default='definition', choices=('problem', 'definition', 'general_content_block'))
 
-class GeneralContent_block(Content_block):
-    type_ = db.StringField(max_length=64, default='general_content_block', choices=('problem', 'general_content_block', 'general_content_block'))
+
+
+
 
 #collection for problem sets
 class Problem_set(db.Document):
-    name = db.StringField(required=True, max_length=128)
-    slug = db.StringField(max_length=128, unique=True)
+    title = db.StringField(required=True, unique=True, max_length=128)
+    slug = db.StringField(max_length=128, required=True, unique=True)
     status = db.StringField(max_length=64, default='dev', choices=('dev', 'stage', 'production'))
     tags= db.ListField(db.StringField(max_length=128))
-    
     content_blocks = db.ListField(db.ReferenceField('Content_block'))
 
+    def assign_numbers_to_content_blocks(self):
+        definition_counter=0
+        problem_counter=0
+        for content_block in self.content_blocks:
+            if content_block['type_']=='problem': #then set the number of this problem
+                problem_counter+=1
+                content_block['number_in_problem_set']= problem_counter
+                content_block.save()
+            if content_block['type_']=='definition': #then set the number of this definition
+                definition_counter+=1
+                content_block ['number_in_problem_set']= definition_counter
+                content_block.save()
+        return self
 
 
 
@@ -83,7 +94,7 @@ class Solution(db.Document):
     language = db.StringField(max_length=256, default='rus')
     status = db.StringField(max_length=64, default='not_checked', choices=('checked_correct', 'checked_incorrect', 'not_checked'))
 
-    problem = db.ReferenceField('Problem')
+    problem = db.ReferenceField('Content_block')
     author= db.ReferenceField('User')
     problem_set = db.ReferenceField('Problem_set')
     discussion=db.ListField(db.ReferenceField('Comment'))
@@ -122,14 +133,29 @@ class Subscribed_user(db.Document):
     date = db.DateTimeField(default=datetime.datetime.now) 
 
 
-# deleting rules see here:
+# NEVER TOUCH or USE these things:)
+# class Problem(Content_block):
+#     type_ = db.StringField(max_length=64, default='problem', choices=('problem', 'definition', 'general_content_block'))
+#     solutions=db.ListField(db.ReferenceField('Solution'))
+ 
+# class Definition(Content_block):
+#     type_ = db.StringField(max_length=64, default='definition', choices=('problem', 'definition', 'general_content_block'))
+#     solutions=db.ListField(db.ReferenceField('Solution'))
+
+# class GeneralContent_block(Content_block):
+#     type_ = db.StringField(max_length=64, default='general_content_block', choices=('problem', 'general_content_block', 'general_content_block'))
+#     solutions=db.ListField(db.ReferenceField('Solution'))
+
+
+
+# "deleting rules" see here:
 # http://docs.mongoengine.org/guide/defining-documents.html#dealing-with-deletion-of-referred-documents
 # and here (API page) http://docs.mongoengine.org/en/latest/apireference.html#mongoengine.fields.ReferenceField
-Problem.register_delete_rule(User,'problems_solved', PULL)
-Problem.register_delete_rule(User,'problems_can_vote', PULL)
-Problem.register_delete_rule(User,'problems_solution_written',PULL)
-Problem.register_delete_rule(User,'problems_can_see_other_solutions',PULL)
-Problem.register_delete_rule(Solution,'problem', NULLIFY)
+Content_block.register_delete_rule(User,'problems_solved', PULL)
+Content_block.register_delete_rule(User,'problems_can_vote', PULL)
+Content_block.register_delete_rule(User,'problems_solution_written',PULL)
+Content_block.register_delete_rule(User,'problems_can_see_other_solutions',PULL)
+Content_block.register_delete_rule(Solution,'problem', NULLIFY)
 
 Problem_set.register_delete_rule(Content_block,'problem_set',NULLIFY)
 Problem_set.register_delete_rule(Solution,'problem_set',NULLIFY)
@@ -140,7 +166,7 @@ User.register_delete_rule(Solution,'author',NULLIFY)
 User.register_delete_rule(Solution,'users_upvoted',PULL)
 User.register_delete_rule(Solution,'users_downvoted',PULL)
 
-Solution.register_delete_rule(Problem,'solutions',PULL)
+Solution.register_delete_rule(Content_block,'solutions',PULL)
 Solution.register_delete_rule(CommentToSolution,'parent_solution',NULLIFY)
 
 Content_block.register_delete_rule(Problem_set,'content_blocks',PULL)
@@ -148,6 +174,9 @@ Content_block.register_delete_rule(CommentToContent_block,'parent_content_block'
 
 Comment.register_delete_rule(Content_block,'general_discussion',PULL)
 Comment.register_delete_rule(Solution,'discussion',PULL)
+
+
+
 
 
 

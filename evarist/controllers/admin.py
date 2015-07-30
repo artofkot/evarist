@@ -10,7 +10,9 @@ from functools import wraps
 from evarist.forms import ProblemSetForm, EntryForm, EditEntryForm, ProblemSetDelete, VoteForm, FeedbackToSolutionForm, EditCommentForm
 from evarist.models import model_problem_set, model_entry, mongo, model_post, model_solution
 
-from evarist.models_mongoengine import User, EmailUser, GplusUser, Rights
+from evarist.models_mongoengine import (User, EmailUser, GplusUser, Rights, 
+                                        Problem_set, Content_block)
+
 
 admin = Blueprint('admin', __name__,
                         template_folder='templates')
@@ -32,65 +34,42 @@ def admin_required(f):
 
 
 @admin.route('/admin/db', methods=["GET", "POST"])
+@admin_required
 def db():
     if current_app.debug==False: return redirect(url_for('workflow.home'))
     #####
     count1=0
     count2=0
+    count3=0
 
-    old_users= g.db.users.find()
-    for old_user in old_users:
-        rights=Rights(is_moderator=old_user['rights']['is_moderator'],
-                      is_checker=old_user['rights']['is_checker'])
+    for c_b in Content_block.objects():
+        if getattr(c_b,'_cls',None):
+            c_b._cls='Content_block'
+            print c_b._cls
+            c_b.save()
+            count1+=1
 
-        if old_user.get('gplus_email'):
-            count1=count1+1
-            
-            new_user= GplusUser(gplus_id=old_user['gplus_id'], 
-                            gplus_picture=old_user['gplus_picture'],
-                            gplus_name=old_user.get('username'), 
-                            gplus_email=old_user['gplus_email'],
-                            rights=rights)
-            new_user.email=new_user.gplus_email
-            new_user.username=new_user.gplus_name
-            # try:new_user.save()
-            # except: pass
-        else:
-            count2=count2+1
-            new_user= EmailUser(email=old_user.get('email'), 
-                            username=old_user.get('username'),
-                            pw_hash=None,
-                            confirmed=old_user.get('confirmed'),
-                            rights=rights,
-                            old_pw_hash=old_user.get('pw_hash'))
-
-            # try:new_user.save()
-            # except: pass
-
-    # prob=Problem.objects(author=art).first()
-    # print prob.text
-
-    return 'Ok! %d %d ' % (count1,count2)
+    return '%d %d %d' % (count1,count2,count3)
 
 
 
 @admin.route('/admin/', methods=["GET", "POST"])
-# @admin_required
+@admin_required
 def home():
 
     form = ProblemSetForm()
     if form.validate_on_submit():
 
-        if model_problem_set.add(slug=form.slug.data, 
-                                 title=form.title.data, 
-                                 db=g.db ):
+        try:
+            problem_set=Problem_set(slug=form.slug.data, 
+                                 title=form.title.data)
+            problem_set.save()
             flash('Probem set added, sir.')
-        else: 
-            flash('Need different title or slug.')
+        except: 
+            flash('Need a different title and slug.')
         return redirect(url_for('admin.home'))
 
-    # problem_sets=model_problem_set.get_all(g.db)
-    problem_sets=mongo.get_all(g.db.problem_sets)
+    problem_sets=Problem_set.objects()
 
     problem_sets_dev=[pset for pset in problem_sets if pset['status']=='dev']
     problem_sets_stage=[pset for pset in problem_sets if pset['status']=='stage']
@@ -104,16 +83,16 @@ def home():
                             problem_sets_production=problem_sets_production)
 
 @admin.route('/admin/feedbacks', methods=["GET", "POST"])
-# @admin_required
+@admin_required
 def feedbacks():
-    posts=g.db.posts.find({'parent_type':'evarist_feedback'})
+    posts=g.db.posts.find({'post_type':'feedback'})
     return render_template("admin/feedbacks.html", 
                             posts=posts)
 
 @admin.route('/admin/problem_questions', methods=["GET", "POST"])
-# @admin_required
+@admin_required
 def problem_questions():
-    ps=g.db.posts.find({'parent_type':'problem'})
+    ps=g.db.posts.find({'post_type':'entry->general_discussion'})
     posts=[]
     for p in ps:
         p['problem_set']=g.db.problem_sets.find_one({'_id':p['problem_set_id']})
@@ -123,14 +102,14 @@ def problem_questions():
                             posts=posts)
 
 @admin.route('/admin/users', methods=["GET", "POST"])
-# @admin_required
+@admin_required
 def users():
-    users=g.db.users.find()
+    users=User.objects()
     return render_template("admin/users.html", 
                             users=users)
 
 @admin.route('/admin/checked_solutions', methods=["GET", "POST"])
-# @admin_required
+@admin_required
 def checked_solutions():
 
     solutions=g.db.solutions.find({'status':{ '$in': [ 'checked_correct',  'checked_incorrect' ] }})
@@ -194,7 +173,7 @@ def checked_solutions():
 
 
 @admin.route('/admin/not_checked_solutions', methods=["GET", "POST"])
-# @admin_required
+@admin_required
 def not_checked_solutions():
     solutions=g.db.solutions.find({'status': 'not_checked'})
     sols=[]
@@ -254,61 +233,55 @@ def not_checked_solutions():
                             solution_comment_form=solution_comment_form)
 
 @admin.route('/admin/<problem_set_slug>/', methods=["GET", "POST"])
-# @admin_required
+@admin_required
 def problem_set_edit(problem_set_slug):
 
 
-    problem_set=g.db.problem_sets.find_one({"slug": problem_set_slug})
+    problem_set=Problem_set.objects(slug=problem_set_slug).first()
     if not problem_set: 
         flash('No such slug.')
         return redirect(url_for('admin.home'))
 
-    # model_problem_set.load_entries(problem_set,g.db)
-    mongo.load(problem_set,'entries_ids','entries',g.db.entries)
-    # get the numbers of problems or definitions
-    model_problem_set.get_numbers(problem_set=problem_set)
-
-    
+    problem_set.assign_numbers_to_content_blocks()
 
     edit_problem_set_form=ProblemSetForm()
     if edit_problem_set_form.validate_on_submit():
-        if model_problem_set.edit(ob_id=problem_set['_id'],
-                                old_title=problem_set['title'], 
-                                title=edit_problem_set_form.title.data, 
-                                slug=edit_problem_set_form.slug.data, 
-                                db=g.db,
-                                status=edit_problem_set_form.status.data,
-                                old_slug=problem_set['slug']): 
-            flash ('edited') 
-        else: flash('you must change the slug to other slug, which does not exist. Sorry :)')
+        problem_set.title=edit_problem_set_form.title.data
+        problem_set.slug=edit_problem_set_form.slug.data
+        problem_set.status=edit_problem_set_form.status.data
+        try: 
+            problem_set.save()
+            flash('Problem_set was edited')
+        except: 
+            flash('you must change the slug or title to other values, which do not exist in our database. Sorry :)')
+            return redirect(url_for('admin.problem_set_edit',
+                                problem_set_slug=problem_set_slug))
+
         return redirect(url_for('admin.problem_set_edit',
-                                problem_set_slug=edit_problem_set_form.slug.data))
+                                problem_set_slug=problem_set.slug))
 
     delete_problem_set_form=ProblemSetDelete()
     if delete_problem_set_form.validate_on_submit():
         if delete_problem_set_form.delete.data:
-            model_problem_set.delete(ob_id=problem_set['_id'],
-                                     db=g.db)
+            problem_set.delete()
         return redirect(url_for('admin.home'))
 
     edit_entry_form=EditEntryForm()
     if edit_entry_form.validate_on_submit():
-        entry_type=edit_entry_form.entry_type.data
-        
+        content_block=Content_block.objects(id=ObjectId(request.args['entry_id'])).first()
+        place_of_content_block= int(edit_entry_form.place_of_content_block.data)
         if edit_entry_form.delete_entry.data:
-            model_entry.delete_forever(entry_id=ObjectId(request.args['entry_id']),
-                                       problem_set_id=problem_set['_id'],
-                                       db=g.db)
+            content_block.delete()
         else:
-            rez=model_entry.edit(ob_id=ObjectId(request.args['entry_id']),
-                             db=g.db, 
-                             text=edit_entry_form.edit_text.data,
-                             entry_type=entry_type,
-                             entry_number= int(edit_entry_form.entry_number.data),
-                             problem_set_id=problem_set['_id'])
-            if rez:
+            content_block.text=edit_entry_form.edit_text.data
+            content_block.type_=edit_entry_form.type_.data
+            try:
+                problem_set.content_blocks.remove(content_block)
+                problem_set.content_blocks.insert(place_of_content_block,content_block)
+                content_block.save()
+                problem_set.save()
                 flash('Entry edited, sir.')
-            else:
+            except:
                 flash('Didnt work, slug or title is wrong.')
 
         return redirect(url_for('admin.problem_set_edit',
@@ -316,14 +289,23 @@ def problem_set_edit(problem_set_slug):
 
     entryform = EntryForm()
     if entryform.validate_on_submit():
-        entry_type=entryform.entry_type.data
-        if model_entry.add(entry_type=entry_type, 
-                            author_id=g.user.get('_id'),
-                            db=g.db, 
-                            text=entryform.text.data, 
-                            problem_set_id=problem_set['_id'],
-                            entry_number= int(entryform.entry_number.data)):
+        content_block=Content_block()
+        content_block.type_=entryform.type_.data
+        # if type_=='definition': content_block=Definition()
+        # if type_=='problem': content_block=Problem()
+        # if type_=='general_content_block': content_block=GeneralContent_block()
+        content_block.author=g.user
+        content_block.problem_set=problem_set
+        content_block.text=entryform.text.data
+        place_of_content_block= int(entryform.place_of_content_block.data)
+            
+        try:
+            content_block.save()
+            problem_set.content_blocks.insert(place_of_content_block,content_block)
+            problem_set.save()
             flash('Entry added, sir.')
+        except: 
+            flash('Something went wrong')
 
         return redirect(url_for('admin.problem_set_edit',
                                 problem_set_slug=problem_set['slug']))
@@ -337,7 +319,7 @@ def problem_set_edit(problem_set_slug):
 
 #CRUD comments
 @admin.route('/admin/posts/', methods=["GET", "POST"])
-# @admin_required
+@admin_required
 def posts():
     posts_db=g.db.posts.find(sort=[('date', pymongo.DESCENDING)])
     posts=[]

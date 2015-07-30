@@ -6,16 +6,16 @@
 
 <div class="blog-post">
   <p class="blog-post-meta"><strong>{{inscription}}</strong> 
-  {% if solution['status']=='checked_correct' %}
+  {% if solution.status=='checked_correct' %}
     <strong style='color:green'> Проверено, правильное.</strong>
   {% endif %}
-  {% if solution['status']=='checked_incorrect' %}
+  {% if solution.status=='checked_incorrect' %}
     <strong style='color:#E78798'> Проверено, надо доработать.</strong>
   {% endif %}
   </p>
   <div class='solution'>
-    {{ solution['text'] }}
-    {% if solution.get('image_url') %}
+    {{ solution.text }}
+    {% if solution.image_url %}
     <img src="{{solution.get('image_url')}}" class="img-responsive" alt='responsive image'>
     {% endif %}
   </div>
@@ -28,7 +28,7 @@
 
 {% macro display_votes(solution) -%}
 
-<p>{{solution.get("upvotes")}} верно </p>
-<p>{{solution.get('downvotes')}} неверно</p>
+<p>{{solution.upvotes}} верно </p>
+<p>{{solution.downvotes}} неверно</p>
 
 {%- endmacro %}

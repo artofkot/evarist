@@ -51,7 +51,7 @@
         
         <form class="form-inline" action="{{url_for('.problem_set_edit',problem_set_slug=problem_set['slug'])}}" method="post">  
           {{ delete_problem_set_form.hidden_tag() }}
-          <button type="submit" class="btn btn-xs btn-danger">Delete the whole problem set, and all its entries.</button>
+          <button type="submit" class="btn btn-xs btn-danger">Delete the whole problem set, and all its content_blocks.</button>
           <div class="checkbox">
             <label><input type="checkbox" name='delete'> I am sure about that</label>
           </div>
@@ -59,87 +59,87 @@
 
       
       <div style='height:20px'></div>
-      <p>Entries:</p>
+      <p>content_blocks:</p>
       <ol>
-        {%for entry in problem_set['entries']%}
+        {%for content_block in problem_set['content_blocks']%}
           <li>
             
             <div>
               <p>
-              {% if entry.get('entry_type')=='problem' %}
-              <a href="{{ url_for('workflow.problem', problem_set_slug=problem_set['slug'], prob_id=entry.get('_id') ) }}">
-                Задача {{entry.get('problem_number')}}.</a>
-              {% elif entry.get('entry_type')=='definition' %}
-              <a href="{{ url_for('workflow.entry', problem_set_slug=problem_set['slug'], entry_type=entry.get('entry_type'), __id=entry.get('_id') ) }}">
-                ∆ Определение {{entry.get('definition_number')}}.</a>
+              {% if content_block.type_=='problem' %}
+              <a href="{{ url_for('workflow.problem', problem_set_slug=problem_set['slug'], prob_id=content_block.id ) }}">
+                Задача {{content_block.number_in_problem_set}}.</a>
+              {% elif content_block.type_=='definition' %}
+              <a href="{{ url_for('workflow.content_block', problem_set_slug=problem_set['slug'], type_=content_block.type_, __id=content_block.id ) }}">
+                ∆ Определение {{content_block.number_in_problem_set}}.</a>
               {% else %}
-              <a href="{{ url_for('workflow.entry', problem_set_slug=problem_set['slug'], entry_type=entry.get('entry_type'), __id=entry.get('_id') ) }}"> general_entry </a>
+              <a href="{{ url_for('workflow.content_block', problem_set_slug=problem_set['slug'], type_=content_block.type_, __id=content_block.id ) }}"> general_content_block </a>
               {%endif%}
-              tags:{{entry['tags']}}
+              tags:{{content_block['tags']}}
               <br>
-              {{entry['text']|safe}}
+              {{content_block['text']|safe}}
               </p>
             </div>
 
 
             <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#collapsId{{(loop.index)}}" aria-expanded="false" aria-controls="collapsId{{(loop.index)}}">
-              Edit upper entry
+              Edit upper content_block
             </button>
             <div class="collapse" id="collapsId{{(loop.index)}}">
-              <form action=" {{url_for('.problem_set_edit', problem_set_slug=problem_set['slug'], entry_id=entry['_id'])}}" method="post">
+              <form action=" {{url_for('.problem_set_edit', problem_set_slug=problem_set['slug'], entry_id=content_block.id)}}" method="post">
                 <div class="form-group" style='width: 800px'>
                   {{ edit_entry_form.hidden_tag() }}
                   <div class="checkbox">
                     
-                    {% if entry['entry_type']=='problem' %}
+                    {% if content_block['type_']=='problem' %}
                       <div class="form-group" >
                         <div class="radio">
-                          <label ><input type="radio" name='entry_type' value='general_entry'> Check this, if this entry has type "general_entry". </label>
+                          <label ><input type="radio" name='type_' value='general_content_block'> Check this, if this content_block has type "general_content_block". </label>
                         </div>
                         <div class='radio'>
-                          <label ><input type="radio" name='entry_type'  value='definition'> Check this, if this entry has type "definition". </label>
+                          <label ><input type="radio" name='type_'  value='definition'> Check this, if this content_block has type "definition". </label>
                         </div> 
                         <div class="radio">
-                          <label ><input type="radio" name='entry_type' value='problem' checked> Check this, if this entry has type "problem". </label>
+                          <label ><input type="radio" name='type_' value='problem' checked> Check this, if this content_block has type "problem". </label>
                         </div>
                       </div>
-                    {% elif entry['entry_type']=='definition' %}
+                    {% elif content_block['type_']=='definition' %}
                       <div class="form-group" >
                         <div class="radio">
-                          <label ><input type="radio" name='entry_type' value='general_entry'> Check this, if this entry has type "general_entry". </label>
+                          <label ><input type="radio" name='type_' value='general_content_block'> Check this, if this content_block has type "general_content_block". </label>
                         </div>
                         <div class='radio'>
-                          <label ><input type="radio" name='entry_type'  value='definition' checked> Check this, if this entry has type "definition. </label>
+                          <label ><input type="radio" name='type_'  value='definition' checked> Check this, if this content_block has type "definition. </label>
                         </div> 
                         <div class="radio">
-                          <label ><input type="radio" name='entry_type' value='problem'> Check this, if this entry has type "problem". </label>
+                          <label ><input type="radio" name='type_' value='problem'> Check this, if this content_block has type "problem". </label>
                         </div>
                       </div>
                     {% else %}
                       <div class="form-group" >
                         <div class="radio">
-                          <label ><input type="radio" name='entry_type' value='general_entry' checked> Check this, if this entry has type "general_entry". </label>
+                          <label ><input type="radio" name='type_' value='general_content_block' checked> Check this, if this content_block has type "general_content_block". </label>
                         </div>
                         <div class='radio'>
-                          <label ><input type="radio" name='entry_type'  value='definition'> Check this, if this entry has type "definition. </label>
+                          <label ><input type="radio" name='type_'  value='definition'> Check this, if this content_block has type "definition. </label>
                         </div> 
                         <div class="radio">
-                          <label ><input type="radio" name='entry_type' value='problem'> Check this, if this entry has type "problem". </label>
+                          <label ><input type="radio" name='type_' value='problem'> Check this, if this content_block has type "problem". </label>
                         </div>
                       </div>
                     {% endif %}
       
 
                   </div>
-                  <label for="edit_text">Edit the entry: </label>
-                  <textarea class="form-control" rows="10" name='edit_text'>{{entry['text']}}</textarea>
+                  <label for="edit_text">Edit the content_block: </label>
+                  <textarea class="form-control" rows="10" name='edit_text'>{{content_block['text']}}</textarea>
 
-                  <label for="title">Write here the number of entry after which you want this entry to pop up: </label>
-                  <input type="text" class="form-control" name="entry_number" value='{{loop.index-1}}'>
+                  <label>Write here the number of content_block after which you want this content_block to pop up: </label>
+                  <input type="text" class="form-control" name="place_of_content_block" value='{{loop.index-1}}'>
                   
                   <div class="checkbox" style='background-color:red'>
                     <label >
-                      <input type="checkbox" name='delete_entry'>just want to delete this entry, forever
+                      <input type="checkbox" name='delete_entry'>just want to delete this content_block, forever
                     </label>
                   </div>
                 </div>
@@ -166,26 +166,26 @@
   <div class="row">
     <div class="col-md-8 col-md-offset-2">
       <form action=" {{url_for('.problem_set_edit', problem_set_slug=problem_set['slug'])}}" method="post">
-        Create a new entry.
+        Create a new content_block.
         <div class="form-group" style='width: 800px'>
 
           {{ entryform.hidden_tag() }}
           <div class="form-group" >
             <div class="radio">
-              <label ><input type="radio" name='entry_type' value='general_entry'> Check this, if this entry has type "general_entry". </label>
+              <label ><input type="radio" name='type_' value='general_content_block'> Check this, if this content_block has type "general_content_block". </label>
             </div>
             <div class='radio'>
-              <label ><input type="radio" name='entry_type'  value='definition'> Check this, if this entry has type "definition". </label>
+              <label ><input type="radio" name='type_'  value='definition'> Check this, if this content_block has type "definition". </label>
             </div> 
             <div class="radio">
-              <label ><input type="radio" name='entry_type' value='problem' checked> Check this, if this entry has type "problem". </label>
+              <label ><input type="radio" name='type_' value='problem' checked> Check this, if this content_block has type "problem". </label>
             </div>
           </div>
-          <label for="text">Here put the content of entry: </label>
+          <label for="text">Here put the content of content_block: </label>
           <textarea class="form-control" rows="5"  name='text'></textarea>
 
-          <label for="entry_number">Write here the number of entry after which you want this entry to pop up: </label>
-          <input type="text" class="form-control" name="entry_number" value='{{problem_set["entries"] | length}}'>
+          <label for="place_of_content_block">Write here the number of content_block after which you want this content_block to pop up: </label>
+          <input type="text" class="form-control" name="place_of_content_block" value='{{problem_set["content_blocks"] | length}}'>
 
         </div>
         <button type="submit" class="btn btn-default">Отправить</button>

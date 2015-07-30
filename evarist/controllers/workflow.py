@@ -132,8 +132,8 @@ def problem_set(problem_set_slug):
     return render_template('problem_set.html', 
                             problem_set=problem_set)
 
-@workflow.route('/problem_sets/<problem_set_slug>/<entry_type>/<__id>/', methods=["GET", "POST"])
-def entry(problem_set_slug,entry_type,__id):
+@workflow.route('/problem_sets/<problem_set_slug>/<type_>/<__id>/', methods=["GET", "POST"])
+def content_block(problem_set_slug,type_,__id):
 
     # get the problem set of entry
     # problem_set=g.db.problem_sets.find_one({"slug": problem_set_slug})

@@ -1,7 +1,7 @@
 {% macro edit_solution_form(solution) -%}
   <div class="form-group" style='width: 370px'>
     <label for="edit_text">Исправьте решение здесь: </label>
-    <textarea class="form-control" rows="2"  name='edited_solution'>{{solution['text']}}  
+    <textarea class="form-control" rows="2"  name='edited_solution'>{{solution.text}}  
     </textarea>
     
     <div class="checkbox" style='background-color:red'>

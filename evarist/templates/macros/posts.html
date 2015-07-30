@@ -1,8 +1,8 @@
 {% macro post(post) -%}
 
   <div class="blog-post">
-    <p class="blog-post-meta">{{post['date'].day}}/{{post['date'].month}}/{{post['date'].year}} by {{post.get('author')['username']}} </p> 
-    <div class='comment'>{{post['text']}}</div>
+    <p class="blog-post-meta">{{post.date.day}}/{{post.date..month}}/{{post.date..year}} by {{post.author.username}} </p> 
+    <div class='comment'>{{post.text}}</div>
   </div>
 
 {%- endmacro %}

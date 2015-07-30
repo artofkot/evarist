@@ -136,7 +136,7 @@ def login():
 
         if not getattr(user,'pw_hash',None):
             if check_old_pwd(user_password=password,
-                            hashed_password=getattr(user,'old_pw_hash',None),
+                            hashed_password=getattr(user,'old_pw_hash','dumb:string'),
                             secret_key=secret_key):
                 user.pw_hash=hash_str(password, secret_key)
                 user.save

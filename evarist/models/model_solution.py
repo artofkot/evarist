@@ -69,7 +69,7 @@ def get_solutions_for_check_page(db,user):
     solutions=[]
     if user['rights']['is_moderator'] or user['rights']['is_checker']:
         # (sort from newest to oldest)
-        solutions=db.solutions.find({'author_id':{'$ne':user['_id']}},
+        solutions=db.solutions.find({'author_id':{'$ne':user['id']}},
                                 sort=[('date', pymongo.DESCENDING)])
     else:
         for idd in user['problems_ids']['can_see_other_solutions']:

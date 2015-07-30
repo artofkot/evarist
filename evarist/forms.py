@@ -82,11 +82,11 @@ class ProblemSetDelete(Form):
 
 class EntryForm(Form):
     text= TextField('text', validators=[Required()])
-    entry_type=TextField('entry_type')
-    entry_number=TextField('entry_number')
+    type_=TextField('type_')
+    place_of_content_block=TextField('place_of_content_block')
 
 class EditEntryForm(Form):
-    entry_type=TextField('entry_type')
-    entry_number=TextField('entry_number')
+    type_=TextField('type_')
+    place_of_content_block=TextField('place_of_content_block')
     edit_text= TextField('edit_text', validators=[Required()])
     delete_entry=BooleanField('delete_entry')
