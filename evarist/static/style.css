@@ -1,9 +1,3 @@
-div.transbox {
-/*  background-color: black;
-  opacity: 0.3;
-  filter: alpha(opacity=30);*/ /* For IE8 and earlier */
-}
-
 div.solution {
   white-space: pre-wrap;
   border:solid 1px;
@@ -18,14 +12,6 @@ div.comment {
   border-color: #A9A7A7; 
   border-radius: 5px; 
   padding: 5px;
-}
-
-.problem_set {
-  /*background-color: black;*/
-  /*background: rgb(0, 0, 0); *//* Fall-back for browsers that don't support rgba */
-  /*background: rgba(0, 0, 0, .25);*/
-  /*opacity :1.0;*/
-  /*color:white;*/
 }
 
 .box-sh {

@@ -15,24 +15,22 @@
   <hr>
 
   <div class="row">
-    <div class="transbox">
-      <div class="col-md-8 col-md-offset-2 problem_set">
-        <h2 class="text-center"> {{problem_set['title']}}</h2>
-        {%for entry in problem_set['entries']%}
-          <div>
-            <p>
-            {% if entry.get('entry_type')=='problem' %}
-            <a class="def_prob_as_link" href="{{ url_for('workflow.problem', problem_set_slug=problem_set['slug'], prob_id=entry.get('_id') ) }}">
-              Задача {{entry.get('problem_number')}}.</a>
-            {% elif entry.get('entry_type')=='definition' %}
-            <a class="def_prob_as_link" href="{{ url_for('workflow.entry', problem_set_slug=problem_set['slug'], entry_type=entry.get('entry_type'), __id=entry.get('_id') ) }}">
-              ∆ Определение {{entry.get('definition_number')}}.</a>
-            {%endif%}
-            {{entry['text']|safe}}
-            </p>
-          </div>
-        {% endfor %}
-      </div>
+    <div class="col-md-8 col-md-offset-2 problem_set">
+      <h2 class="text-center"> {{problem_set['title']}}</h2>
+      {%for entry in problem_set['entries']%}
+        <p>
+        {% if entry.get('entry_type')=='problem' %}
+        <a class="def_prob_as_link" href="{{ url_for('workflow.problem', problem_set_slug=problem_set['slug'], prob_id=entry.get('_id') ) }}">
+          Задача {{entry.get('problem_number')}}.</a>
+        {% elif entry.get('entry_type')=='definition' %}
+        <a class="def_prob_as_link" href="{{ url_for('workflow.entry', problem_set_slug=problem_set['slug'], entry_type=entry.get('entry_type'), __id=entry.get('_id') ) }}">
+          ∆ Определение {{entry.get('definition_number')}}.</a> <!-- that Delta is really badass... -->
+        {%endif%}
+        {{entry['text']|safe}}
+        <a class="btn btn-s btn-primary pull-right" href="{{ url_for('workflow.problem', problem_set_slug=problem_set['slug'], prob_id=entry.get('_id') ) }}" >Я решил!</a> 
+        </p>
+        <br>
+      {% endfor %}
     </div>
   </div>
 
