@@ -12,11 +12,6 @@
       <form class="form-signin" action="{{ url_for('user.signup') }}" role="form" method=post>
         {{ signup_form.hidden_tag() }}
         <dl>
-          {% if error %}
-            <div class="alert alert-warning error" role="alert"> 
-              <strong>Error:</strong> {{ error }} 
-            </div> 
-          {% endif %}
             <h2 class="form-signin-heading">Registration.</h2>
             <label for="inputEmailPassword" class="sr-only">email</label>
             <input id="inputEmailPassword" class="form-control" type=text placeholder="Email" required name='email'>

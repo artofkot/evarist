@@ -40,3 +40,6 @@ ADMINS = ['artofkot@gmail.com','alexej.levin@gmail.com']
 
 # for picture upload
 CLOUDINARY_URL=os.environ.get("CLOUDINARY_URL")
+
+
+BCRYPT_LOG_ROUNDS=12

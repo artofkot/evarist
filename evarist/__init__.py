@@ -3,6 +3,7 @@ from bson.objectid import ObjectId
 import os, sys, pymongo, re, time
 from flask import Flask, request, session, g, redirect, url_for
 from flask.ext.babel import Babel
+from flask.ext.bcrypt import Bcrypt
 from flask.ext.mail import Mail
 from controllers.user import user
 from controllers.workflow import workflow
@@ -37,6 +38,9 @@ babel = Babel(app)
 # making mail
 mail = Mail(app)
 
+# for hashing passwords
+bcrypt=Bcrypt(app)
+
 # for logging python errors in production, see them in papertrail
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.ERROR)
@@ -60,8 +64,13 @@ if not app.debug:
 @app.before_request
 def before_request():
     # mongoengine
-    try: g.user=User.objects.get(id=ObjectId(session.get('id')))
-    except: g.user={}
+    try: 
+        g.user=User.objects.get(id=ObjectId(session.get('id')))
+    except: 
+        session.pop('id', None) 
+        session.pop('gplus_id', None)
+        session.pop('access_token', None)
+        g.user={}
 
 
 
@@ -71,6 +80,7 @@ def before_request():
 
     # passing database in each request
     g.db=dbpymongo
+
 
     # store current user dictionary in g object
     # if session.get('_id'):

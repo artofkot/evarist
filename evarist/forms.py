@@ -2,7 +2,7 @@ import re
 from flask import flash, g, request, redirect, url_for
 from flask.ext.wtf import Form
 from wtforms.fields import TextField, PasswordField, BooleanField, FileField
-from wtforms.validators import Required, Email, Regexp, ValidationError
+from wtforms.validators import Required, Email, Regexp, ValidationError, EqualTo
 
 #regexs for usernames and passwords and emails
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
@@ -49,7 +49,7 @@ class SignUpForm(Form):
     email = TextField('email', validators=[Required(), Email()])
     username = TextField('username', validators=[Required(), Regexp(USER_RE,message=u'Invalid username.')])
     confirm_password = PasswordField('confirm_password', validators=[Required()])
-    password = PasswordField('password', validators=[Required()])
+    password = PasswordField('password', validators=[Required(),EqualTo('confirm_password', message='passwords must match.')])
 
 class SignInForm(Form):
     email = TextField('email', validators=[Required(message=u'Whats the email?'), Email()])

@@ -8,8 +8,7 @@ from flask import current_app, Flask, Blueprint, request, session, g, redirect, 
 from contextlib import closing
 from jinja2 import TemplateNotFound
 from evarist.models import model_user
-from evarist.models.token import generate_confirmation_token, confirm_token
-from evarist.forms import SignUpForm, SignInForm
+from evarist.forms import SignUpForm, SignInForm, trigger_flash_error
 from flask.ext.mail import Message
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
@@ -18,11 +17,37 @@ import httplib2, json, uuid, hashlib, string, random
 from flask import make_response
 import requests
 
-from evarist.models_mongoengine import EmailUser
-
+from evarist.models_mongoengine import User, EmailUser, GplusUser
+from itsdangerous import URLSafeTimedSerializer
+import evarist
 
 user = Blueprint('user', __name__,
                         template_folder='templates')
+
+def hash_str(password,secret_key):
+    return evarist.bcrypt.generate_password_hash(password+secret_key)
+    
+def check_pwd(user_password, hashed_password, secret_key):
+    return evarist.bcrypt.check_password_hash(hashed_password,
+                                user_password+secret_key)
+
+def generate_confirmation_token(email):
+    serializer = URLSafeTimedSerializer(evarist.app.config['SECRET_KEY'])
+    return serializer.dumps(email, salt=evarist.app.config['SECURITY_PASSWORD_SALT'])
+
+
+def confirm_token(token, expiration=3600):
+    serializer = URLSafeTimedSerializer(evarist.app.config['SECRET_KEY'])
+    try:
+        email = serializer.loads(
+            token,
+            salt=evarist.app.config['SECURITY_PASSWORD_SALT'],
+            max_age=expiration
+        )
+    except:
+        return False
+    return email
+
 
 def send_confirmation_link(email):
     token = generate_confirmation_token(email)
@@ -47,35 +72,26 @@ def logged_out_required(f):
 
 @user.route('/user/signup', methods=['GET', 'POST'])
 def signup():
-    if g.user:
-        flash('Please log out first')
-        return redirect(url_for('workflow.home'))
+    print getattr(g.user,'gplus_name',None)
 
     signup_form=SignUpForm()
-
     if request.method == 'POST' and signup_form.validate_on_submit():
-        if not signup_form.password.data == signup_form.confirm_password.data:
-            flash('Passwords should be the same. Try one more time, please')
-            return redirect(url_for('user.signup'))
-        if model_user.add(email=signup_form.email.data,
-                        password=signup_form.password.data,
-                        username=signup_form.username.data,
-                        db=g.db,
-                        secret_key=current_app.config["SECRET_KEY"]):
-            flash('Hey, thanks for signing up! We sent you an email, please visit the confirmation link.')
-            send_confirmation_link(signup_form.email.data)
-            return redirect(url_for('workflow.home'))
-        else: 
-            flash('Such email already exists')
-            return redirect(url_for('user.signup'))
+        secret_key=current_app.config["SECRET_KEY"]
+        try:
+            new_user= EmailUser(email=signup_form.email.data, 
+                    username=signup_form.username.data,
+                    pw_hash=hash_str(signup_form.password.data, secret_key))
+            new_user.save()
+        except: 
+            flash('Such email already exists in our database. Please, log in.')
+            return redirect(url_for('user.login'))
+        
+        flash('Hey, thanks for signing up! We sent you an email, please visit the confirmation link.')
+        send_confirmation_link(new_user.email)
+        return redirect(url_for('workflow.home'))
+    trigger_flash_error(form=signup_form,endpoint='user.signup')
 
-    error=''
-    if request.method == 'POST' and not signup_form.validate_on_submit():
-        for err in signup_form.errors:
-            error=error+signup_form.errors[err][0]+' '
-        return render_template("user/signup.html", error=error, signup_form=SignUpForm())
-
-    return render_template("user/signup.html", error=error, signup_form=signup_form)
+    return render_template("user/signup.html", signup_form=signup_form)
 
 @user.route('/confirm/<token>')
 def confirm_email(token):
@@ -83,52 +99,43 @@ def confirm_email(token):
         email = confirm_token(token)
     except:
         flash('The confirmation link is invalid or has expired.')
-    user = g.db.users.find_one({'email':email, 'provider':'email'})
+    user = EmailUser.objects(email=email).first()
     if user:
-        if user.get('confirmed'):
+        if user.confirmed:
             flash('Account already confirmed. Please login.')
         else:
-            g.db.users.update_one({"_id": user['_id']}, 
-                                {'$set': {'confirmed': True} })
-            session['_id']=str(user['_id'])
+            user.confirmed=True
+            user.save()
+            session['id']=str(user['id'])
             flash('You have confirmed your account. Thanks!', 'success')
     else: flash('Such email does not exist in our database.')
+    
     return redirect(url_for('workflow.home'))
 
 
 @user.route('/user/login', methods=['GET', 'POST'])
 def login():
-    if g.user:
-        flash('Please log out first')
-        return redirect(url_for('workflow.home'))
 
     state=''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
     session['state']=state
 
-    error = ''
     signin_form=SignInForm()
     if request.method == 'POST' and signin_form.validate_on_submit():
-
         email=signin_form.email.data
         password=signin_form.password.data
-
-        user=g.db.users.find_one({"email": email})
-        if user:
-            if model_user.check_pwd(password,user["pw_hash"],secret_key=current_app.config["SECRET_KEY"]):
-                session['_id']=str(user['_id'])
-                return redirect(url_for('workflow.home'))
-
-
-            else:
-                error = 'Invalid password'
+        secret_key=current_app.config['SECRET_KEY']
+        
+        user=EmailUser.objects(email=email).first()
+        if user and check_pwd(password,user.pw_hash,secret_key):
+            session['id']=str(user['id'])
+            flash('You were logged in.')
+            return redirect(url_for('workflow.home'))
         else:
-            error = 'Invalid username'
+            flash('Incorrect email or password.')
+            return redirect(url_for('user.login'))
+    trigger_flash_error(form=signin_form,endpoint='user.login')
 
-    if request.method == 'POST' and not signin_form.validate_on_submit():
-        for err in signin_form.errors:
-            error=error+signin_form.errors[err][0]+' '
-        return render_template("user/login.html", error=error, signin_form=SignInForm())
-    return render_template('user/login.html', error=error, signin_form=signin_form, client_id_yep=current_app.config['CLIENT_ID']) 
+    return render_template('user/login.html', signin_form=signin_form, client_id_yep=current_app.config['CLIENT_ID']) 
 
 # this POST request comes from login page if user presses gplus-sign-in button
 @user.route('/user/gconnect', methods=['POST'])
@@ -210,19 +217,26 @@ def gconnect():
     answer = requests.get(userinfo_url, params=params)
     data = answer.json()
 
+
     # add user if such email does not exist in database of gplus users
-    added_user_id = model_user.add_gplus(gplus_id=gplus_id , 
-                                gplus_picture=data['picture'],
-                                db=g.db, 
-                                gplus_name=data['name'], 
-                                gplus_email=data['email'])
+    added_user=False
+    if not GplusUser.objects(gplus_id=gplus_id).first():
+        new_user= GplusUser(gplus_id=gplus_id, 
+                            gplus_picture=data['picture'],
+                            gplus_name=data['name'], 
+                            gplus_email=data['email'],
+                            provider='gplus')
+        new_user.email=new_user.gplus_email
+        new_user.username=new_user.gplus_name
+        new_user.save()
+        added_user=True
 
     # store user's id in session
-    if added_user_id:
-        session['_id']=str(added_user_id)
+    if added_user:
+        session['id']=str(new_user.id)
     else:
-        user=g.db.users.find_one({"gplus_id": gplus_id})
-        session['_id']=str(user['_id'])
+        user=GplusUser.objects(gplus_id=gplus_id).first()
+        session['id']=str(user.id)
     
 
     # make a response and send it back to login page
@@ -253,7 +267,7 @@ def gdisconnect():
 
     if result['status'] == '200':
         # Reset the user's session.
-        session.pop('_id', None)
+        session.pop('id', None)
         session.pop('gplus_id', None)
         session.pop('access_token', None)
 
@@ -263,7 +277,7 @@ def gdisconnect():
         # return response
     else:
         # For whatever reason, the given token was invalid.
-        session.pop('_id', None)
+        session.pop('id', None)
         session.pop('gplus_id', None)
         session.pop('access_token', None)
         
@@ -275,14 +289,15 @@ def gdisconnect():
 
 @user.route('/user/logout')
 def logout():
-    if g.user.get('provider')=='gplus':
-        return redirect(url_for('user.gdisconnect'))
-    else:
-        session.pop('_id', None)
-        session.pop('gplus_id', None)
-        session.pop('access_token', None)
-        # We use a neat trick here:
-        # if you use the pop() method of the dict and pass a second parameter to it (the default),
-        # the method will delete the key from the dictionary if present or
-        # do nothing when that key is not in there.
-        return redirect(url_for('workflow.home'))
+    if g.user:
+        if g.user.provider=='gplus':
+            return redirect(url_for('user.gdisconnect'))
+
+    session.pop('id', None)
+    session.pop('gplus_id', None)
+    session.pop('access_token', None)
+    # We use a neat trick here:
+    # if you use the pop() method of the dict and pass a second parameter to it (the default),
+    # the method will delete the key from the dictionary if present or
+    # do nothing when that key is not in there.
+    return redirect(url_for('workflow.home'))

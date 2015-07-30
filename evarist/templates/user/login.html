@@ -71,11 +71,6 @@
       <form class="form-signin" action="{{ url_for('user.login') }}" role="form" method=post>
         {{ signin_form.hidden_tag() }}
         <dl>
-          {% if error %}
-            <div class="alert alert-warning error" role="alert"> 
-              <strong>Error:</strong> {{ error }} 
-            </div> 
-          {% endif %}
             <h2 class="form-signin-heading">Or login with email.</h2>
             <label for="inputLogin" class="sr-only">Email</label>
             <input id="inputLogin" class="form-control" type=text placeholder="email" autofocus required name='email'>

@@ -23,19 +23,19 @@ class User(db.Document):
 
 class GplusUser(User):
     provider= db.StringField(default='gplus')
-    gplus_id=db.StringField()
+    gplus_id=db.StringField(unique_with='provider')
     gplus_picture=db.StringField()
     gplus_email=db.StringField()
     gplus_name=db.StringField()
 
     # default=gplus_name,
-    username = db.StringField(unique_with='provider', max_length=256)
+    username = db.StringField()
     # default=gplus_email,
-    email = db.StringField(unique_with='provider', max_length=256)
+    email = db.StringField()
 
 class EmailUser(User):
     provider= db.StringField(default='email')
-    username = db.StringField(required=True,unique_with='provider', max_length=256)
+    username = db.StringField(required=True, max_length=256)
     email = db.StringField(required=True, unique_with='provider', max_length=256)
     pw_hash = db.StringField()
     confirmed= db.BooleanField(default=False)
