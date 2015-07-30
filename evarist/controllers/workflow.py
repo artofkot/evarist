@@ -149,7 +149,7 @@ def entry(problem_set_slug,entry_type,__id):
 
 @workflow.route('/problem_sets/<problem_set_slug>/problem/<prob_id>/', methods=["GET", "POST"])
 def problem(problem_set_slug,prob_id):
-    
+
     # get the problem_set
     problem_set=g.db.problem_sets.find_one({"slug": problem_set_slug})
     if problem_set==False: 
@@ -173,7 +173,7 @@ def problem(problem_set_slug,prob_id):
     # get the problem and problem's number out of problem_set
     try:
         problem, problem_number=next((entry, entry['problem_number']) for entry in problem_set['entries'] if entry.get('_id')==ObjectId(prob_id))
-    except StopIteration:
+    except:
         flash('No such problem in this problem_set.')
         return redirect(url_for('workflow.problem_set',problem_set_slug=problem_set_slug))
     
