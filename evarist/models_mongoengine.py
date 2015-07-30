@@ -1,7 +1,7 @@
 from flask.ext.mongoengine import MongoEngine
 db = MongoEngine()
 
-import datetime #, mongoengine
+import datetime
 from mongoengine import *
 
 #collection for registered users
@@ -37,12 +37,12 @@ class EmailUser(User):
     provider= db.StringField(default='email')
     username = db.StringField(required=True,unique_with='provider', max_length=256)
     email = db.StringField(required=True, unique_with='provider', max_length=256)
-    pw_hash = db.StringField(max_length=256)
+    pw_hash = db.StringField()
     confirmed= db.BooleanField(default=False)
 
 
-#collection for content boxes
-class Cbox(db.Document):
+#collection for content blocks
+class Content_block(db.Document):
     text = db.StringField()
     date = db.DateTimeField(default=datetime.datetime.now)
     tags= db.ListField(db.StringField(max_length=128))
@@ -53,15 +53,15 @@ class Cbox(db.Document):
 
     meta = {'allow_inheritance': True}
 
-class Problem(Cbox):
-    type_ = db.StringField(max_length=64, default='problem', choices=('problem', 'definition', 'general_cbox'))
+class Problem(Content_block):
+    type_ = db.StringField(max_length=64, default='problem', choices=('problem', 'definition', 'general_content_block'))
     solutions=db.ListField(db.ReferenceField('Solution'))
  
-class Definition(Cbox):
-    type_ = db.StringField(max_length=64, default='definition', choices=('problem', 'definition', 'general_cbox'))
+class Definition(Content_block):
+    type_ = db.StringField(max_length=64, default='definition', choices=('problem', 'definition', 'general_content_block'))
 
-class General_cbox(Cbox):
-    type_ = db.StringField(max_length=64, default='general_cbox', choices=('problem', 'general_cbox', 'general_cbox'))
+class GeneralContent_block(Content_block):
+    type_ = db.StringField(max_length=64, default='general_content_block', choices=('problem', 'general_content_block', 'general_content_block'))
 
 #collection for problem sets
 class Problem_set(db.Document):
@@ -70,7 +70,7 @@ class Problem_set(db.Document):
     status = db.StringField(max_length=64, default='dev', choices=('dev', 'stage', 'production'))
     tags= db.ListField(db.StringField(max_length=128))
     
-    cboxes = db.ListField(db.ReferenceField('Cbox'))
+    content_blocks = db.ListField(db.ReferenceField('Content_block'))
 
 
 
@@ -102,17 +102,17 @@ class Comment(db.Document):
 
     meta = {'allow_inheritance': True}
 
-class Comment_to_solution(Comment):    
+class CommentToSolution(Comment):    
     parent_solution = db.ReferenceField('Solution')
-    type_ = db.StringField(max_length=64, default='comment_to_solution', choices=('comment_to_solution', 'comment_to_cbox', 'feedback'))
+    type_ = db.StringField(max_length=64, default='comment_to_solution', choices=('comment_to_solution', 'comment_to_content_block', 'feedback'))
 
-class Comment_to_cbox(Comment): 
-    parent_cbox = db.ReferenceField('Cbox')
-    type_ = db.StringField(max_length=64, default='comment_to_cbox', choices=('comment_to_solution', 'comment_to_cbox', 'feedback'))
+class CommentToContent_block(Comment): 
+    parent_content_block = db.ReferenceField('Content_block')
+    type_ = db.StringField(max_length=64, default='comment_to_content_block', choices=('comment_to_solution', 'comment_to_content_block', 'feedback'))
 
-class Comment_feedback(Comment): 
+class CommentFeedback(Comment): 
     feedback_to_what = db.StringField()
-    type_ = db.StringField(max_length=64, default='feedback', choices=('comment_to_solution', 'comment_to_cbox', 'feedback'))
+    type_ = db.StringField(max_length=64, default='feedback', choices=('comment_to_solution', 'comment_to_content_block', 'feedback'))
 
 
 
@@ -131,22 +131,22 @@ Problem.register_delete_rule(User,'problems_solution_written',PULL)
 Problem.register_delete_rule(User,'problems_can_see_other_solutions',PULL)
 Problem.register_delete_rule(Solution,'problem', NULLIFY)
 
-Problem_set.register_delete_rule(Cbox,'problem_set',NULLIFY)
+Problem_set.register_delete_rule(Content_block,'problem_set',NULLIFY)
 Problem_set.register_delete_rule(Solution,'problem_set',NULLIFY)
 
-User.register_delete_rule(Cbox,'author',NULLIFY)
+User.register_delete_rule(Content_block,'author',NULLIFY)
 User.register_delete_rule(Comment,'author',NULLIFY)
 User.register_delete_rule(Solution,'author',NULLIFY)
 User.register_delete_rule(Solution,'users_upvoted',PULL)
 User.register_delete_rule(Solution,'users_downvoted',PULL)
 
 Solution.register_delete_rule(Problem,'solutions',PULL)
-Solution.register_delete_rule(Comment_to_solution,'parent_solution',NULLIFY)
+Solution.register_delete_rule(CommentToSolution,'parent_solution',NULLIFY)
 
-Cbox.register_delete_rule(Problem_set,'cboxes',PULL)
-Cbox.register_delete_rule(Comment_to_cbox,'parent_cbox',NULLIFY)
+Content_block.register_delete_rule(Problem_set,'content_blocks',PULL)
+Content_block.register_delete_rule(CommentToContent_block,'parent_content_block',NULLIFY)
 
-Comment.register_delete_rule(Cbox,'general_discussion',PULL)
+Comment.register_delete_rule(Content_block,'general_discussion',PULL)
 Comment.register_delete_rule(Solution,'discussion',PULL)
 
 

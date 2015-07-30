@@ -32,6 +32,16 @@ def send_confirmation_link(email):
                         subject='Please confirm your email',
                         recipients=[email]))
 
+def logged_out_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        
+        if g.user:
+            flash('Please log out first.')
+            return redirect(url_for('workflow.home'))
+        
+        return f(*args, **kwargs)
+    return decorated_function
     
 
 

@@ -59,6 +59,11 @@ if not app.debug:
 # connecting to database before every request comes
 @app.before_request
 def before_request():
+    # mongoengine
+    try: g.user=User.objects.get(id=ObjectId(session.get('id')))
+    except: g.user={}
+
+
 
 
     # for timing of response
@@ -68,23 +73,22 @@ def before_request():
     g.db=dbpymongo
 
     # store current user dictionary in g object
-    if session.get('_id'):
-        g.user=g.db.users.find_one({'_id':ObjectId(session['_id'])})
+    # if session.get('_id'):
+    #     g.user=g.db.users.find_one({'_id':ObjectId(session['_id'])})
         
-        # for loggin other users :)
-        # g.user=g.db.users.find_one({'_id':ObjectId('55fdsdf22')})
-        
-        if g.user==None: 
-            session.pop('_id', None)
-            session.pop('gplus_id', None)
-            session.pop('access_token', None)
-            g.user={}
+    #     if g.user==None: 
+    #         session.pop('_id', None)
+    #         session.pop('gplus_id', None)
+    #         session.pop('access_token', None)
+    #         g.user={}
 
-    else:
-        session.pop('_id', None) 
-        session.pop('gplus_id', None)
-        session.pop('access_token', None)
-        g.user={}
+    # else:
+    #     session.pop('_id', None) 
+    #     session.pop('gplus_id', None)
+    #     session.pop('access_token', None)
+    #     g.user={}
+
+
 
     #connection in order to send emails
     g.mail=mail
