@@ -1,16 +1,16 @@
 div.solution {
   white-space: pre-wrap;
   border:solid 1px;
-  border-color: black; 
-  border-radius: 10px; 
-  padding: 10px;
+  border-color: #A9A7A7; 
+  /*border-radius: 10px; */  /*i really dont like it...*/
+  padding: 5px;
 }
 
 div.comment {
   white-space: pre-wrap;
   border:solid 1px;
   border-color: #A9A7A7; 
-  border-radius: 5px; 
+  /*border-radius: 5px; */
   padding: 5px;
 }
 
