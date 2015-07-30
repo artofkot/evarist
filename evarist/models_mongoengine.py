@@ -23,7 +23,7 @@ class User(db.Document):
 
 class GplusUser(User):
     provider= db.StringField(default='gplus')
-    gplus_id=db.StringField(unique_with='provider')
+    gplus_id=db.StringField(unique=True, sparse=True)
     gplus_picture=db.StringField()
     gplus_email=db.StringField()
     gplus_name=db.StringField()
@@ -31,15 +31,15 @@ class GplusUser(User):
     # default=gplus_name,
     username = db.StringField()
     # default=gplus_email,
-    email = db.StringField()
+    email = db.StringField(required=True)
 
 class EmailUser(User):
     provider= db.StringField(default='email')
     username = db.StringField(required=True, max_length=256)
     email = db.StringField(required=True, unique_with='provider', max_length=256)
     pw_hash = db.StringField()
+    old_pw_hash = db.StringField()
     confirmed= db.BooleanField(default=False)
-
 
 #collection for content blocks
 class Content_block(db.Document):

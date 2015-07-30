@@ -20,9 +20,16 @@ import requests
 from evarist.models_mongoengine import User, EmailUser, GplusUser
 from itsdangerous import URLSafeTimedSerializer
 import evarist
+from functools import wraps
+import uuid
+import hashlib
 
 user = Blueprint('user', __name__,
                         template_folder='templates')
+
+def check_old_pwd(user_password, hashed_password, secret_key):
+    password, salt = hashed_password.split(':')
+    return password == hashlib.sha256(secret_key+ salt.encode() + user_password.encode()).hexdigest()
 
 def hash_str(password,secret_key):
     return evarist.bcrypt.generate_password_hash(password+secret_key)
@@ -71,9 +78,8 @@ def logged_out_required(f):
 
 
 @user.route('/user/signup', methods=['GET', 'POST'])
+@logged_out_required
 def signup():
-    print getattr(g.user,'gplus_name',None)
-
     signup_form=SignUpForm()
     if request.method == 'POST' and signup_form.validate_on_submit():
         secret_key=current_app.config["SECRET_KEY"]
@@ -94,6 +100,7 @@ def signup():
     return render_template("user/signup.html", signup_form=signup_form)
 
 @user.route('/confirm/<token>')
+@logged_out_required
 def confirm_email(token):
     try:
         email = confirm_token(token)
@@ -126,7 +133,16 @@ def login():
         secret_key=current_app.config['SECRET_KEY']
         
         user=EmailUser.objects(email=email).first()
-        if user and check_pwd(password,user.pw_hash,secret_key):
+
+        if not getattr(user,'pw_hash',None):
+            if check_old_pwd(user_password=password,
+                            hashed_password=getattr(user,'old_pw_hash',None),
+                            secret_key=secret_key):
+                user.pw_hash=hash_str(password, secret_key)
+                user.save
+
+
+        if user and user.pw_hash and check_pwd(password,user.pw_hash,secret_key):
             session['id']=str(user['id'])
             flash('You were logged in.')
             return redirect(url_for('workflow.home'))
@@ -224,8 +240,7 @@ def gconnect():
         new_user= GplusUser(gplus_id=gplus_id, 
                             gplus_picture=data['picture'],
                             gplus_name=data['name'], 
-                            gplus_email=data['email'],
-                            provider='gplus')
+                            gplus_email=data['email'])
         new_user.email=new_user.gplus_email
         new_user.username=new_user.gplus_name
         new_user.save()

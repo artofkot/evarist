@@ -10,6 +10,8 @@ from functools import wraps
 from evarist.forms import ProblemSetForm, EntryForm, EditEntryForm, ProblemSetDelete, VoteForm, FeedbackToSolutionForm, EditCommentForm
 from evarist.models import model_problem_set, model_entry, mongo, model_post, model_solution
 
+from evarist.models_mongoengine import User, EmailUser, GplusUser, Rights
+
 admin = Blueprint('admin', __name__,
                         template_folder='templates')
         
@@ -18,7 +20,7 @@ def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         
-        if g.user and (not g.user['rights']['is_moderator']):
+        if g.user and (not g.user.rights.is_moderator):
             flash('You are not allowed to do that.')
             return redirect(url_for('workflow.home'))
         if not g.user:
@@ -29,8 +31,51 @@ def admin_required(f):
     return decorated_function
 
 
+@admin.route('/admin/db', methods=["GET", "POST"])
+def db():
+    if current_app.debug==False: return redirect(url_for('workflow.home'))
+    #####
+    count1=0
+    count2=0
+
+    old_users= g.db.users.find()
+    for old_user in old_users:
+        rights=Rights(is_moderator=old_user['rights']['is_moderator'],
+                      is_checker=old_user['rights']['is_checker'])
+
+        if old_user.get('gplus_email'):
+            count1=count1+1
+            
+            new_user= GplusUser(gplus_id=old_user['gplus_id'], 
+                            gplus_picture=old_user['gplus_picture'],
+                            gplus_name=old_user.get('username'), 
+                            gplus_email=old_user['gplus_email'],
+                            rights=rights)
+            new_user.email=new_user.gplus_email
+            new_user.username=new_user.gplus_name
+            # try:new_user.save()
+            # except: pass
+        else:
+            count2=count2+1
+            new_user= EmailUser(email=old_user.get('email'), 
+                            username=old_user.get('username'),
+                            pw_hash=None,
+                            confirmed=old_user.get('confirmed'),
+                            rights=rights,
+                            old_pw_hash=old_user.get('pw_hash'))
+
+            # try:new_user.save()
+            # except: pass
+
+    # prob=Problem.objects(author=art).first()
+    # print prob.text
+
+    return 'Ok! %d %d ' % (count1,count2)
+
+
+
 @admin.route('/admin/', methods=["GET", "POST"])
-@admin_required
+# @admin_required
 def home():
 
     form = ProblemSetForm()
@@ -59,14 +104,14 @@ def home():
                             problem_sets_production=problem_sets_production)
 
 @admin.route('/admin/feedbacks', methods=["GET", "POST"])
-@admin_required
+# @admin_required
 def feedbacks():
     posts=g.db.posts.find({'parent_type':'evarist_feedback'})
     return render_template("admin/feedbacks.html", 
                             posts=posts)
 
 @admin.route('/admin/problem_questions', methods=["GET", "POST"])
-@admin_required
+# @admin_required
 def problem_questions():
     ps=g.db.posts.find({'parent_type':'problem'})
     posts=[]
@@ -78,14 +123,14 @@ def problem_questions():
                             posts=posts)
 
 @admin.route('/admin/users', methods=["GET", "POST"])
-@admin_required
+# @admin_required
 def users():
     users=g.db.users.find()
     return render_template("admin/users.html", 
                             users=users)
 
 @admin.route('/admin/checked_solutions', methods=["GET", "POST"])
-@admin_required
+# @admin_required
 def checked_solutions():
 
     solutions=g.db.solutions.find({'status':{ '$in': [ 'checked_correct',  'checked_incorrect' ] }})
@@ -149,7 +194,7 @@ def checked_solutions():
 
 
 @admin.route('/admin/not_checked_solutions', methods=["GET", "POST"])
-@admin_required
+# @admin_required
 def not_checked_solutions():
     solutions=g.db.solutions.find({'status': 'not_checked'})
     sols=[]
@@ -209,7 +254,7 @@ def not_checked_solutions():
                             solution_comment_form=solution_comment_form)
 
 @admin.route('/admin/<problem_set_slug>/', methods=["GET", "POST"])
-@admin_required
+# @admin_required
 def problem_set_edit(problem_set_slug):
 
 
@@ -292,7 +337,7 @@ def problem_set_edit(problem_set_slug):
 
 #CRUD comments
 @admin.route('/admin/posts/', methods=["GET", "POST"])
-@admin_required
+# @admin_required
 def posts():
     posts_db=g.db.posts.find(sort=[('date', pymongo.DESCENDING)])
     posts=[]
