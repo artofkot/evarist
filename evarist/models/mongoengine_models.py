@@ -41,6 +41,7 @@ class EmailUser(User):
     old_pw_hash = db.StringField()
     confirmed= db.BooleanField(default=False)
 
+
 #collection for content blocks
 class Content_block(db.Document):
     text = db.StringField()
@@ -52,11 +53,11 @@ class Content_block(db.Document):
     general_discussion=db.ListField(db.ReferenceField('Comment'))
     number_in_problem_set=db.IntField()
 
-    old_id = db.StringField()
-
-    meta = {'allow_inheritance': True}
     type_ = db.StringField(max_length=64, default='problem', choices=('problem', 'definition', 'general_content_block'))
     solutions=db.ListField(db.ReferenceField('Solution'))
+
+    meta = {'allow_inheritance': True}
+    old_id = db.StringField()
 
 
 
@@ -74,35 +75,19 @@ class Problem_set(db.Document):
         definition_counter=0
         problem_counter=0
         for content_block in self.content_blocks:
-            if content_block['type_']=='problem': #then set the number of this problem
+            if not getattr(content_block,'type_',None):
+                print self.title
+                print self.content_blocks
+                continue
+            if content_block.type_=='problem': #then set the number of this problem
                 problem_counter+=1
-                content_block['number_in_problem_set']= problem_counter
+                content_block.number_in_problem_set= problem_counter
                 content_block.save()
-            if content_block['type_']=='definition': #then set the number of this definition
+            if content_block.type_=='definition': #then set the number of this definition
                 definition_counter+=1
-                content_block ['number_in_problem_set']= definition_counter
+                content_block .number_in_problem_set= definition_counter
                 content_block.save()
         return self
-
-
-
-#collection for solutions
-class Solution(db.Document):
-    text = db.StringField(required=True)
-    answer = db.StringField()
-    date = db.DateTimeField(default=datetime.datetime.now)
-    language = db.StringField(max_length=256, default='rus')
-    status = db.StringField(max_length=64, default='not_checked', choices=('checked_correct', 'checked_incorrect', 'not_checked'))
-
-    problem = db.ReferenceField('Content_block')
-    author= db.ReferenceField('User')
-    problem_set = db.ReferenceField('Problem_set')
-    discussion=db.ListField(db.ReferenceField('Comment'))
-
-    downvotes=db.IntField(default=0)
-    upvotes=db.IntField(default=0)
-    users_upvoted=db.ListField(db.ReferenceField('User'))
-    users_downvoted=db.ListField(db.ReferenceField('User'))
 
 
 #collection for comments
@@ -121,9 +106,29 @@ class CommentToContent_block(Comment):
     parent_content_block = db.ReferenceField('Content_block')
     type_ = db.StringField(max_length=64, default='comment_to_content_block', choices=('comment_to_solution', 'comment_to_content_block', 'feedback'))
 
-class CommentFeedback(Comment): 
-    feedback_to_what = db.StringField()
+class CommentFeedback(Comment):
+    author_email=db.StringField()
+    where_feedback = db.StringField()
     type_ = db.StringField(max_length=64, default='feedback', choices=('comment_to_solution', 'comment_to_content_block', 'feedback'))
+
+
+#collection for solutions
+class Solution(Comment):
+    answer = db.StringField()
+    image_url = db.StringField()
+    language = db.StringField(max_length=256, default='rus')
+    status = db.StringField(max_length=64, default='not_checked', choices=('checked_correct', 'checked_incorrect', 'not_checked'))
+
+    problem = db.ReferenceField('Content_block')
+    problem_set = db.ReferenceField('Problem_set')
+    discussion=db.ListField(db.ReferenceField('Comment'))
+
+    downvotes=db.IntField(default=0)
+    upvotes=db.IntField(default=0)
+    users_upvoted=db.ListField(db.ReferenceField('User'))
+    users_downvoted=db.ListField(db.ReferenceField('User'))
+
+
 
 
 
@@ -131,20 +136,6 @@ class CommentFeedback(Comment):
 class Subscribed_user(db.Document):
     email = db.StringField(required=True, unique=True, max_length=256)
     date = db.DateTimeField(default=datetime.datetime.now) 
-
-
-# NEVER TOUCH or USE these things:)
-# class Problem(Content_block):
-#     type_ = db.StringField(max_length=64, default='problem', choices=('problem', 'definition', 'general_content_block'))
-#     solutions=db.ListField(db.ReferenceField('Solution'))
- 
-# class Definition(Content_block):
-#     type_ = db.StringField(max_length=64, default='definition', choices=('problem', 'definition', 'general_content_block'))
-#     solutions=db.ListField(db.ReferenceField('Solution'))
-
-# class GeneralContent_block(Content_block):
-#     type_ = db.StringField(max_length=64, default='general_content_block', choices=('problem', 'general_content_block', 'general_content_block'))
-#     solutions=db.ListField(db.ReferenceField('Solution'))
 
 
 

@@ -80,13 +80,13 @@ class ProblemSetForm(Form):
 class ProblemSetDelete(Form):
     delete=BooleanField('delete', validators=[Required()])
 
-class EntryForm(Form):
+class Content_blockForm(Form):
     text= TextField('text', validators=[Required()])
     type_=TextField('type_')
     place_of_content_block=TextField('place_of_content_block')
 
-class EditEntryForm(Form):
+class EditContent_blockForm(Form):
     type_=TextField('type_')
     place_of_content_block=TextField('place_of_content_block')
     edit_text= TextField('edit_text', validators=[Required()])
-    delete_entry=BooleanField('delete_entry')
+    delete_content_block=BooleanField('delete_content_block')

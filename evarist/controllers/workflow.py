@@ -9,8 +9,16 @@ from contextlib import closing
 from flask.ext.mail import Message
 from evarist import models
 from functools import wraps
-from evarist.models import model_problem_set, model_entry, model_post, model_solution, mongo
-from evarist.forms import WebsiteFeedbackForm, CommentForm, SolutionForm, FeedbackToSolutionForm, EditSolutionForm, VoteForm, trigger_flash_error
+from evarist.models import (model_problem_set, model_entry, model_post, 
+                            model_solution, mongo, problem_set_filters,
+                            solution_filters)
+from evarist.forms import (WebsiteFeedbackForm, CommentForm, 
+                            SolutionForm, FeedbackToSolutionForm, 
+                            EditSolutionForm, VoteForm, 
+                            trigger_flash_error)
+from evarist.models.mongoengine_models import *
+
+
 from cloudinary.uploader import upload
 from cloudinary.utils import cloudinary_url
 
@@ -31,11 +39,6 @@ def login_required(f):
 
 @workflow.route('/', methods=["GET", "POST"])
 def home():
-    # USE THIS CAREFULLY, its DANGEROUS! This is template for updating keys in all documents.
-    
-    # print mongo.add_key_value_where_none(collection=g.db.entries, key='general_discussion_ids', value=[])
-
-    
     # this is example code for sending emails
     #
     # msg = Message("Hello",
@@ -44,31 +47,28 @@ def home():
 
     website_feedback_form=WebsiteFeedbackForm()
     if website_feedback_form.validate_on_submit():
-        if g.user:
-            model_post.add(text=website_feedback_form.feedback.data,
-                            db=g.db,
-                            author_id=g.user['_id'],
-                            post_type='feedback',
-                            parent_id=None)
-        else:
-            author_email=website_feedback_form.email.data
-            model_post.add(text=website_feedback_form.feedback.data,
-                            db=g.db,
-                            author_email=author_email,
-                            post_type='feedback',
-                            parent_id=None)
+        feedback=CommentFeedback(text=website_feedback_form.feedback.data,
+                                type_='feedback',
+                                where_feedback='homepage')
+        if g.user: feedback.author=g.user
+        else: feedback.author_email=website_feedback_form.email.data
+        
+        feedback.save()
+
         flash('Thank you for your feedback!')
         return redirect(url_for('workflow.home'))
 
     
     # this is how we manually choose which problem_sets to display on homepage
-    rus_slugset=model_problem_set.rus_slugset
-    eng_slugset=model_problem_set.eng_slugset
+    rus_slugset=problem_set_filters.rus_slugset
+    eng_slugset=problem_set_filters.eng_slugset
+    slugset=problem_set_filters.slugset
+
     if g.locale == 'ru': homepage_slugset=rus_slugset
     else: homepage_slugset=eng_slugset
     
     # get all problem_sets
-    psets=mongo.get_all(g.db.problem_sets)
+    psets=Problem_set.objects()
 
     # choose those problem_sets, which slug is in homepage_slugset
     # check if all chosen slugs matched to some problem_sets, and if not - write which ones are wrong
@@ -103,144 +103,106 @@ def about():
 @workflow.route('/problem_sets/<problem_set_slug>/', methods=["GET", "POST"])
 def problem_set(problem_set_slug):
     # get the problem set
-    problem_set=g.db.problem_sets.find_one({"slug": problem_set_slug})
+    
+    problem_set=Problem_set.objects(slug=problem_set_slug).first()
     if not problem_set: 
         flash('No such problem set.')
         return redirect(url_for('.home'))
 
 
-    is_moder=False
-    if g.user: is_moder=g.user['rights']['is_moderator']
-    if (not problem_set['status']=='production') and (not is_moder):
+    is_moderator=False
+    if g.user: is_moderator=g.user['rights']['is_moderator']
+    if (not problem_set['status']=='production') and (not is_moderator):
         flash('This problem set is not ready yet.')
         return redirect(url_for('.home'))
 
-
-    # load problems, definition, etc
-    mongo.load(problem_set,'entries_ids','entries',g.db.entries)
-    # get the numbers of problems or definitions
-    model_problem_set.get_numbers(problem_set=problem_set)
     
-    # check if all entries loaded correctly
-
-    if len(problem_set['entries'])!=len(problem_set['entries_ids']):
-        if not app.debug: g.mail.send(Message('Some entry in prob_set_slug=' + problem_set_slug + ' was not found on the problem_set_page',
-                                                subject='Catched error on Evarist (production)!',
-                                                recipients=current_app.config['ADMINS']))
-        else: flash('Some entry was not found!')
-
     return render_template('problem_set.html', 
                             problem_set=problem_set)
 
 @workflow.route('/problem_sets/<problem_set_slug>/<type_>/<__id>/', methods=["GET", "POST"])
 def content_block(problem_set_slug,type_,__id):
 
-    # get the problem set of entry
-    # problem_set=g.db.problem_sets.find_one({"slug": problem_set_slug})
-    # if problem_set==False: 
-    #     flash('No such problem set.')
-    #     return redirect(url_for('.home'))   
+    content_block=Content_block.objects(id=ObjectId(__id)).first()
 
-    # get the entry
-    entry=g.db.entries.find_one({"_id":ObjectId(__id)})
-
-    return render_template('entry.html',
-                            entry=entry)
+    return render_template('content_block.html',
+                            content_block=content_block)
 
 @workflow.route('/problem_sets/<problem_set_slug>/problem/<prob_id>/', methods=["GET", "POST"])
 def problem(problem_set_slug,prob_id):
     
     # get the problem_set
-    problem_set=g.db.problem_sets.find_one({"slug": problem_set_slug})
-    if problem_set==False: 
+    problem_set=Problem_set.objects(slug=problem_set_slug).first()
+    if not problem_set: 
         flash('No such problem set.')
         return redirect(url_for('.home'))
 
-    is_moder=False
-    if g.user: is_moder=g.user['rights']['is_moderator']
-    if (not problem_set['status']=='production') and (not is_moder):
+    # get the problem_set
+    problem=Content_block.objects(id=ObjectId(prob_id)).first()
+    if not problem: 
+        flash('No such problem.')
+        return redirect(url_for('.home'))
+
+    # check if user can see this problem set
+    is_moderator=False
+    if g.user: is_moderator=g.user.rights.is_moderator
+    if (not problem_set['status']=='production') and (not is_moderator):
         flash('This problem set is not ready yet.')
         return redirect(url_for('.home'))
 
-
-    #next 3 queries are done so that we know the number of the problem in probem set
-
-    #load the entries of problem_set in order to get the number of problem
-    mongo.load(problem_set,'entries_ids','entries',g.db.entries)
-    # get the numbers of problems or definitions
-    model_problem_set.get_numbers(problem_set=problem_set)
-
-    # get the problem and problem's number out of problem_set
-    try:
-        problem, problem_number=next((entry, entry['problem_number']) for entry in problem_set['entries'] if entry.get('_id')==ObjectId(prob_id))
-    except StopIteration:
-        flash('No such problem in this problem_set.')
-        return redirect(url_for('workflow.problem_set',problem_set_slug=problem_set_slug))
-    
-
-    #load general discussion
-    mongo.load(obj=problem,key_id='general_discussion_ids',key='general_discussion',collection=g.db.posts)
-    for post in problem['general_discussion']:
-        mongo.load(post,'author_id','author',g.db.users)
-    # load solutions
-    mongo.load(problem,'solutions_ids','solutions',g.db.solutions)
-
     # get the current_user_solution, if its written
     try: 
-        current_user_solution= next(sol for sol in problem['solutions'] if sol.get('author_id')==g.user.get('_id'))
-        mongo.load(current_user_solution,'solution_discussion_ids','discussion',g.db.posts)
-        for post in current_user_solution['discussion']:
-            mongo.load(post,'author_id','author',g.db.users)
+        current_user_solution= next(sol for sol in problem['solutions'] if sol.author.id==g.user.id)
     except StopIteration: 
         current_user_solution={}
 
     general_comment_form=CommentForm()
     if general_comment_form.validate_on_submit():
-        model_post.add(text=general_comment_form.text.data,
-                       db=g.db,
-                       author_id=g.user['_id'],
-                       post_type='entry->general_discussion',
-                       parent_id=problem['_id'])
+
+        comment=CommentToContent_block(text=general_comment_form.text.data,
+                                        author=g.user,
+                                        parent_content_block=problem)
+        comment.save()
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
-                                prob_id=problem['_id']))
+                                prob_id=problem['id']))
 
     vote_form=VoteForm()
     if vote_form.validate_on_submit():
-        voted_solution=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
-        if not g.user['_id'] in (voted_solution['users_upvoted_ids'] + voted_solution['users_downvoted_ids'] ):
+        voted_solution=Solution.objects(id=ObjectId(request.args['sol_id'])).first()
+        
+        if not g.user['id'] in (voted_solution['users_upvoted'] + voted_solution['users_downvoted'] ):
             if g.user['rights']['is_checker']: vote_weight=2
             else: vote_weight=1
 
             if vote_form.vote.data == 'upvote': 
-                g.db.solutions.update_one({'_id':voted_solution['_id']},
-                                            {'$addToSet':{'users_upvoted_ids':g.user['_id']}})
-                g.db.solutions.update_one({'_id':voted_solution['_id']},
-                                            {'$inc':{'upvotes':vote_weight}})
+                voted_solution.users_upvoted.append(g.user)
+                voted_solution.upvotes+=vote_weight
 
             if vote_form.vote.data == 'downvote':
-                g.db.solutions.update_one({'_id':voted_solution['_id']},
-                                            {'$addToSet':{'users_downvoted_ids':g.user['_id']}})
-                g.db.solutions.update_one({'_id':voted_solution['_id']},
-                                            {'$inc':{'downvotes':vote_weight}})
-        
-            model_solution.update_everything(g.db, voted_solution['_id'])
+                voted_solution.users_downvoted.append(g.user)
+                voted_solution.downvotes+=vote_weight
+            
+            voted_solution.save()
+
+            solution_filters.update_everything(voted_solution)
+        else:
+            flash('It turns out you already voted for this solution, sorry for the wrong data on the page.')
 
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
-                                prob_id=problem['_id']))
+                                prob_id=problem['id']))
 
     solution_comment_form=FeedbackToSolutionForm()
     if solution_comment_form.validate_on_submit():
         if solution_comment_form.feedback_to_solution.data:
-            model_post.add(text=solution_comment_form.feedback_to_solution.data,
-                           db=g.db,
-                           author_id=g.user['_id'],
-                           post_type='solution->comment',
-                           parent_id=ObjectId(request.args['sol_id']))
+            comment=CommentToSolution(text=solution_comment_form.feedback_to_solution.data,
+                author=g.user,
+                parent_solution=Solution.objects(id=ObjectId(request.args['sol_id'])).first())
+            comment.save()
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
-                                prob_id=problem['_id']))
+                                prob_id=problem.id))
 
     solution_form=SolutionForm()
     if solution_form.validate_on_submit():
@@ -249,24 +211,23 @@ def problem(problem_set_slug,prob_id):
         if file:
             upload_result = upload(file)
             image_url=upload_result['url'] 
-        model_solution.add(text=solution_form.solution.data,
-                           db=g.db,
-                           author_id=g.user['_id'],
-                           problem_id=problem['_id'],
-                           problem_set_id=problem_set['_id'],
-                           image_url=image_url)
+        solution=Solution(text=solution_form.solution.data,
+                        author=g.user,
+                        problem=problem,
+                        problem_set=problem_set,
+                        image_url=image_url)
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
-                                prob_id=problem['_id']))
+                                prob_id=problem['id']))
 
     edit_solution_form=EditSolutionForm()
     if edit_solution_form.validate_on_submit():
         if edit_solution_form.delete_solution.data:
-            model_solution.delete(db=g.db,solution=current_user_solution)
+            current_user_solution.delete()
         else:
-            g.db.solutions.update_one({"_id":current_user_solution['_id']},
-                                        {'$set':{'text':edit_solution_form.edited_solution.data,
-                                                'date':datetime.datetime.utcnow()} })
+            current_user_solution.text=edit_solution_form.edited_solution.data
+            current_user_solution.date=datetime.datetime.utcnow()
+            current_user_solution.save()
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem['_id']))
@@ -277,10 +238,9 @@ def problem(problem_set_slug,prob_id):
 
     other_solutions=[]
     if g.user:
-        other_solutions=model_solution.get_other_solutions_on_problem_page(db=g.db,
-                                                        user=g.user,
+        other_solutions=solution_filters.get_other_solutions_on_problem_page(user=g.user,
                                                         problem=problem,
-                                                        current_solution_id=current_user_solution.get('_id'))
+                                                        current_solution=current_user_solution)
 
     return render_template('problem.html', 
                             problem_set_slug=problem_set_slug, 

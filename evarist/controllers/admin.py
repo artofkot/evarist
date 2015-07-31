@@ -7,11 +7,12 @@ from flask import current_app, Flask, Blueprint, request, session, g, redirect, 
     abort, render_template, flash
 from contextlib import closing
 from functools import wraps
-from evarist.forms import ProblemSetForm, EntryForm, EditEntryForm, ProblemSetDelete, VoteForm, FeedbackToSolutionForm, EditCommentForm
+from evarist.forms import ProblemSetForm, Content_blockForm, EditContent_blockForm, ProblemSetDelete, VoteForm, FeedbackToSolutionForm, EditCommentForm
 from evarist.models import model_problem_set, model_entry, mongo, model_post, model_solution
 
-from evarist.models_mongoengine import (User, EmailUser, GplusUser, Rights, 
-                                        Problem_set, Content_block)
+from evarist.models.mongoengine_models import (User, EmailUser, GplusUser, Rights, 
+                                        Problem_set, Content_block,
+                                        CommentToContent_block)
 
 
 admin = Blueprint('admin', __name__,
@@ -42,12 +43,8 @@ def db():
     count2=0
     count3=0
 
-    for c_b in Content_block.objects():
-        if getattr(c_b,'_cls',None):
-            c_b._cls='Content_block'
-            print c_b._cls
-            c_b.save()
-            count1+=1
+    for ps in Problem_set.objects():
+        ps.assign_numbers_to_content_blocks()
 
     return '%d %d %d' % (count1,count2,count3)
 
@@ -81,6 +78,91 @@ def home():
                             problem_sets_dev=problem_sets_dev,
                             problem_sets_stage=problem_sets_stage,
                             problem_sets_production=problem_sets_production)
+
+@admin.route('/admin/<problem_set_slug>/', methods=["GET", "POST"])
+@admin_required
+def problem_set_edit(problem_set_slug):
+
+    problem_set=Problem_set.objects(slug=problem_set_slug).first()
+    if not problem_set: 
+        flash('No such slug.')
+        return redirect(url_for('admin.home'))
+
+    problem_set.assign_numbers_to_content_blocks()
+
+    edit_problem_set_form=ProblemSetForm()
+    if edit_problem_set_form.validate_on_submit():
+        problem_set.title=edit_problem_set_form.title.data
+        problem_set.slug=edit_problem_set_form.slug.data
+        problem_set.status=edit_problem_set_form.status.data
+        try: 
+            problem_set.save()
+            flash('Problem_set was edited')
+        except: 
+            flash('you must change the slug or title to other values, which do not exist in our database. Sorry :)')
+            return redirect(url_for('admin.problem_set_edit',
+                                problem_set_slug=problem_set_slug))
+
+        return redirect(url_for('admin.problem_set_edit',
+                                problem_set_slug=problem_set.slug))
+
+    delete_problem_set_form=ProblemSetDelete()
+    if delete_problem_set_form.validate_on_submit():
+        if delete_problem_set_form.delete.data:
+            problem_set.delete()
+        return redirect(url_for('admin.home'))
+
+    edit_content_block_form=EditContent_blockForm()
+    if edit_content_block_form.validate_on_submit():
+        content_block=Content_block.objects(id=ObjectId(request.args['content_block_id'])).first()
+        place_of_content_block= int(edit_content_block_form.place_of_content_block.data)
+        if edit_content_block_form.delete_content_block.data:
+            content_block.delete()
+        else:
+            content_block.text=edit_content_block_form.edit_text.data
+            content_block.type_=edit_content_block_form.type_.data
+            try:
+                problem_set.content_blocks.remove(content_block)
+                problem_set.content_blocks.insert(place_of_content_block,content_block)
+                content_block.save()
+                problem_set.save()
+                flash('content_block edited, sir.')
+            except:
+                flash('Didnt work, slug or title is wrong.')
+
+        return redirect(url_for('admin.problem_set_edit',
+                                problem_set_slug=problem_set['slug']))
+
+    content_blockform = Content_blockForm()
+    if content_blockform.validate_on_submit():
+        content_block=Content_block()
+        content_block.type_=content_blockform.type_.data
+        # if type_=='definition': content_block=Definition()
+        # if type_=='problem': content_block=Problem()
+        # if type_=='general_content_block': content_block=GeneralContent_block()
+        content_block.author=g.user
+        content_block.problem_set=problem_set
+        content_block.text=content_blockform.text.data
+        place_of_content_block= int(content_blockform.place_of_content_block.data)
+            
+        try:
+            content_block.save()
+            problem_set.content_blocks.insert(place_of_content_block,content_block)
+            problem_set.save()
+            flash('content_block added, sir.')
+        except: 
+            flash('Something went wrong')
+
+        return redirect(url_for('admin.problem_set_edit',
+                                problem_set_slug=problem_set['slug']))
+
+    return render_template('admin/problem_set_edit.html', 
+                            problem_set=problem_set, 
+                            content_blockform=content_blockform,
+                            edit_problem_set_form=edit_problem_set_form,
+                            delete_problem_set_form=delete_problem_set_form,
+                            edit_content_block_form=edit_content_block_form)
+
 
 @admin.route('/admin/feedbacks', methods=["GET", "POST"])
 @admin_required
@@ -232,90 +314,6 @@ def not_checked_solutions():
                             vote_form=vote_form,
                             solution_comment_form=solution_comment_form)
 
-@admin.route('/admin/<problem_set_slug>/', methods=["GET", "POST"])
-@admin_required
-def problem_set_edit(problem_set_slug):
-
-
-    problem_set=Problem_set.objects(slug=problem_set_slug).first()
-    if not problem_set: 
-        flash('No such slug.')
-        return redirect(url_for('admin.home'))
-
-    problem_set.assign_numbers_to_content_blocks()
-
-    edit_problem_set_form=ProblemSetForm()
-    if edit_problem_set_form.validate_on_submit():
-        problem_set.title=edit_problem_set_form.title.data
-        problem_set.slug=edit_problem_set_form.slug.data
-        problem_set.status=edit_problem_set_form.status.data
-        try: 
-            problem_set.save()
-            flash('Problem_set was edited')
-        except: 
-            flash('you must change the slug or title to other values, which do not exist in our database. Sorry :)')
-            return redirect(url_for('admin.problem_set_edit',
-                                problem_set_slug=problem_set_slug))
-
-        return redirect(url_for('admin.problem_set_edit',
-                                problem_set_slug=problem_set.slug))
-
-    delete_problem_set_form=ProblemSetDelete()
-    if delete_problem_set_form.validate_on_submit():
-        if delete_problem_set_form.delete.data:
-            problem_set.delete()
-        return redirect(url_for('admin.home'))
-
-    edit_entry_form=EditEntryForm()
-    if edit_entry_form.validate_on_submit():
-        content_block=Content_block.objects(id=ObjectId(request.args['entry_id'])).first()
-        place_of_content_block= int(edit_entry_form.place_of_content_block.data)
-        if edit_entry_form.delete_entry.data:
-            content_block.delete()
-        else:
-            content_block.text=edit_entry_form.edit_text.data
-            content_block.type_=edit_entry_form.type_.data
-            try:
-                problem_set.content_blocks.remove(content_block)
-                problem_set.content_blocks.insert(place_of_content_block,content_block)
-                content_block.save()
-                problem_set.save()
-                flash('Entry edited, sir.')
-            except:
-                flash('Didnt work, slug or title is wrong.')
-
-        return redirect(url_for('admin.problem_set_edit',
-                                problem_set_slug=problem_set['slug']))
-
-    entryform = EntryForm()
-    if entryform.validate_on_submit():
-        content_block=Content_block()
-        content_block.type_=entryform.type_.data
-        # if type_=='definition': content_block=Definition()
-        # if type_=='problem': content_block=Problem()
-        # if type_=='general_content_block': content_block=GeneralContent_block()
-        content_block.author=g.user
-        content_block.problem_set=problem_set
-        content_block.text=entryform.text.data
-        place_of_content_block= int(entryform.place_of_content_block.data)
-            
-        try:
-            content_block.save()
-            problem_set.content_blocks.insert(place_of_content_block,content_block)
-            problem_set.save()
-            flash('Entry added, sir.')
-        except: 
-            flash('Something went wrong')
-
-        return redirect(url_for('admin.problem_set_edit',
-                                problem_set_slug=problem_set['slug']))
-
-    return render_template('admin/problem_set_edit.html', 
-                            problem_set=problem_set, 
-                            entryform=entryform,
-                            edit_problem_set_form=edit_problem_set_form,
-                            delete_problem_set_form=delete_problem_set_form,
-                            edit_entry_form=edit_entry_form)
 
 #CRUD comments
 @admin.route('/admin/posts/', methods=["GET", "POST"])

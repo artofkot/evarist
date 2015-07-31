@@ -17,7 +17,7 @@ import httplib2, json, uuid, hashlib, string, random
 from flask import make_response
 import requests
 
-from evarist.models_mongoengine import User, EmailUser, GplusUser
+from evarist.models.mongoengine_models import User, EmailUser, GplusUser
 from itsdangerous import URLSafeTimedSerializer
 import evarist
 from functools import wraps

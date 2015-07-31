@@ -1,0 +1,8 @@
+{% macro comment(comment) -%}
+
+  <div class="blog-post">
+    <p class="blog-post-meta">{{comment.date.day}}/{{comment.date.month}}/{{comment.date.year}} by {{comment.author.username}} </p> 
+    <div class='comment'>{{comment.text}}</div>
+  </div>
+
+{%- endmacro %}

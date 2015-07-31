@@ -10,7 +10,7 @@ from controllers.workflow import workflow
 from controllers.admin import admin
 import logging
 
-from evarist.models_mongoengine import db, User
+from evarist.models.mongoengine_models import db, User
 
 # creating an app
 app = Flask(__name__)

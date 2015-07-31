@@ -86,9 +86,9 @@
               Edit upper content_block
             </button>
             <div class="collapse" id="collapsId{{(loop.index)}}">
-              <form action=" {{url_for('.problem_set_edit', problem_set_slug=problem_set['slug'], entry_id=content_block.id)}}" method="post">
+              <form action=" {{url_for('.problem_set_edit', problem_set_slug=problem_set['slug'], content_block_id=content_block.id)}}" method="post">
                 <div class="form-group" style='width: 800px'>
-                  {{ edit_entry_form.hidden_tag() }}
+                  {{ edit_content_block_form.hidden_tag() }}
                   <div class="checkbox">
                     
                     {% if content_block['type_']=='problem' %}
@@ -139,7 +139,7 @@
                   
                   <div class="checkbox" style='background-color:red'>
                     <label >
-                      <input type="checkbox" name='delete_entry'>just want to delete this content_block, forever
+                      <input type="checkbox" name='delete_content_block'>just want to delete this content_block, forever
                     </label>
                   </div>
                 </div>
@@ -169,7 +169,7 @@
         Create a new content_block.
         <div class="form-group" style='width: 800px'>
 
-          {{ entryform.hidden_tag() }}
+          {{ content_blockform.hidden_tag() }}
           <div class="form-group" >
             <div class="radio">
               <label ><input type="radio" name='type_' value='general_content_block'> Check this, if this content_block has type "general_content_block". </label>
