@@ -1,31 +1,17 @@
-div.transbox {
-/*  background-color: black;
-  opacity: 0.3;
-  filter: alpha(opacity=30);*/ /* For IE8 and earlier */
-}
-
 div.solution {
   white-space: pre-wrap;
   border:solid 1px;
-  border-color: black; 
-  border-radius: 10px; 
-  padding: 10px;
+  border-color: #A9A7A7; 
+  /*border-radius: 10px; */  /*i really dont like it...*/
+  padding: 5px;
 }
 
 div.comment {
   white-space: pre-wrap;
   border:solid 1px;
   border-color: #A9A7A7; 
-  border-radius: 5px; 
+  /*border-radius: 5px; */
   padding: 5px;
-}
-
-.problem_set {
-  /*background-color: black;*/
-  /*background: rgb(0, 0, 0); *//* Fall-back for browsers that don't support rgba */
-  /*background: rgba(0, 0, 0, .25);*/
-  /*opacity :1.0;*/
-  /*color:white;*/
 }
 
 .box-sh {
@@ -34,6 +20,10 @@ div.comment {
     box-shadow:          0 0 50px rgba(255,255,255,1);
     background-color: white;
     /*position:relative;*/
+}
+
+textarea.form-control {
+  border: 1px solid #cccccc;
 }
 
 body {
@@ -112,6 +102,10 @@ a:active {
     text-decoration: underline;
 }
 
+a:visited {
+  color:#0b0080; /*wikipedia's color*/
+}
+
 #particles {
   overflow: visible;
   position: fixed;
@@ -129,4 +123,8 @@ a:active {
   height: 100%;
   width: 100%;
   z-index: 1;
+}
+
+.navbar {
+  background-color: rgb(250,250,250);
 }

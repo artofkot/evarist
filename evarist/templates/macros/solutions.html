@@ -1,11 +1,9 @@
 {% import 'macros/forms.html' as form_macros %}
 
-
-
 {% macro solution(solution, inscription) -%}
 
 <div class="blog-post">
-  <p class="blog-post-meta"><strong>{{inscription}}</strong> 
+  <p class="blog-post-meta">{{inscription}}
   {% if solution.status=='checked_correct' %}
     <strong style='color:green'> Проверено, правильное.</strong>
   {% endif %}
@@ -13,8 +11,7 @@
     <strong style='color:#E78798'> Проверено, надо доработать.</strong>
   {% endif %}
   </p>
-  <div class='solution'>
-    {{ solution.text }}
+  <div class='solution'>{{ solution.text }} <!-- no newline, because white-space: pre-wrap -->
     {% if solution.image_url %}
     <img src="{{solution.image_url}}" class="img-responsive" alt='responsive image'>
     {% endif %}
@@ -23,8 +20,6 @@
 </div>
 
 {%- endmacro %}
-
-
 
 {% macro display_votes(solution) -%}
 

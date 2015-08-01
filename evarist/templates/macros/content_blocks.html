@@ -1,26 +1,14 @@
 {% macro content_block(content_block,number=None,type_=None) -%}
 
-{% if number %}
-  <p>
-  {% if content_block.type_=='problem' %}
-    Задача {{number}}.
-  {% elif content_block.type_=='definition' %}
-    ∆ Определение {{number}}.
-  {%endif%}
-  {{content_block['text']|safe}}
-  </p>
 
-{% else %}
+  <h4>
+    {% if content_block.type_=='problem' %} Задача
+    {% elif content_block.type_=='definition' %} ∆ Определение {%endif%}
+    {% if number %} {{number}} {%endif%}.
+  </h4>
   <p>
-  {% if content_block.type_=='problem' %}
-    Задача.
-  {% elif content_block.type_=='definition' %}
-    ∆ Определение.
-  {%endif%}
-  {{content_block['text']|safe}}
+    {{content_block['text']|safe}}
   </p>
-
-{% endif %}
 
 
 

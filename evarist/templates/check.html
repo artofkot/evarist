@@ -2,17 +2,14 @@
 {% import 'macros/forms.html' as form_macros %}
 {% import 'macros/comments.html' as comment_macros %}
 
-
 {% extends "layout.html" %}
 {% block head %}
 {% endblock %}
 {% block body %}
 
   <div class="row">
-    <div class="col-md-6 col-md-offset-3">
-      
-
-      <p>Здесь находятся решения ко всем задачам, которые вы уже решили. Решив какую-либо задачу, вы получаете право смотреть и проверять другие решения этой задачи, и эта страница сделана для удобства этого процесса. Проверить решение можно проголосовав за "верно" или "неверно", и написав отзыв при необходимости (например если решение недоведено).</p>
+    <div class="col-md-8 col-md-offset-2">
+      <p>Здесь находятся решения ко всем задачам, которые вы уже решили. Решив какую-либо задачу, вы получаете право смотреть и проверять другие решения этой задачи, и эта страница сделана для удобства этого процесса. Проверив решение можно проголосовать за "верно" или "неверно", и написать отзыв при необходимости (например если решение не доведено).</p>
       <!-- <h3>Это решения, которые можно проверить, то есть проголосовать за "верно" или "неверно", и написать отзыв при необходимости (например если решение недоведено). Вы можете проверять только уже решенные вами задачи. </h3> -->
       <hr>
     </div>
@@ -25,15 +22,14 @@
       {%for solution in not_checked_solutions%}
           <!-- solutions text, and the name of problem set -->
           <div>
+            <h5>{{solution.problem_set['title']|safe}}</h5> 
             <p>
-              <em>{{solution.problem_set['title']|safe}}</em> 
-              <br>
               {{solution.problem['text']|safe}}
             </p>
           </div>
 
           <!-- solution -->
-          {{solution_macros.solution(solution=solution,inscription=gettext('Решение от %(author)s', author = solution['author']['username']))}}
+          {{solution_macros.solution(solution=solution,inscription=gettext('Решение от <strong>%(author)s</strong>', author = solution['author']['username']))}}
 
 
           <!-- votes + form for voting-->
@@ -90,16 +86,14 @@
       {%for solution in checked_solutions%}
           <!-- solutions text, and the name of problem set -->
           <div>
+            <h5>{{solution.problem_set['title']|safe}}</h5> 
             <p>
-              <em>{{solution.problem_set['title']|safe}}</em> 
-              <br>
               {{solution.problem['text']|safe}}
             </p>
           </div>
 
           <!-- solution -->
-          {{solution_macros.solution(solution=solution,inscription=gettext('Решение от %(author)s', author = solution['author']['username']))}}
-
+          {{solution_macros.solution(solution=solution,inscription=gettext('Решение от <strong>%(author)s</strong>', author = solution['author']['username']))}}
 
           <!-- votes + form for voting-->
           <div class='row'>

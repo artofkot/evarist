@@ -128,7 +128,7 @@ def content_block(problem_set_slug,type_,__id):
 
 @workflow.route('/problem_sets/<problem_set_slug>/problem/<prob_id>/', methods=["GET", "POST"])
 def problem(problem_set_slug,prob_id):
-    
+
     # get the problem_set
     problem_set=Problem_set.objects(slug=problem_set_slug).first()
     if not problem_set: 
@@ -244,7 +244,7 @@ def problem(problem_set_slug,prob_id):
                                 prob_id=problem['id']))
     # trigger_flash_error(edit_solution_form,'workflow.problem', 
     #                             problem_set_slug=problem_set_slug,
-    #                             prob_id=problem['_id'])
+    #                             prob_id=problem['id'])
 
 
     other_solutions=[]

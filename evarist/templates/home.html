@@ -1,9 +1,7 @@
 {% extends "layout.html" %}
 {% block head %}
-    
     <script type='text/javascript' src='static/vendor/jQuery-Plugin-For-Particle-System-Background-with-Parallax-Effect-Particleground/jquery.particleground.js'></script>
     <script type='text/javascript' src='static/js/particles.js'></script>
-
 {% endblock %}
 {% block body %}
 
@@ -16,8 +14,7 @@
   <div class="jumbotron on_particles">
     <div class="row" >
       <div col-md-12>
-        <h1 >{{gettext("Evarist")}}</h1>
-        <!-- <h1 class="text-center">{{gettext("Evarist")}}</h1> -->
+        <h1>{{gettext("Evarist")}}</h1>
       </div>
     </div>
     <div class="row">
@@ -53,7 +50,7 @@
     </div>
     <div class="col-md-3">
       {% if g.user%}
-        <p><a href="{{url_for('workflow.my_solutions')}}">Cмотреть свои решения</a></p>
+        <p><a href="{{url_for('workflow.my_solutions')}}">Ваши решения</a></p>
         <p><a href="{{url_for('workflow.check')}}">Cмотреть чужие решения</a></p>
       {%endif%}
     </div>

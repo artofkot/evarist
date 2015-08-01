@@ -15,24 +15,22 @@
   <hr>
 
   <div class="row">
-    <div class="transbox">
-      <div class="col-md-8 col-md-offset-2 problem_set">
-        <h2 class="text-center"> {{problem_set['title']}}</h2>
-        {%for content_block in problem_set['content_blocks']%}
-          <div>
-            <p>
-            {% if content_block.type_=='problem' %}
-            <a class="def_prob_as_link" href="{{ url_for('workflow.problem', problem_set_slug=problem_set['slug'], prob_id=content_block.id ) }}">
-              Задача {{content_block.number_in_problem_set}}.</a>
-            {% elif content_block.type_=='definition' %}
-            <a class="def_prob_as_link" href="{{ url_for('workflow.content_block', problem_set_slug=problem_set['slug'], type_=content_block.type_, __id=content_block.id ) }}">
-              ∆ Определение {{content_block.number_in_problem_set}}.</a>
-            {%endif%}
-            {{content_block['text']|safe}}
-            </p>
-          </div>
-        {% endfor %}
-      </div>
+    <div class="col-md-8 col-md-offset-2 problem_set">
+      <h2 class="text-center"> {{problem_set['title']}}</h2>
+      {%for content_block in problem_set['content_blocks']%}
+        <div>
+          <p>
+          {% if content_block.type_=='problem' %}
+          <a class="def_prob_as_link" href="{{ url_for('workflow.problem', problem_set_slug=problem_set['slug'], prob_id=content_block.id ) }}">
+            Задача {{content_block.number_in_problem_set}}.</a>
+          {% elif content_block.type_=='definition' %}
+          <a class="def_prob_as_link" href="{{ url_for('workflow.content_block', problem_set_slug=problem_set['slug'], type_=content_block.type_, __id=content_block.id ) }}">
+            ∆ Определение {{content_block.number_in_problem_set}}.</a>
+          {%endif%}
+          {{content_block['text']|safe}}
+          </p>
+        </div>
+      {% endfor %}
     </div>
   </div>
 
