@@ -1,6 +1,6 @@
 {% import 'macros/solutions.html' as solution_macros %}
 {% import 'macros/forms.html' as form_macros %}
-{% import 'macros/posts.html' as post_macros %}
+{% import 'macros/comments.html' as comment_macros %}
 
 {% extends "layout.html" %}
 {% block head %}
@@ -10,17 +10,17 @@
 <div class="row">
   <div class="col-md-6 col-md-offset-3">
   
-  {% for post in posts %}
-    {{ post_macros.post(post) }}
+  {% for comment in comments %}
+    {{ comment_macros.comment(comment) }}
     <button class="btn btn-default" type="button" data-toggle="collapse" data-target="#collapse_Id_edit_{{loop.index}}" aria-expanded="false" aria-controls="collapsId">
       Исправить комментарий
     </button>
     <div class="collapse" id="collapse_Id_edit_{{loop.index}}">
-      <form action=" {{url_for('admin.posts', post_id=post['_id'])}}" method="post">
+      <form action=" {{url_for('admin.comments', comment_id=comment['id'])}}" method="post">
         {{ edit_comment_form.hidden_tag() }}
         <div class="form-group" style='width: 370px'>
           <label for="text">Исправьте решение здесь: </label>
-          <textarea class="form-control" rows="2"  name='text'>{{post['text']}}  
+          <textarea class="form-control" rows="2"  name='text'>{{comment['text']}}  
           </textarea>
           
           <div class="checkbox" style='background-color:red'>

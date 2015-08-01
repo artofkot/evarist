@@ -22,8 +22,6 @@ app.register_blueprint(workflow)
 app.register_blueprint(admin)
 
 #connecting to database, Mongoengine
-
-
 db.init_app(app)
 
 
@@ -63,7 +61,7 @@ if not app.debug:
 # connecting to database before every request comes
 @app.before_request
 def before_request():
-    # mongoengine
+    # store user in proxy using mongoengine
     try: 
         g.user=User.objects.get(id=ObjectId(session.get('id')))
     except: 
@@ -72,33 +70,11 @@ def before_request():
         session.pop('access_token', None)
         g.user={}
 
-
-
-
     # for timing of response
     g.start=time.time()
 
-    # passing database in each request
+    # passing pymongo database in each request
     g.db=dbpymongo
-
-
-    # store current user dictionary in g object
-    # if session.get('_id'):
-    #     g.user=g.db.users.find_one({'_id':ObjectId(session['_id'])})
-        
-    #     if g.user==None: 
-    #         session.pop('_id', None)
-    #         session.pop('gplus_id', None)
-    #         session.pop('access_token', None)
-    #         g.user={}
-
-    # else:
-    #     session.pop('_id', None) 
-    #     session.pop('gplus_id', None)
-    #     session.pop('access_token', None)
-    #     g.user={}
-
-
 
     #connection in order to send emails
     g.mail=mail

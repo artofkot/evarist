@@ -7,10 +7,8 @@ from flask import current_app, Flask, Blueprint, request, session, g, redirect, 
     abort, render_template, flash
 from contextlib import closing
 from flask.ext.mail import Message
-from evarist import models
 from functools import wraps
-from evarist.models import (model_problem_set, model_entry, model_post, 
-                            model_solution, mongo, problem_set_filters,
+from evarist.models import (problem_set_filters,
                             solution_filters)
 from evarist.forms import (WebsiteFeedbackForm, CommentForm, 
                             SolutionForm, FeedbackToSolutionForm, 
@@ -143,6 +141,8 @@ def problem(problem_set_slug,prob_id):
         flash('No such problem.')
         return redirect(url_for('.home'))
 
+    print len(problem.solutions)
+
     # check if user can see this problem set
     is_moderator=False
     if g.user: is_moderator=g.user.rights.is_moderator
@@ -163,6 +163,8 @@ def problem(problem_set_slug,prob_id):
                                         author=g.user,
                                         parent_content_block=problem)
         comment.save()
+        problem.general_discussion.append(comment)
+        problem.save()
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem['id']))
@@ -196,10 +198,13 @@ def problem(problem_set_slug,prob_id):
     solution_comment_form=FeedbackToSolutionForm()
     if solution_comment_form.validate_on_submit():
         if solution_comment_form.feedback_to_solution.data:
+            parent_solution=Solution.objects(id=ObjectId(request.args['sol_id'])).first()
             comment=CommentToSolution(text=solution_comment_form.feedback_to_solution.data,
                 author=g.user,
-                parent_solution=Solution.objects(id=ObjectId(request.args['sol_id'])).first())
+                parent_solution=parent_solution)
             comment.save()
+            parent_solution.discussion.append(comment)
+            parent_solution.save()
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem.id))
@@ -211,11 +216,17 @@ def problem(problem_set_slug,prob_id):
         if file:
             upload_result = upload(file)
             image_url=upload_result['url'] 
+        print 'OK1'
         solution=Solution(text=solution_form.solution.data,
                         author=g.user,
                         problem=problem,
                         problem_set=problem_set,
                         image_url=image_url)
+        solution.save()
+        problem.solutions.append(solution)
+        problem.save()
+        g.user.problems_solution_written.append(problem)
+        g.user.save()
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem['id']))
@@ -230,7 +241,7 @@ def problem(problem_set_slug,prob_id):
             current_user_solution.save()
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
-                                prob_id=problem['_id']))
+                                prob_id=problem['id']))
     # trigger_flash_error(edit_solution_form,'workflow.problem', 
     #                             problem_set_slug=problem_set_slug,
     #                             prob_id=problem['_id'])
@@ -257,41 +268,42 @@ def problem(problem_set_slug,prob_id):
 @workflow.route('/check', methods=["GET", "POST"])
 @login_required
 def check():
-    (not_checked_sols,checked_sols)=model_solution.get_solutions_for_check_page(g.db,g.user)
+    (not_checked_sols,checked_sols)=solution_filters.get_solutions_for_check_page(g.user)
 
     vote_form=VoteForm()
     if vote_form.validate_on_submit():
-        voted_solution=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
-        if not g.user['_id'] in (voted_solution['users_upvoted_ids'] + voted_solution['users_downvoted_ids'] ):
+        voted_solution=Solution.objects(id=ObjectId(request.args['sol_id'])).first()
+        
+        if not g.user['id'] in (voted_solution['users_upvoted'] + voted_solution['users_downvoted'] ):
             if g.user['rights']['is_checker']: vote_weight=2
             else: vote_weight=1
+
             if vote_form.vote.data == 'upvote': 
-                g.db.solutions.update_one({'_id':voted_solution['_id']},
-                                            {'$addToSet':{'users_upvoted_ids':g.user['_id']}})
-                g.db.solutions.update_one({'_id':voted_solution['_id']},
-                                            {'$inc':{'upvotes':vote_weight}})
+                voted_solution.users_upvoted.append(g.user)
+                voted_solution.upvotes+=vote_weight
 
             if vote_form.vote.data == 'downvote':
-                g.db.solutions.update_one({'_id':voted_solution['_id']},
-                                            {'$addToSet':{'users_downvoted_ids':g.user['_id']}})
-                g.db.solutions.update_one({'_id':voted_solution['_id']},
-                                            {'$inc':{'downvotes':vote_weight}})
-        
-            model_solution.update_everything(g.db, voted_solution['_id'])
+                voted_solution.users_downvoted.append(g.user)
+                voted_solution.downvotes+=vote_weight
+            
+            voted_solution.save()
+
+            solution_filters.update_everything(voted_solution)
+        else:
+            flash('It turns out you already voted for this solution, sorry for the wrong data on the page.')
 
         return redirect(url_for('.check'))
 
     solution_comment_form=FeedbackToSolutionForm()
     if solution_comment_form.validate_on_submit():
-
         if solution_comment_form.feedback_to_solution.data:
-            solut=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
-            model_post.add(text=solution_comment_form.feedback_to_solution.data,
-                           db=g.db,
-                           author_id=g.user['_id'],
-                           post_type='solution->comment',
-                           parent_id=ObjectId(request.args['sol_id']))
-        
+            parent_solution=Solution.objects(id=ObjectId(request.args['sol_id'])).first()
+            comment=CommentToSolution(text=solution_comment_form.feedback_to_solution.data,
+                author=g.user,
+                parent_solution=parent_solution)
+            comment.save()
+            parent_solution.discussion.append(comment)
+            parent_solution.save()
         return redirect(url_for('.check'))
 
 
@@ -306,28 +318,29 @@ def check():
 @workflow.route('/my_solutions', methods=["GET", "POST"])
 @login_required
 def my_solutions():
-    (not_checked_sols,checked_sols)=model_solution.get_solutions_for_my_solutions_page(g.db,g.user)
+    (not_checked_sols,checked_sols)=solution_filters.get_solutions_for_my_solutions_page(g.user)
     solution_comment_form=FeedbackToSolutionForm()
     if solution_comment_form.validate_on_submit():
         if solution_comment_form.feedback_to_solution.data:
-            solut=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
-            model_post.add(text=solution_comment_form.feedback_to_solution.data,
-                           db=g.db,
-                           author_id=g.user['_id'],
-                           post_type='solution->comment',
-                           parent_id=ObjectId(request.args['sol_id']))
-        
+            parent_solution=Solution.objects(id=ObjectId(request.args['sol_id'])).first()
+            comment=CommentToSolution(text=solution_comment_form.feedback_to_solution.data,
+                author=g.user,
+                parent_solution=parent_solution)
+            comment.save()
+            parent_solution.discussion.append(comment)
+            parent_solution.save()
         return redirect(url_for('.my_solutions'))
 
     edit_solution_form=EditSolutionForm()
     if edit_solution_form.validate_on_submit():
-        solut=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
+        solution=Solution.objects(id=ObjectId(request.args['sol_id'])).first()
+        print solution.image_url
         if edit_solution_form.delete_solution.data:
-            model_solution.delete(db=g.db,solution=solut)
+            solution.delete()
         else:
-            g.db.solutions.update_one({"_id":solut['_id']},
-                                        {'$set':{'text':edit_solution_form.edited_solution.data,
-                                        'date':datetime.datetime.utcnow()} })
+            solution.text=edit_solution_form.edited_solution.data
+            solution.date=datetime.datetime.utcnow()
+            solution.save()
         return redirect(url_for('.my_solutions'))
     # trigger_flash_error(edit_solution_form,'workflow.my_solutions')
 

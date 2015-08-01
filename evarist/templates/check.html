@@ -1,6 +1,6 @@
 {% import 'macros/solutions.html' as solution_macros %}
 {% import 'macros/forms.html' as form_macros %}
-{% import 'macros/posts.html' as post_macros %}
+{% import 'macros/comments.html' as comment_macros %}
 
 
 {% extends "layout.html" %}
@@ -26,9 +26,9 @@
           <!-- solutions text, and the name of problem set -->
           <div>
             <p>
-              <em>{{solution.get('problem_set')['title']|safe}}</em> 
+              <em>{{solution.problem_set['title']|safe}}</em> 
               <br>
-              {{solution.get('problem')['text']|safe}}
+              {{solution.problem['text']|safe}}
             </p>
           </div>
 
@@ -45,8 +45,8 @@
 
             <!-- vote form -->
             <div class="col-md-4 col-md-offset-2">
-            {%if g.user.id not in (  solution['users_upvoted_ids']|list + solution['users_downvoted_ids']|list )%}
-              <form action="{{request.path}}?sol_id={{solution['_id']}}" method="post">
+            {%if g.user not in (  solution['users_upvoted']|list + solution['users_downvoted_']|list )%}
+              <form action="{{request.path}}?sol_id={{solution['id']}}" method="post">
                 {{ vote_form.hidden_tag() }}
                 {{ form_macros.vote_for_solution_form() }}
               </form>
@@ -59,7 +59,7 @@
           <div style='height:14px'></div>
 
           <!-- comment form -->
-          <form action=" {{url_for('.check', sol_id=solution['_id'])}}" method="post">
+          <form action=" {{url_for('.check', sol_id=solution['id'])}}" method="post">
             {{ solution_comment_form.hidden_tag() }}
             {{ form_macros.comment_form(name_of_textarea="feedback_to_solution", name_of_the_button="Оставить комментарий") }}
           </form>
@@ -67,13 +67,13 @@
           <div style='height:5px'></div>
 
           <!-- displaying comments if they exist -->
-          {% if solution.get('discussion')%}
+          {% if solution.discussion%}
             <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#collapse_Id_{{loop.index}}" aria-expanded="true" aria-controls="collapse_Id_{{loop.index}}">
               спрятать комментарии
             </button>
             <div class="collapse in" aria-expanded="true" id="collapse_Id_{{loop.index}}">
-              {% for post in solution['discussion'] | reverse %}
-                {{ post_macros.post(post) }}
+              {% for comment in solution['discussion'] | reverse %}
+                {{ comment_macros.comment(comment) }}
               {% endfor %}
             </div>
           {% endif %}
@@ -91,9 +91,9 @@
           <!-- solutions text, and the name of problem set -->
           <div>
             <p>
-              <em>{{solution.get('problem_set')['title']|safe}}</em> 
+              <em>{{solution.problem_set['title']|safe}}</em> 
               <br>
-              {{solution.get('problem')['text']|safe}}
+              {{solution.problem['text']|safe}}
             </p>
           </div>
 
@@ -110,8 +110,8 @@
 
             <!-- vote form -->
             <div class="col-md-4 col-md-offset-2">
-            {%if g.user.id not in (  solution['users_upvoted_ids']|list + solution['users_downvoted_ids']|list )%}
-              <form action="{{request.path}}?sol_id={{solution['_id']}}" method="post">
+            {%if g.user not in (  solution['users_upvoted']|list + solution['users_downvoted']|list )%}
+              <form action="{{request.path}}?sol_id={{solution['id']}}" method="post">
                 {{ vote_form.hidden_tag() }}
                 {{ form_macros.vote_for_solution_form() }}
               </form>
@@ -124,7 +124,7 @@
           <div style='height:14px'></div>
 
           <!-- comment form -->
-          <form action=" {{url_for('.check', sol_id=solution['_id'])}}" method="post">
+          <form action=" {{url_for('.check', sol_id=solution['id'])}}" method="post">
             {{ solution_comment_form.hidden_tag() }}
             {{ form_macros.comment_form(name_of_textarea="feedback_to_solution", name_of_the_button="Оставить комментарий") }}
           </form>
@@ -132,13 +132,13 @@
           <div style='height:5px'></div>
 
           <!-- displaying comments if they exist -->
-          {% if solution.get('discussion')%}
+          {% if solution.discussion%}
             <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#collapse_Idd_{{loop.index}}" aria-expanded="true" aria-controls="collapse_Idd_{{loop.index}}">
               спрятать комментарии
             </button>
             <div class="collapse in" aria-expanded="true" id="collapse_Idd_{{loop.index}}">
-              {% for post in solution['discussion'] | reverse %}
-                {{ post_macros.post(post) }}
+              {% for comment in solution['discussion'] | reverse %}
+                {{ comment_macros.comment(comment) }}
               {% endfor %}
             </div>
           {% endif %}

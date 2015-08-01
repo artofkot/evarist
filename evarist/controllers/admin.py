@@ -8,11 +8,7 @@ from flask import current_app, Flask, Blueprint, request, session, g, redirect, 
 from contextlib import closing
 from functools import wraps
 from evarist.forms import ProblemSetForm, Content_blockForm, EditContent_blockForm, ProblemSetDelete, VoteForm, FeedbackToSolutionForm, EditCommentForm
-from evarist.models import model_problem_set, model_entry, mongo, model_post, model_solution
-
-from evarist.models.mongoengine_models import (User, EmailUser, GplusUser, Rights, 
-                                        Problem_set, Content_block,
-                                        CommentToContent_block)
+from evarist.models.mongoengine_models import *
 
 
 admin = Blueprint('admin', __name__,
@@ -43,8 +39,26 @@ def db():
     count2=0
     count3=0
 
-    for ps in Problem_set.objects():
-        ps.assign_numbers_to_content_blocks()
+    old_posts=g.db.posts.find()
+    for old_post in old_posts:
+        old_author=g.db.users.find_one({'_id':old_post['author_id']})
+        old_solution=g.db.solutions.find_one({'_id':old_post['parent_id']})
+        if old_author and old_solution: author=User.objects(email=old_author.get('email')).first()
+        else:
+            print 'AAAAAA %s' % old_post['text']
+            continue
+        parent_solution=Solution.objects(text=old_solution['text']).first()    
+        count1+=1
+        # try:
+        #     comment=CommentToSolution(text=old_post['text'],
+        #                     author=author,
+        #                     parent_solution=parent_solution)
+        #     comment.save()
+        #     parent_solution.discussion.append(comment)
+        #     parent_solution.save()
+        #     count3+=1
+        # except: count2+=1
+            
 
     return '%d %d %d' % (count1,count2,count3)
 
@@ -164,24 +178,8 @@ def problem_set_edit(problem_set_slug):
                             edit_content_block_form=edit_content_block_form)
 
 
-@admin.route('/admin/feedbacks', methods=["GET", "POST"])
-@admin_required
-def feedbacks():
-    posts=g.db.posts.find({'post_type':'feedback'})
-    return render_template("admin/feedbacks.html", 
-                            posts=posts)
 
-@admin.route('/admin/problem_questions', methods=["GET", "POST"])
-@admin_required
-def problem_questions():
-    ps=g.db.posts.find({'post_type':'entry->general_discussion'})
-    posts=[]
-    for p in ps:
-        p['problem_set']=g.db.problem_sets.find_one({'_id':p['problem_set_id']})
-        p['problem']=g.db.entries.find_one({'_id':p['problem_id']})
-        posts.append(p)
-    return render_template("admin/problem_questions.html", 
-                            posts=posts)
+
 
 @admin.route('/admin/users', methods=["GET", "POST"])
 @admin_required
@@ -190,159 +188,27 @@ def users():
     return render_template("admin/users.html", 
                             users=users)
 
-@admin.route('/admin/checked_solutions', methods=["GET", "POST"])
-@admin_required
-def checked_solutions():
-
-    solutions=g.db.solutions.find({'status':{ '$in': [ 'checked_correct',  'checked_incorrect' ] }})
-    solutions.sort('date',pymongo.DESCENDING)
-    sols=[]
-    for solution in solutions:
-        mongo.load(solution,'solution_discussion_ids','discussion',g.db.posts)
-        if not mongo.load(solution,'author_id','author',g.db.users):
-            solution['author']={}
-            solution['author']['username']='deleted user'
-        
-
-        problem=g.db.entries.find_one({'_id':ObjectId(solution['problem_id'])})
-        problem_set=g.db.problem_sets.find_one({'_id':ObjectId(solution['problem_set_id'])})
-        solution['problem_text']=problem['text']
-        solution['problem_set']=problem_set['title']
-        sols.append(solution)
-
-    vote_form=VoteForm()
-    if vote_form.validate_on_submit():
-        voted_solution=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
-        if not g.user['_id'] in (voted_solution['users_upvoted_ids'] + voted_solution['users_downvoted_ids'] ):
-            if g.user['rights']['is_checker']: vote_weight=2
-            else: vote_weight=1
-
-            if vote_form.vote.data == 'upvote': 
-                g.db.solutions.update_one({'_id':voted_solution['_id']},
-                                            {'$addToSet':{'users_upvoted_ids':g.user['_id']}})
-                g.db.solutions.update_one({'_id':voted_solution['_id']},
-                                            {'$inc':{'upvotes':vote_weight}})
-
-            if vote_form.vote.data == 'downvote':
-                g.db.solutions.update_one({'_id':voted_solution['_id']},
-                                            {'$addToSet':{'users_downvoted_ids':g.user['_id']}})
-                g.db.solutions.update_one({'_id':voted_solution['_id']},
-                                            {'$inc':{'downvotes':vote_weight}})
-        
-            model_solution.update_everything(g.db, voted_solution['_id'])
-        
-        return redirect(url_for('.not_checked_solutions'))
-
-    solution_comment_form=FeedbackToSolutionForm()
-    if solution_comment_form.validate_on_submit():
-
-        if solution_comment_form.feedback_to_solution.data:
-            solut=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
-            model_post.add(text=solution_comment_form.feedback_to_solution.data,
-                           db=g.db,
-                           author_id=g.user.get('_id'),
-                           post_type='solution->comment',
-                           parent_id=ObjectId(request.args['sol_id']))
-        
-        return redirect(url_for('.not_checked_solutions'))
-
-
-
-    return render_template("admin/checked_solutions.html", 
-                            solutions=sols,
-                            vote_form=vote_form,
-                            solution_comment_form=solution_comment_form)
-
-
-@admin.route('/admin/not_checked_solutions', methods=["GET", "POST"])
-@admin_required
-def not_checked_solutions():
-    solutions=g.db.solutions.find({'status': 'not_checked'})
-    sols=[]
-    for solution in solutions:
-        mongo.load(solution,'solution_discussion_ids','discussion',g.db.posts)
-        if not mongo.load(solution,'author_id','author',g.db.users):
-            solution['author']={}
-            solution['author']['username']='deleted user'
-        problem=g.db.entries.find_one({'_id':ObjectId(solution['problem_id'])})
-        problem_set=g.db.problem_sets.find_one({'_id':ObjectId(solution['problem_set_id'])})
-        solution['problem_text']=problem['text']
-        solution['problem_set']=problem_set['title']
-        sols.append(solution)
-    sols.sort(key=lambda x: x.get('date'),reverse=True)
-
-    vote_form=VoteForm()
-    if vote_form.validate_on_submit():
-        voted_solution=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
-        if not g.user['_id'] in (voted_solution['users_upvoted_ids'] + voted_solution['users_downvoted_ids'] ):
-            if g.user['rights']['is_checker']: vote_weight=2
-            else: vote_weight=1
-
-            if vote_form.vote.data == 'upvote': 
-                g.db.solutions.update_one({'_id':voted_solution['_id']},
-                                            {'$addToSet':{'users_upvoted_ids':g.user['_id']}})
-                g.db.solutions.update_one({'_id':voted_solution['_id']},
-                                            {'$inc':{'upvotes':vote_weight}})
-
-            if vote_form.vote.data == 'downvote':
-                g.db.solutions.update_one({'_id':voted_solution['_id']},
-                                            {'$addToSet':{'users_downvoted_ids':g.user['_id']}})
-                g.db.solutions.update_one({'_id':voted_solution['_id']},
-                                            {'$inc':{'downvotes':vote_weight}})
-        
-            model_solution.update_everything(g.db, voted_solution['_id'])
-        
-        return redirect(url_for('.not_checked_solutions'))
-
-    solution_comment_form=FeedbackToSolutionForm()
-    if solution_comment_form.validate_on_submit():
-
-        if solution_comment_form.feedback_to_solution.data:
-            solut=g.db.solutions.find_one({'_id':ObjectId(request.args['sol_id'])})
-            model_post.add(text=solution_comment_form.feedback_to_solution.data,
-                           db=g.db,
-                           author_id=g.user.get('_id'),
-                           post_type='solution->comment',
-                           parent_id=ObjectId(request.args['sol_id']))
-        
-        return redirect(url_for('.not_checked_solutions'))
-
-
-
-    return render_template("admin/not_checked_solutions.html", 
-                            solutions=sols,
-                            vote_form=vote_form,
-                            solution_comment_form=solution_comment_form)
-
-
 #CRUD comments
-@admin.route('/admin/posts/', methods=["GET", "POST"])
+@admin.route('/admin/comments/', methods=["GET", "POST"])
 @admin_required
-def posts():
-    posts_db=g.db.posts.find(sort=[('date', pymongo.DESCENDING)])
-    posts=[]
-    for post in posts_db:
-        mongo.load(post,'author_id','author',g.db.users)
-        posts.append(post)
+def comments():
+    comments=Comment.objects()
 
     edit_comment_form=EditCommentForm()
     if edit_comment_form.validate_on_submit():
-        
-        post=g.db.posts.find_one({'_id':ObjectId(request.args['post_id'])})
-        print post
-
+        comment=Comment.objects(id=ObjectId(request.args['comment_id'])).first()
         if edit_comment_form.delete_comment.data:
-            model_post.delete(db=g.db,post=post)
+            comment.delete()
         else:
-            g.db.posts.update_one({"_id":post['_id']},
-                                        {'$set':{'text':edit_comment_form.text.data,
-                                        'date':datetime.datetime.utcnow()} })
-        return redirect(url_for('admin.posts'))
+            comment.text=edit_comment_form.text.data
+            comment.date=datetime.datetime.utcnow()
+            comment.save()
+        return redirect(url_for('admin.comments'))
    
 
-    return render_template('admin/posts.html',
+    return render_template('admin/comments.html',
                             edit_comment_form=edit_comment_form, 
-                            posts=posts)    
+                            comments=comments)    
 
 
 

@@ -7,7 +7,6 @@ from flask import current_app, Flask, Blueprint, request, session, g, redirect, 
     abort, render_template, flash
 from contextlib import closing
 from jinja2 import TemplateNotFound
-from evarist.models import model_user
 from evarist.forms import SignUpForm, SignInForm, trigger_flash_error
 from flask.ext.mail import Message
 from oauth2client.client import flow_from_clientsecrets

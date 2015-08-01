@@ -114,6 +114,7 @@ class CommentFeedback(Comment):
 
 #collection for solutions
 class Solution(Comment):
+    text = db.StringField(required=False)
     answer = db.StringField()
     image_url = db.StringField()
     language = db.StringField(max_length=256, default='rus')
@@ -146,6 +147,7 @@ Content_block.register_delete_rule(User,'problems_solved', PULL)
 Content_block.register_delete_rule(User,'problems_can_vote', PULL)
 Content_block.register_delete_rule(User,'problems_solution_written',PULL)
 Content_block.register_delete_rule(User,'problems_can_see_other_solutions',PULL)
+
 Content_block.register_delete_rule(Solution,'problem', NULLIFY)
 
 Problem_set.register_delete_rule(Content_block,'problem_set',NULLIFY)
