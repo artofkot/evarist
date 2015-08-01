@@ -33,4 +33,5 @@ WTForms==2.0.2
 Flask-Bcrypt==0.6.2
 cloudinary==1.1.2
 Flask-DebugToolbar==0.10.0
+flask-mongoengine==0.7.1
 mongoengine==0.10.0
