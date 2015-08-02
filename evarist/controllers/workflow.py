@@ -13,7 +13,7 @@ from evarist.models import (problem_set_filters,
 from evarist.forms import (WebsiteFeedbackForm, CommentForm, 
                             SolutionForm, FeedbackToSolutionForm, 
                             EditSolutionForm, VoteForm, 
-                            trigger_flash_error)
+                            trigger_flash_error, CancelVoteForm)
 from evarist.models.mongoengine_models import *
 
 
@@ -141,8 +141,6 @@ def problem(problem_set_slug,prob_id):
         flash('No such problem.')
         return redirect(url_for('.home'))
 
-    print len(problem.solutions)
-
     # check if user can see this problem set
     is_moderator=False
     if g.user: is_moderator=g.user.rights.is_moderator
@@ -216,7 +214,6 @@ def problem(problem_set_slug,prob_id):
         if file:
             upload_result = upload(file)
             image_url=upload_result['url'] 
-        print 'OK1'
         solution=Solution(text=solution_form.solution.data,
                         author=g.user,
                         problem=problem,
@@ -294,6 +291,24 @@ def check():
 
         return redirect(url_for('.check'))
 
+    cancel_vote_form=CancelVoteForm()
+    if cancel_vote_form.validate_on_submit() and cancel_vote_form.cancel.data:
+        solution=Solution.objects(id=ObjectId(request.args['sol_id'])).first()
+        if g.user['rights']['is_checker']: vote_weight=2
+        else: vote_weight=1
+        
+        if g.user in solution.users_downvoted:
+            solution.users_downvoted.remove(g.user)
+            solution.downvotes-=vote_weight
+        elif g.user in solution.users_upvoted:
+            solution.users_upvoted.remove(g.user)
+            solution.upvotes-=vote_weight
+
+        solution.save()
+        solution_filters.update_everything(solution)
+        return redirect(url_for('.check'))
+        
+
     solution_comment_form=FeedbackToSolutionForm()
     if solution_comment_form.validate_on_submit():
         if solution_comment_form.feedback_to_solution.data:
@@ -313,7 +328,8 @@ def check():
                             not_checked_solutions=not_checked_sols,
                             checked_solutions=checked_sols,
                             vote_form=vote_form,
-                            solution_comment_form=solution_comment_form)
+                            solution_comment_form=solution_comment_form,
+                            cancel_vote_form=cancel_vote_form)
 
 @workflow.route('/my_solutions', methods=["GET", "POST"])
 @login_required
@@ -334,7 +350,6 @@ def my_solutions():
     edit_solution_form=EditSolutionForm()
     if edit_solution_form.validate_on_submit():
         solution=Solution.objects(id=ObjectId(request.args['sol_id'])).first()
-        print solution.image_url
         if edit_solution_form.delete_solution.data:
             solution.delete()
         else:

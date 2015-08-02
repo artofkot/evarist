@@ -48,6 +48,11 @@
               </form>
             {%else%}
               <p><strong style='color:green'> Вы уже проголосовали.</strong></p>
+              <form action="{{request.path}}?sol_id={{solution['id']}}" method="post">
+                {{ cancel_vote_form.hidden_tag() }}
+        
+                {{ form_macros.cancel_vote_form() }}
+              </form>
             {%endif%}
             </div>
           </div>
@@ -111,6 +116,11 @@
               </form>
             {%else%}
               <p><strong style='color:green'> Вы уже проголосовали.</strong></p>
+              <form action="{{request.path}}?sol_id={{solution['id']}}" method="post">
+                {{ cancel_vote_form.hidden_tag() }}
+        
+                {{ form_macros.cancel_vote_form() }}
+              </form>
             {%endif%}
             </div>
           </div>

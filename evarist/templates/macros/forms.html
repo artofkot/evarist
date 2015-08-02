@@ -31,6 +31,17 @@
   <button type="submit" class="btn btn-xs btn-default">Проголосовать</button>
 {%- endmacro %}
 
+{% macro cancel_vote_form() -%}
+
+  <div class="form-group" >
+    <label>
+      <input type="checkbox" name="cancel">
+      <button type="submit" class="btn btn-xs btn-default">Отменить свой голос</button>
+    </label>
+  </div>
+  
+{%- endmacro %}
+
 
 {% macro comment_form(name_of_textarea, name_of_the_button) -%}
   <div class="form-group" >

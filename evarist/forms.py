@@ -72,6 +72,9 @@ class WebsiteFeedbackForm(Form):
 class VoteForm(Form):
     vote = TextField('vote', validators=[Required()])
 
+class CancelVoteForm(Form):
+    cancel=BooleanField('cancel', validators=[Required()])
+
 class ProblemSetForm(Form):
     status= TextField('status')
     title = TextField('title', validators=[Required()])
