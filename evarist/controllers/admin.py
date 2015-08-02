@@ -205,10 +205,13 @@ def comments():
             comment.save()
         return redirect(url_for('admin.comments'))
    
+    solutions=Solution.objects()
+    comments=Comment.objects(_cls__ne='Comment.Solution')
 
     return render_template('admin/comments.html',
                             edit_comment_form=edit_comment_form, 
-                            comments=comments)    
+                            comments=comments,
+                            solutions=solutions)    
 
 
 
