@@ -28,10 +28,12 @@
             ∆ Определение {{content_block.number_in_problem_set}}.</a>
           {%endif%}
           {{content_block['text']|safe}}
+          
           {% if content_block.type_=='problem' %}
             <a class="btn btn-s btn-default pull-right" href="{{ url_for('workflow.problem', problem_set_slug=problem_set['slug'], prob_id=content_block.id ) }}" >Есть решение!</a>
           {%endif%}
           </p>
+          <br>
         </div>
       {% endfor %}
     </div>

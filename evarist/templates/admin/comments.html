@@ -12,6 +12,7 @@
   <strong>Solutions.</strong>
   {% for comment in solutions %}
     <hr>
+    {{loop.index}}) {{comment.id}}
     {{ comment_macros.comment(comment) }}
     <button class="btn btn-default" type="button" data-toggle="collapse" data-target="#collapse_Id_edit_{{loop.index}}" aria-expanded="false" aria-controls="collapsId">
       Исправить комментарий
@@ -43,6 +44,7 @@
   <strong>Other comments.</strong>
   {% for comment in comments %}
     <hr>
+    {{loop.index}}) {{comment.id}}
     {{ comment_macros.comment(comment) }}
     <button class="btn btn-default" type="button" data-toggle="collapse" data-target="#collapse_com_Id_edit_{{loop.index}}" aria-expanded="false" aria-controls="collapsId">
       Исправить комментарий
