@@ -81,9 +81,12 @@ def home():
                                                 recipients=current_app.config['ADMINS']))
             else: flash('Error: slug ' + slug + ' was not found!')
 
+    solution_examples_pset=Problem_set.objects(slug=problem_set_filters.solution_examples_slug).first()
+
     return render_template('home.html',
                         problem_sets=problem_sets,
-                        website_feedback_form=website_feedback_form)
+                        website_feedback_form=website_feedback_form,
+                        solution_examples_pset=solution_examples_pset)
     
 
 @workflow.route('/home')
