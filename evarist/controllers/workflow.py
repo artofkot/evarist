@@ -150,7 +150,7 @@ def problem(problem_set_slug,prob_id):
 
     # get the current_user_solution, if its written
     try: 
-        current_user_solution= next(sol for sol in problem['solutions'] if sol.author.id==g.user.id)
+        current_user_solution= next(sol for sol in problem['solutions'] if sol.author.id==getattr(g.user,'id',None))
     except StopIteration: 
         current_user_solution={}
 
