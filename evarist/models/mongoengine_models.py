@@ -60,9 +60,6 @@ class Content_block(db.Document):
     old_id = db.StringField()
 
 
-
-
-
 #collection for problem sets
 class Problem_set(db.Document):
     title = db.StringField(required=True, unique=True, max_length=128)
