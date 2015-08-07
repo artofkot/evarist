@@ -108,12 +108,13 @@ def problem_set_edit(problem_set_slug):
     if edit_problem_set_form.validate_on_submit():
         problem_set.title=edit_problem_set_form.title.data
         problem_set.slug=edit_problem_set_form.slug.data
-        problem_set.status=edit_problem_set_form.status.data
+        if edit_problem_set_form.status.data:
+            problem_set.status=edit_problem_set_form.status.data
         try: 
             problem_set.save()
             flash('Problem_set was edited')
         except: 
-            flash('you must change the slug or title to other values, which do not exist in our database. Sorry :)')
+            flash('you must change the slug or title to other values, which do not exist in our database.')
             return redirect(url_for('admin.problem_set_edit',
                                 problem_set_slug=problem_set_slug))
 
