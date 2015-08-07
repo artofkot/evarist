@@ -68,13 +68,14 @@ def get_solutions_for_my_solutions_page(user):
 
 
 
-
+upvote_correctness_threshold=2
+downvote_correctness_threshold=2
 
 # criterion!
 def get_status(solution):
-    if solution['downvotes']>=2:
+    if solution['downvotes']>=downvote_correctness_threshold:
         return 'checked_incorrect'
-    elif solution['upvotes']>=2:
+    elif solution['upvotes']>=upvote_correctness_threshold:
         return 'checked_correct'
     else:
         return 'not_checked'

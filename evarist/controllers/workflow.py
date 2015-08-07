@@ -99,7 +99,9 @@ def index():
 
 @workflow.route('/about')
 def about():
-    return render_template('about.html')
+    upvote_correctness_threshold=solution_filters.upvote_correctness_threshold
+    return render_template('about.html',
+        upvote_correctness_threshold=upvote_correctness_threshold)
 
 @workflow.route('/problem_sets/<problem_set_slug>/', methods=["GET", "POST"])
 def problem_set(problem_set_slug):
