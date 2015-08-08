@@ -64,6 +64,8 @@
     
     <link href="/static/style.css" rel="stylesheet" type="text/css">
 
+    
+
     {% block head %}{% endblock %}
   </head>
 
@@ -135,6 +137,22 @@
       <div class="container">
         {% block body %}{% endblock %}
       </div>
+
+      <!-- chat widget -->
+      <script type="text/javascript">
+        var chatovodOnLoad = chatovodOnLoad || [];
+        chatovodOnLoad.push(function() {
+            chatovod.addChatButton({host: "evarist.chatovod.com", align: "bottomRight",
+                width: 600, height: 380, defaultLanguage: "en"});
+        });
+        (function() {
+            var po = document.createElement('script');
+            po.type = 'text/javascript'; po.charset = "UTF-8"; po.async = true;
+            po.src = (document.location.protocol=='https:'?'https:':'http:') + '//st1.chatovod.com/api/js/v1.js?2';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(po, s);
+        })();
+      </script>
 
       <div class="container" style="backgroud-color:#f5f5f5">
         <footer class="footer">

@@ -93,19 +93,11 @@ def home():
 def index():
     return redirect(url_for('.home'))
 
-# @workflow.route('/roots')
-# def roots():
-#     return render_template('roots.html')
-
 @workflow.route('/about')
 def about():
     upvote_correctness_threshold=solution_filters.upvote_correctness_threshold
     return render_template('about.html',
         upvote_correctness_threshold=upvote_correctness_threshold)
-
-@workflow.route('/chat')
-def chat():
-    return render_template('chat.html')
 
 @workflow.route('/problem_sets/<problem_set_slug>/', methods=["GET", "POST"])
 def problem_set(problem_set_slug):
