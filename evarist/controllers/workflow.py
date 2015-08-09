@@ -43,19 +43,6 @@ def home():
     #               recipients=["artofkot@gmail.com"])
     # g.mail.send(msg)
 
-    website_feedback_form=WebsiteFeedbackForm()
-    if website_feedback_form.validate_on_submit():
-        feedback=CommentFeedback(text=website_feedback_form.feedback.data,
-                                type_='feedback',
-                                where_feedback='homepage')
-        if g.user: feedback.author=g.user
-        else: feedback.author_email=website_feedback_form.email.data
-        
-        feedback.save()
-
-        flash('Thank you for your feedback!')
-        return redirect(url_for('workflow.home'))
-
     
     # this is how we manually choose which problem_sets to display on homepage
     rus_slugset=problem_set_filters.rus_slugset
@@ -76,7 +63,7 @@ def home():
             pset= next(pset for pset in psets if pset['slug']==slug)
             problem_sets.append(pset)
         except StopIteration:
-            if not app.debug: g.mail.send(Message('slug ' + slug + ' was not found on the homepage',
+            if not current_app.debug: g.mail.send(Message(body='slug ' + slug + ' was not found on the homepage',
                                                 subject='Catched error on Evarist (production)!',
                                                 recipients=current_app.config['ADMINS']))
             else: flash('Error: slug ' + slug + ' was not found!')
@@ -85,7 +72,6 @@ def home():
 
     return render_template('home.html',
                         problem_sets=problem_sets,
-                        website_feedback_form=website_feedback_form,
                         solution_examples_pset=solution_examples_pset)
     
 
@@ -98,6 +84,34 @@ def about():
     upvote_correctness_threshold=solution_filters.upvote_correctness_threshold
     return render_template('about.html',
         upvote_correctness_threshold=upvote_correctness_threshold)
+
+@workflow.route('/contact',methods=["GET", "POST"])
+def contact():
+    website_feedback_form=WebsiteFeedbackForm()
+    if website_feedback_form.validate_on_submit():
+        feedback=CommentFeedback(text=website_feedback_form.feedback.data,
+                                type_='feedback',
+                                where_feedback='homepage')
+        if g.user: 
+            feedback.author=g.user
+            feedback.author_email=g.user.email
+        else: feedback.author_email=website_feedback_form.email.data
+        
+        feedback.save()
+
+        g.mail.send(Message(body=feedback.text,
+                            sender=feedback.author_email,
+                            subject='feedback',
+                            recipients=current_app.config['ADMINS']))
+
+
+        flash('Thank you for your feedback!')
+        return redirect(url_for('workflow.contact'))
+
+        
+
+    return render_template('contact.html',
+        website_feedback_form=website_feedback_form)
 
 @workflow.route('/problem_sets/<problem_set_slug>/', methods=["GET", "POST"])
 def problem_set(problem_set_slug):
@@ -154,6 +168,8 @@ def problem(problem_set_slug,prob_id):
         current_user_solution= next(sol for sol in problem['solutions'] if sol.author.id==getattr(g.user,'id',None))
     except StopIteration: 
         current_user_solution={}
+
+
 
     general_comment_form=CommentForm()
     if general_comment_form.validate_on_submit():
