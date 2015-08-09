@@ -103,6 +103,8 @@ class CommentToContent_block(Comment):
     parent_content_block = db.ReferenceField('Content_block')
     type_ = db.StringField(max_length=64, default='comment_to_content_block', choices=('comment_to_solution', 'comment_to_content_block', 'feedback'))
 
+
+# mb change this to email to mandrill!
 class CommentFeedback(Comment):
     author_email=db.StringField()
     where_feedback = db.StringField()
