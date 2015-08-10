@@ -35,7 +35,7 @@ def admin_required(f):
 @admin.route('/admin/db', methods=["GET", "POST"])
 @admin_required
 def db():
-    if current_app.debug==False: return redirect(url_for('workflow.home'))
+    # if current_app.debug==False: return redirect(url_for('workflow.home'))
     #####
     count1=0
     count2=0
@@ -176,8 +176,7 @@ def users():
 @admin.route('/admin/comments/', methods=["GET", "POST"])
 @admin_required
 def comments():
-    comments=Comment.objects()
-
+    
     edit_comment_form=EditCommentForm()
     if edit_comment_form.validate_on_submit():
         comment=Comment.objects(id=ObjectId(request.args['comment_id'])).first()
@@ -189,8 +188,8 @@ def comments():
             comment.save()
         return redirect(url_for('admin.comments'))
    
-    solutions=Solution.objects()
-    comments=Comment.objects(_cls__ne='Comment.Solution')
+    solutions=Solution.objects().order_by('-date')
+    comments=Comment.objects(_cls__ne='Comment.Solution').order_by('-date')
 
     return render_template('admin/comments.html',
                             edit_comment_form=edit_comment_form, 
