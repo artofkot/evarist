@@ -125,7 +125,7 @@ def problem_set(problem_set_slug):
 
     is_moderator=False
     if g.user: is_moderator=g.user['rights']['is_moderator']
-    if (not problem_set['status']=='production') and (not is_moderator):
+    if (problem_set['status']=='dev') and (not is_moderator):
         flash('This problem set is not ready yet.')
         return redirect(url_for('.home'))
 
@@ -159,7 +159,7 @@ def problem(problem_set_slug,prob_id):
     # check if user can see this problem set
     is_moderator=False
     if g.user: is_moderator=g.user.rights.is_moderator
-    if (not problem_set['status']=='production') and (not is_moderator):
+    if (problem_set['status']=='dev') and (not is_moderator):
         flash('This problem set is not ready yet.')
         return redirect(url_for('.home'))
 
