@@ -35,7 +35,7 @@ def solution_written(solution):
     solution.problem.solutions.append(solution)
     solution.problem.save()
     
-    solution.author.problems_solution_written.append(problem)
+    solution.author.problems_solution_written.append(solution.problem)
     solution.author.karma+=parameters.karma_solution_written
     solution.author.save()
 
@@ -45,6 +45,9 @@ def commented_solution(comment):
 
     if comment.author is not comment.parent_solution.author:
         comment.author.karma+=parameters.karma_commented_solution
+        comment.author.save()
+        comment.parent_solution.author.karma+=parameters.karma_solution_was_commented
+        comment.parent_solution.author.save()
 
 
 
@@ -95,6 +98,7 @@ def change_solution_status(old_status,solution):
         solution.author.karma-=parameters.karma_solution_became_right
         solution.author.karma+=parameters.karma_solution_became_wrong
 
+    solution.author.save()
     solution.save()
 
 

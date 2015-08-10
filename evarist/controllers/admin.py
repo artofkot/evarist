@@ -41,7 +41,7 @@ def db():
     count2=0
     count3=0
     
-    parameters.recount_all_users_karma()        
+    (count1,count2,count3)=parameters.recount_all_users_karma()        
 
     return '%d %d %d' % (count1,count2,count3)
 

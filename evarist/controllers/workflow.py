@@ -16,7 +16,7 @@ from evarist.forms import (WebsiteFeedbackForm, CommentForm,
                             EditSolutionForm, VoteForm, 
                             trigger_flash_error, CancelVoteForm)
 from evarist.models.mongoengine_models import *
-
+from evarist.controllers.admin import admin_required
 
 from cloudinary.uploader import upload
 from cloudinary.utils import cloudinary_url
@@ -74,7 +74,16 @@ def home():
     return render_template('home.html',
                         problem_sets=problem_sets,
                         solution_examples_pset=solution_examples_pset)
-    
+
+
+@workflow.route('/users', methods=["GET", "POST"])    
+@admin_required
+def users():
+    users=User.objects().order_by('-karma')
+
+    return render_template('users.html',
+                            users=users)
+
 
 @workflow.route('/home')
 def index():
@@ -309,7 +318,7 @@ def check():
                 parent_solution=parent_solution)
             comment.save()
             events.commented_solution(comment)
-            
+
         return redirect(url_for('.check'))
 
 
