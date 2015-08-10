@@ -81,6 +81,8 @@ def home():
 def users():
     users=User.objects().order_by('-karma')
 
+    users=users[:10]
+
     return render_template('users.html',
                             users=users)
 
