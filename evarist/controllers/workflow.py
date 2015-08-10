@@ -9,13 +9,14 @@ from contextlib import closing
 from flask.ext.mail import Message
 from functools import wraps
 from evarist.models import (problem_set_filters,
-                            solution_filters)
+                            solution_filters, events,
+                            parameters)
 from evarist.forms import (WebsiteFeedbackForm, CommentForm, 
                             SolutionForm, FeedbackToSolutionForm, 
                             EditSolutionForm, VoteForm, 
                             trigger_flash_error, CancelVoteForm)
 from evarist.models.mongoengine_models import *
-
+from evarist.controllers.admin import admin_required
 
 from cloudinary.uploader import upload
 from cloudinary.utils import cloudinary_url
@@ -73,7 +74,16 @@ def home():
     return render_template('home.html',
                         problem_sets=problem_sets,
                         solution_examples_pset=solution_examples_pset)
-    
+
+
+@workflow.route('/users', methods=["GET", "POST"])    
+@admin_required
+def users():
+    users=User.objects().order_by('-karma')
+
+    return render_template('users.html',
+                            users=users)
+
 
 @workflow.route('/home')
 def index():
@@ -81,7 +91,7 @@ def index():
 
 @workflow.route('/about')
 def about():
-    upvote_correctness_threshold=solution_filters.upvote_correctness_threshold
+    upvote_correctness_threshold=parameters.upvote_correctness_threshold
     return render_template('about.html',
         upvote_correctness_threshold=upvote_correctness_threshold)
 
@@ -188,21 +198,8 @@ def problem(problem_set_slug,prob_id):
     if vote_form.validate_on_submit():
         voted_solution=Solution.objects(id=ObjectId(request.args['sol_id'])).first()
         
-        if not g.user['id'] in (voted_solution['users_upvoted'] + voted_solution['users_downvoted'] ):
-            if g.user['rights']['is_checker']: vote_weight=2
-            else: vote_weight=1
-
-            if vote_form.vote.data == 'upvote': 
-                voted_solution.users_upvoted.append(g.user)
-                voted_solution.upvotes+=vote_weight
-
-            if vote_form.vote.data == 'downvote':
-                voted_solution.users_downvoted.append(g.user)
-                voted_solution.downvotes+=vote_weight
-            
-            voted_solution.save()
-
-            solution_filters.update_everything(voted_solution)
+        if events.vote(g.user,voted_solution,vote_form.vote.data):
+            events.do_events_after_voting(voted_solution)
         else:
             flash('It turns out you already voted for this solution, sorry for the wrong data on the page.')
 
@@ -218,8 +215,9 @@ def problem(problem_set_slug,prob_id):
                 author=g.user,
                 parent_solution=parent_solution)
             comment.save()
-            parent_solution.discussion.append(comment)
-            parent_solution.save()
+
+            events.commented_solution(comment)
+            
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem.id))
@@ -237,10 +235,8 @@ def problem(problem_set_slug,prob_id):
                         problem_set=problem_set,
                         image_url=image_url)
         solution.save()
-        problem.solutions.append(solution)
-        problem.save()
-        g.user.problems_solution_written.append(problem)
-        g.user.save()
+        events.solution_written(solution)
+        
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem['id']))
@@ -288,21 +284,8 @@ def check():
     if vote_form.validate_on_submit():
         voted_solution=Solution.objects(id=ObjectId(request.args['sol_id'])).first()
         
-        if not g.user['id'] in (voted_solution['users_upvoted'] + voted_solution['users_downvoted'] ):
-            if g.user['rights']['is_checker']: vote_weight=2
-            else: vote_weight=1
-
-            if vote_form.vote.data == 'upvote': 
-                voted_solution.users_upvoted.append(g.user)
-                voted_solution.upvotes+=vote_weight
-
-            if vote_form.vote.data == 'downvote':
-                voted_solution.users_downvoted.append(g.user)
-                voted_solution.downvotes+=vote_weight
-            
-            voted_solution.save()
-
-            solution_filters.update_everything(voted_solution)
+        if events.vote(g.user,voted_solution,vote_form.vote.data):
+            events.do_events_after_voting(voted_solution)
         else:
             flash('It turns out you already voted for this solution, sorry for the wrong data on the page.')
 
@@ -322,7 +305,7 @@ def check():
             solution.upvotes-=vote_weight
 
         solution.save()
-        solution_filters.update_everything(solution)
+        events.do_events_after_voting(solution)
         return redirect(url_for('.check'))
         
 
@@ -334,8 +317,8 @@ def check():
                 author=g.user,
                 parent_solution=parent_solution)
             comment.save()
-            parent_solution.discussion.append(comment)
-            parent_solution.save()
+            events.commented_solution(comment)
+
         return redirect(url_for('.check'))
 
 
@@ -360,8 +343,7 @@ def my_solutions():
                 author=g.user,
                 parent_solution=parent_solution)
             comment.save()
-            parent_solution.discussion.append(comment)
-            parent_solution.save()
+            events.commented_solution(comment)
         return redirect(url_for('.my_solutions'))
 
     edit_solution_form=EditSolutionForm()

@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block head %}
+{% endblock %}
+{% block body %}
+
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      {% for user in users %}
+        <div>
+          {{user}}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+{% endblock %}

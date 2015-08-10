@@ -118,7 +118,7 @@
                     </div>
                     {% endif %}
                   </li>
-                  <li> <a href="{{ url_for('workflow.home') }}">{{g.user.username}} </a></li>
+                  <li> <a href="{{ url_for('workflow.home') }}">{{g.user | safe}} </a></li>
                   <li><a href="{{ url_for('user.logout') }}">Log out</a></li>
                 {% endif%}
               </ul>

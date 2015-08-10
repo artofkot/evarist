@@ -73,7 +73,7 @@
         {%if other_solutions%}
           {%for solution in other_solutions%}
 
-            {{solution_macros.solution(solution=solution,inscription=gettext('Решение от %(author)s', author = solution['author']['username']))}}       
+            {{solution_macros.solution(solution=solution,inscription=gettext('Решение от %(user)s', user = solution['author']))}}       
             
             <!-- votes + form for voting-->
             <div class='row'>
