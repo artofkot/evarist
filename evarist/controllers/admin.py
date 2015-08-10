@@ -35,13 +35,13 @@ def admin_required(f):
 @admin.route('/admin/db', methods=["GET", "POST"])
 @admin_required
 def db():
-    # if current_app.debug==False: return redirect(url_for('workflow.home'))
-    #####
+    if current_app.debug==False: return redirect(url_for('workflow.home'))
+
     count1=0
     count2=0
     count3=0
     
-    (count1,count2,count3)=parameters.recount_all_users_karma()        
+    # (count1,count2,count3)=parameters.recount_all_users_karma()        
 
     return '%d %d %d' % (count1,count2,count3)
 
