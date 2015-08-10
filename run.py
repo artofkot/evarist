@@ -14,8 +14,9 @@ app.config['DEBUG_TB_PANELS'] = (
     'flask.ext.debugtoolbar.panels.template.TemplateDebugPanel',
     'flask.ext.debugtoolbar.panels.logger.LoggingPanel',
     # 'flask_debugtoolbar.panels.profiler.ProfilerDebugPanel',
+    # 'flask.ext.mongoengine.panels.MongoDebugPanel',  #from flask-mongoengine
     'flask_debugtoolbar.panels.route_list.RouteListDebugPanel'
-
+    
 )
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.run(debug=True)

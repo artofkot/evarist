@@ -1,0 +1,3 @@
+
+upvote_correctness_threshold=2
+downvote_correctness_threshold=2
