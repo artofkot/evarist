@@ -30,7 +30,7 @@
           </div>
 
           <!-- solution -->
-          {{solution_macros.solution(solution=solution,inscription=gettext('Решение от %(author)s', author = solution['author']['username']))}}
+          {{solution_macros.solution(solution=solution,inscription=gettext('Решение от %(author)s', author = solution['author']))}}
           {{solution_macros.display_votes(solution)}}
           
           <!-- edit solution form -->
@@ -86,7 +86,7 @@
           </div>
 
           <!-- solution -->
-          {{solution_macros.solution(solution=solution,inscription=gettext('Решение от %(author)s', author = solution['author']['username']))}}
+          {{solution_macros.solution(solution=solution,inscription=gettext('Решение от %(author)s', author = solution['author']))}}
 
           {{solution_macros.display_votes(solution)}}
           

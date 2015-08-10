@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask.ext.mongoengine import MongoEngine
 db = MongoEngine()
 
@@ -19,6 +20,10 @@ class User(db.Document):
     problems_can_see_other_solutions=db.ListField(db.ReferenceField('Content_block'))
     problems_can_vote=db.ListField(db.ReferenceField('Content_block'))
 
+    def __unicode__(self):
+        return self.username + '•'.decode('utf-8') + str(self.karma)
+    
+
     meta = {'allow_inheritance': True}
 
 class GplusUser(User):
@@ -33,6 +38,7 @@ class GplusUser(User):
     # default=gplus_email,
     email = db.StringField(required=True)
 
+
 class EmailUser(User):
     provider= db.StringField(default='email')
     username = db.StringField(required=True, max_length=256)
@@ -40,6 +46,8 @@ class EmailUser(User):
     pw_hash = db.StringField()
     old_pw_hash = db.StringField()
     confirmed= db.BooleanField(default=False)
+
+    
 
 
 #collection for content blocks

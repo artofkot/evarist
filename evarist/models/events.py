@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from mongoengine_models import *
 import parameters
+import criteria
 
+# this event is triggered by vote forms on website
 def vote(user,solution,upvote_or_downvote):
     if not user['id'] in (solution['users_upvoted'] + solution['users_downvoted'] ):
         if user['rights']['is_checker']: vote_weight=2
@@ -21,63 +23,77 @@ def vote(user,solution,upvote_or_downvote):
     else:
         return False
 
+def do_events_after_voting(solution):
+    (old_status,solution)=update_status(solution)
 
+    if old_status!=solution.status:
+        change_solution_status(old_status,solution)
 
+    update_who_solved(solution)
 
-# criterions, depending on solution
-def solution_status_by_criterion(solution):
-    if solution['downvotes']>=parameters.downvote_correctness_threshold:
-        return 'checked_incorrect'
-    elif solution['upvotes']>=parameters.upvote_correctness_threshold:
-        return 'checked_correct'
-    else:
-        return 'not_checked'
+    update_who_can_see_other_solutions(solution)
 
-def did_solve(problem, user):
-    solutions=Solution.objects(problem=problem,author=user)
-    for solution in solutions:
-        if solution.status=='checked_correct':
-            return True
-    return False
-
-def can_vote(problem, user):
-    return did_solve(problem, user)
-
-def can_see_other_solutions(problem, user):
-    return did_solve(problem, user)
-
-
-
+    update_who_can_vote(solution)
 
 def update_status(solution):
-    solution.status=solution_status_by_criterion(solution)
+    old_status=solution.status
+    solution.status=criteria.get_solution_status_by_criterion(solution)
     solution.save()
-    return 1
 
-# subtle point, it is UNCLEAR how to move from one criterion to another
+    return (old_status,solution)
+
+
+# this event is triggered in update_status
+def change_solution_status(old_status,solution):
+    if old_status=='not_checked' and solution.status=='checked_correct':
+        solution.author.karma+=parameters.karma_solution_became_right
+
+    if old_status=='checked_correct' and solution.status=='not_checked':
+        solution.author.karma-=parameters.karma_solution_became_right
+
+
+
+    if old_status=='not_checked' and solution.status=='checked_incorrect':
+        solution.author.karma+=parameters.karma_solution_became_wrong
+
+    if old_status=='checked_incorrect' and solution.status=='not_checked':
+        solution.author.karma-=parameters.karma_solution_became_wrong
+
+
+
+    if old_status=='checked_incorrect' and solution.status=='checked_correct':
+        solution.author.karma+=parameters.karma_solution_became_right
+        solution.author.karma-=parameters.karma_solution_became_wrong
+
+    if old_status=='checked_correct' and solution.status=='checked_incorrect':
+        solution.author.karma-=parameters.karma_solution_became_right
+        solution.author.karma+=parameters.karma_solution_became_wrong
+
+    solution.save()
+
+
+
 def update_who_solved(solution):
-    if did_solve(solution.problem,solution.author):
+    if criteria.did_solve(solution.problem,solution.author):
         User.objects(id=solution.author.id).update_one(push__problems_solved=solution.problem)
     else:
         User.objects(id=solution.author.id).update_one(pull__problems_solved=solution.problem)
     return 1
 
 def update_who_can_see_other_solutions(solution):
-    if can_see_other_solutions(solution.problem,solution.author):
+    if criteria.can_see_other_solutions(solution.problem,solution.author):
         User.objects(id=solution.author.id).update_one(push__problems_can_see_other_solutions=solution.problem)
     else:
         User.objects(id=solution.author.id).update_one(pull__problems_can_see_other_solutions=solution.problem)
     return 1
 
 def update_who_can_vote(solution):
-    if can_vote(solution.problem,solution.author):
+    if criteria.can_vote(solution.problem,solution.author):
         User.objects(id=solution.author.id).update_one(push__problems_can_vote=solution.problem)
     else:
         User.objects(id=solution.author.id).update_one(pull__problems_can_vote=solution.problem)
     return 1
 
-def update_everything(solution):
-    update_status(solution)
-    update_who_solved(solution)
-    update_who_can_see_other_solutions(solution)
-    update_who_can_vote(solution)
+
+
+
