@@ -3,11 +3,12 @@ from mongoengine_models import *
 import parameters
 import criteria
 
-# this event is triggered by vote forms on website
+
+# ACTIVE EVENTS
+# these events is triggered by vote forms on website
 def vote(user,solution,upvote_or_downvote):
     if not user['id'] in (solution['users_upvoted'] + solution['users_downvoted'] ):
-        if user['rights']['is_checker']: vote_weight=2
-        else: vote_weight=1
+        vote_weight=parameters.vote_weight(user)
 
         if upvote_or_downvote == 'upvote': 
             solution.users_upvoted.append(user)
@@ -17,12 +18,37 @@ def vote(user,solution,upvote_or_downvote):
             solution.users_downvoted.append(user)
             solution.downvotes+=vote_weight
         
+        solution.author.karma+=parameters.karma_solution_was_voted(
+                                                upvote_or_downvote,vote_weight)
+        solution.author.save()
         solution.save()
+
+        user.karma+=parameters.karma_voted_for_solution
+        user.save()
+
         return True
     
     else:
         return False
 
+def solution_written(solution):
+    solution.problem.solutions.append(solution)
+    solution.problem.save()
+    
+    solution.author.problems_solution_written.append(problem)
+    solution.author.karma+=parameters.karma_solution_written
+    solution.author.save()
+
+def commented_solution(comment):
+    comment.parent_solution.discussion.append(comment)
+    comment.parent_solution.save()
+
+    if comment.author is not comment.parent_solution.author:
+        comment.author.karma+=parameters.karma_commented_solution
+
+
+
+# PASSIVE EVENTS
 def do_events_after_voting(solution):
     (old_status,solution)=update_status(solution)
 

@@ -101,6 +101,9 @@ class Comment(db.Document):
     date = db.DateTimeField(default=datetime.datetime.now)
     author= db.ReferenceField('User')
 
+    def save(self, *args, **kwargs):
+        super(Comment, self).save(*args, **kwargs)
+
     meta = {'allow_inheritance': True}
 
 class CommentToSolution(Comment):    

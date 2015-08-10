@@ -206,8 +206,9 @@ def problem(problem_set_slug,prob_id):
                 author=g.user,
                 parent_solution=parent_solution)
             comment.save()
-            parent_solution.discussion.append(comment)
-            parent_solution.save()
+
+            events.commented_solution(comment)
+            
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem.id))
@@ -225,10 +226,8 @@ def problem(problem_set_slug,prob_id):
                         problem_set=problem_set,
                         image_url=image_url)
         solution.save()
-        problem.solutions.append(solution)
-        problem.save()
-        g.user.problems_solution_written.append(problem)
-        g.user.save()
+        events.solution_written(solution)
+        
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem['id']))
@@ -309,8 +308,8 @@ def check():
                 author=g.user,
                 parent_solution=parent_solution)
             comment.save()
-            parent_solution.discussion.append(comment)
-            parent_solution.save()
+            events.commented_solution(comment)
+            
         return redirect(url_for('.check'))
 
 
@@ -335,8 +334,7 @@ def my_solutions():
                 author=g.user,
                 parent_solution=parent_solution)
             comment.save()
-            parent_solution.discussion.append(comment)
-            parent_solution.save()
+            events.commented_solution(comment)
         return redirect(url_for('.my_solutions'))
 
     edit_solution_form=EditSolutionForm()
