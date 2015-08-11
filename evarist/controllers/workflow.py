@@ -185,7 +185,6 @@ def problem(problem_set_slug,prob_id):
 
     general_comment_form=CommentForm()
     if general_comment_form.validate_on_submit():
-
         comment=CommentToContent_block(text=general_comment_form.text.data,
                                         author=g.user,
                                         parent_content_block=problem)
@@ -203,7 +202,7 @@ def problem(problem_set_slug,prob_id):
         if events.vote(g.user,voted_solution,vote_form.vote.data):
             events.do_events_after_voting(voted_solution)
         else:
-            flash('It turns out you already voted for this solution, sorry for the wrong data on the page.')
+            flash('It turns out you already voted for this solution.')
 
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
@@ -211,14 +210,13 @@ def problem(problem_set_slug,prob_id):
 
     solution_comment_form=FeedbackToSolutionForm()
     if solution_comment_form.validate_on_submit():
-        if solution_comment_form.feedback_to_solution.data:
-            parent_solution=Solution.objects(id=ObjectId(request.args['sol_id'])).first()
-            comment=CommentToSolution(text=solution_comment_form.feedback_to_solution.data,
-                author=g.user,
-                parent_solution=parent_solution)
-            comment.save()
+        parent_solution=Solution.objects(id=ObjectId(request.args['sol_id'])).first()
+        comment=CommentToSolution(text=solution_comment_form.feedback_to_solution.data,
+            author=g.user,
+            parent_solution=parent_solution)
+        comment.save()
 
-            events.commented_solution(comment)
+        events.commented_solution(comment)
             
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
@@ -313,13 +311,12 @@ def check():
 
     solution_comment_form=FeedbackToSolutionForm()
     if solution_comment_form.validate_on_submit():
-        if solution_comment_form.feedback_to_solution.data:
-            parent_solution=Solution.objects(id=ObjectId(request.args['sol_id'])).first()
-            comment=CommentToSolution(text=solution_comment_form.feedback_to_solution.data,
-                author=g.user,
-                parent_solution=parent_solution)
-            comment.save()
-            events.commented_solution(comment)
+        parent_solution=Solution.objects(id=ObjectId(request.args['sol_id'])).first()
+        comment=CommentToSolution(text=solution_comment_form.feedback_to_solution.data,
+            author=g.user,
+            parent_solution=parent_solution)
+        comment.save()
+        events.commented_solution(comment)
 
         return redirect(url_for('.check'))
 
@@ -339,13 +336,12 @@ def my_solutions():
     (not_checked_sols,checked_sols)=solution_filters.get_solutions_for_my_solutions_page(g.user)
     solution_comment_form=FeedbackToSolutionForm()
     if solution_comment_form.validate_on_submit():
-        if solution_comment_form.feedback_to_solution.data:
-            parent_solution=Solution.objects(id=ObjectId(request.args['sol_id'])).first()
-            comment=CommentToSolution(text=solution_comment_form.feedback_to_solution.data,
-                author=g.user,
-                parent_solution=parent_solution)
-            comment.save()
-            events.commented_solution(comment)
+        parent_solution=Solution.objects(id=ObjectId(request.args['sol_id'])).first()
+        comment=CommentToSolution(text=solution_comment_form.feedback_to_solution.data,
+            author=g.user,
+            parent_solution=parent_solution)
+        comment.save()
+        events.commented_solution(comment)
         return redirect(url_for('.my_solutions'))
 
     edit_solution_form=EditSolutionForm()
