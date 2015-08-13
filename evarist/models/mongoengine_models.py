@@ -127,9 +127,6 @@ class Solution(Comment):
     users_downvoted=db.ListField(db.ReferenceField('User'))
 
 
-
-
-
 # collection for subscribed users
 class Subscribed_user(db.Document):
     email = db.StringField(required=True, unique=True, max_length=256)

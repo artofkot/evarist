@@ -5,7 +5,9 @@
     {% if content_block.type_=='problem' %} Задача
     {% elif content_block.type_=='definition' %} ∆ Определение {%endif%}
     {% if number %} {{number}} {%endif%}.
+    <!-- {% if name %} {{name}} {%endif%}. -->
   </h4>
+  <!-- <em>{%for tag in content_block.tags%} {{tag}} {%endfor%}</em> -->
   <p>
     {{content_block['text']|safe}}
   </p>
@@ -13,3 +15,22 @@
 
 
 {%- endmacro %}
+
+
+<!-- 
+class Content_block(db.Document):
+    text = db.StringField()
+    date = db.DateTimeField(default=datetime.datetime.now)
+    tags= db.ListField(db.StringField(max_length=128))
+    
+    problem_set= db.ReferenceField('Problem_set')
+    author= db.ReferenceField('User')
+    general_discussion=db.ListField(db.ReferenceField('Comment'))
+    number_in_problem_set=db.IntField()
+
+    type_ = db.StringField(max_length=64, default='problem', choices=('problem', 'definition', 'general_content_block'))
+    solutions=db.ListField(db.ReferenceField('Solution'))
+
+    meta = {'allow_inheritance': True}
+    old_id = db.StringField()
+-->
