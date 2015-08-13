@@ -3,17 +3,6 @@
     <script type='text/javascript' src='static/vendor/jQuery-Plugin-For-Particle-System-Background-with-Parallax-Effect-Particleground/jquery.particleground.js'></script>
 
     <script type='text/javascript' src='static/js/particles.js'></script>
-
-    <!--
-    <script>var __v='barc-user-artofkot';</script>
-    <script type="text/javascript">
-        (function(d) {
-            var b = d.createElement("script"); b.type = "text/javascript"; b.async = true;
-            b.src = ("https:" == d.location.protocol ? "https" : "http") + "://barc.com/js/libs/barc/barc.js";
-            var s = d.getElementsByTagName("script")[0]; s.parentNode.insertBefore(b, s);
-        })(document);
-    </script>
-    -->
               
 
 
@@ -76,32 +65,5 @@
     </div>
   </div>
 
-  <hr>
-  
-  <div style='height:150px'></div>
-
-  <div class="row"> 
-    <div class="col-md-6 col-md-offset-3">
-        <form action=" {{url_for('workflow.home')}}" method="post">
-          <div class="form-group" >
-            {{ website_feedback_form.hidden_tag() }}
-
-            <label for="feedback">  <strong> Что скажете? </strong> </label>
-            <textarea class="form-control" rows="5"  name='feedback'></textarea>
-            
-            {% if not g.user%}
-              {{website_feedback_form.email.label('Ваш email (необязательно)')}}
-              <!-- oh my fucking god, u can do this -->
-              {{website_feedback_form.email(class='form-control')}}
-              <!-- instead of this -->
-              <!-- <input type="text" class="form-control" name="email"> -->
-            {%endif%}
-          
-          </div>
-          <button type="submit" class="btn btn-default">Отправить</button>
-        </form>
-    </div>
-  </div>
-  <hr>
 
 {% endblock %}

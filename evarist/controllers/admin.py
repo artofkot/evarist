@@ -9,6 +9,8 @@ from contextlib import closing
 from functools import wraps
 from evarist.forms import ProblemSetForm, Content_blockForm, EditContent_blockForm, ProblemSetDelete, VoteForm, FeedbackToSolutionForm, EditCommentForm
 from evarist.models.mongoengine_models import *
+from evarist.models import (events,
+                            parameters, criteria)
 
 
 admin = Blueprint('admin', __name__,
@@ -34,31 +36,12 @@ def admin_required(f):
 @admin_required
 def db():
     if current_app.debug==False: return redirect(url_for('workflow.home'))
-    #####
+
     count1=0
     count2=0
     count3=0
-
-    old_posts=g.db.posts.find()
-    for old_post in old_posts:
-        old_author=g.db.users.find_one({'_id':old_post['author_id']})
-        old_solution=g.db.solutions.find_one({'_id':old_post['parent_id']})
-        if old_author and old_solution: author=User.objects(email=old_author.get('email')).first()
-        else:
-            print 'AAAAAA %s' % old_post['text']
-            continue
-        parent_solution=Solution.objects(text=old_solution['text']).first()    
-        count1+=1
-        # try:
-        #     comment=CommentToSolution(text=old_post['text'],
-        #                     author=author,
-        #                     parent_solution=parent_solution)
-        #     comment.save()
-        #     parent_solution.discussion.append(comment)
-        #     parent_solution.save()
-        #     count3+=1
-        # except: count2+=1
-            
+    
+    # (count1,count2,count3)=parameters.recount_all_users_karma()        
 
     return '%d %d %d' % (count1,count2,count3)
 
@@ -193,8 +176,7 @@ def users():
 @admin.route('/admin/comments/', methods=["GET", "POST"])
 @admin_required
 def comments():
-    comments=Comment.objects()
-
+    
     edit_comment_form=EditCommentForm()
     if edit_comment_form.validate_on_submit():
         comment=Comment.objects(id=ObjectId(request.args['comment_id'])).first()
@@ -206,8 +188,8 @@ def comments():
             comment.save()
         return redirect(url_for('admin.comments'))
    
-    solutions=Solution.objects()
-    comments=Comment.objects(_cls__ne='Comment.Solution')
+    solutions=Solution.objects().order_by('-date')
+    comments=Comment.objects(_cls__ne='Comment.Solution').order_by('-date')
 
     return render_template('admin/comments.html',
                             edit_comment_form=edit_comment_form, 

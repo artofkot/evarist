@@ -29,7 +29,7 @@
           </div>
 
           <!-- solution -->
-          {{solution_macros.solution(solution=solution,inscription=gettext('Решение от <strong>%(author)s</strong>', author = solution['author']['username']))}}
+          {{solution_macros.solution(solution=solution,inscription=gettext('Решение от <strong>%(author)s</strong>', author = solution['author']))}}
 
 
           <!-- votes + form for voting-->
@@ -98,7 +98,7 @@
           </div>
 
           <!-- solution -->
-          {{solution_macros.solution(solution=solution,inscription=gettext('Решение от <strong>%(author)s</strong>', author = solution['author']['username']))}}
+          {{solution_macros.solution(solution=solution,inscription=gettext('Решение от <strong>%(author)s</strong>', author = solution['author']))}}
 
           <!-- votes + form for voting-->
           <div class='row'>
