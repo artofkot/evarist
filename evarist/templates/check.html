@@ -20,9 +20,9 @@
     <div class="col-md-6 col-md-offset-0">
       <h3>Непроверенные задачи:</h3>
       {%for solution in not_checked_solutions%}
-          <!-- solutions text, and the name of problem set -->
+          <!-- solutions text, and a link to problem set -->
           <div>
-            <h5>{{solution.problem_set['title']|safe}}</h5> 
+            <a href="/problem_sets/{{solution.problem_set['slug']}}">{{solution.problem_set['title']|safe}}</a> 
             <p>
               {{solution.problem['text']|safe}}
             </p>
@@ -89,9 +89,9 @@
     <div class="col-md-6 col-md-offset-0">
       <h3>Проверенные задачи:</h3>
       {%for solution in checked_solutions%}
-          <!-- solutions text, and the name of problem set -->
+          <!-- solutions text, and a link to problem set -->
           <div>
-            <h5>{{solution.problem_set['title']|safe}}</h5> 
+            <a href="/problem_sets/{{solution.problem_set['slug']}}">{{solution.problem_set['title']|safe}}</a> 
             <p>
               {{solution.problem['text']|safe}}
             </p>
