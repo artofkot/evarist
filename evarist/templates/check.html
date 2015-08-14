@@ -22,7 +22,8 @@
       {%for solution in not_checked_solutions%}
           <!-- solutions text, and a link to problem set -->
           <div>
-            <a href="/problem_sets/{{solution.problem_set['slug']}}">{{solution.problem_set['title']|safe}}</a> 
+            <a href="/problem_sets/{{solution.problem_set['slug']}}">{{solution.problem_set['title']|safe}}</a>.
+            <a href="/problem_sets/{{solution.problem_set['slug']}}/problem/{{solution.problem.id}}">Задача {{solution.problem.number_in_problem_set}}</a>.
             <p>
               {{solution.problem['text']|safe}}
             </p>
