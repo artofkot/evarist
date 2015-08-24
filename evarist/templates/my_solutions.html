@@ -22,9 +22,9 @@
       {%for solution in not_checked_solutions%}
           <!-- solutions text, and the name of problem set -->
           <div>
+            <a href="/problem_sets/{{solution.problem_set['slug']}}">{{solution.problem_set['title']|safe}}</a>.
+            <a href="/problem_sets/{{solution.problem_set['slug']}}/problem/{{solution.problem.id}}">Задача {{solution.problem.number_in_problem_set}}</a>.
             <p>
-              <em>{{solution.problem_set['title']|safe}}</em> 
-              <br>
               {{solution.problem['text']|safe}}
             </p>
           </div>
@@ -78,9 +78,9 @@
       {%for solution in checked_solutions%}
           <!-- solutions text, and the name of problem set -->
           <div>
+            <a href="/problem_sets/{{solution.problem_set['slug']}}">{{solution.problem_set['title']|safe}}</a>.
+            <a href="/problem_sets/{{solution.problem_set['slug']}}/problem/{{solution.problem.id}}">Задача {{solution.problem.number_in_problem_set}}</a>.
             <p>
-              <em>{{solution.problem_set['title']|safe}}</em> 
-              <br>
               {{solution.problem['text']|safe}}
             </p>
           </div>
