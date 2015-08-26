@@ -36,7 +36,7 @@
   <div class="row">
     <div class="col-md-5 col-md-offset-2">
       <p class="lead">
-        <h3> Изучить: </h3>
+        <h3> Курс по матанализу 57 школы. </h3>
         <ol style='list-style-type:none'>
           {%for problem_set in problem_sets%}
             <li>
@@ -47,6 +47,7 @@
       </p>
     </div>
     <div class="col-md-3">
+      <div style='height:45px'></div>
       <p><a href="{{url_for('workflow.problem_set', problem_set_slug=solution_examples_pset['slug'])}}">
         Посмотреть примеры правильных решений
       </a></p>
