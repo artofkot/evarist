@@ -1,7 +1,7 @@
 {% macro edit_solution_form(solution) -%}
-  <div class="form-group" style='width: 370px'>
+  <div class="form-group">
     <label for="edit_text">Исправьте решение здесь: </label>
-    <textarea class="form-control" rows="2"  name='edited_solution'>{{solution.text}}  
+    <textarea class="form-control" rows="8"  name='edited_solution'>{{solution.text}}  
     </textarea>
     
     <div class="checkbox" style='background-color:red'>
@@ -54,7 +54,7 @@
 {% macro solution_form(name_of_textarea, name_of_the_button) -%}
   <div class="form-group" >
     <!-- <label for="feedback_to_solution">  <strong> Комментировать: </strong> </label> -->
-    <textarea class="form-control" rows="2"  name='{{name_of_textarea}}'></textarea>
+    <textarea class="form-control" rows="8"  name='{{name_of_textarea}}'></textarea>
     <input type="file" name="image">
   </div>
   <button type="submit" class="btn btn-default"><!-- Отправить -->{{name_of_the_button}}</button>

@@ -121,6 +121,10 @@
                   <li> <a href="{{ url_for('workflow.home') }}">{{g.user | safe}} </a></li>
                   <li><a href="{{ url_for('user.logout') }}">Log out</a></li>
                 {% endif%}
+
+                {% if g.user and g.user.rights.is_moderator%}
+                  <li><a href="{{url_for('admin.home')}}">[admin interface]</a></li>
+                {%endif%}
               </ul>
 
             </div>

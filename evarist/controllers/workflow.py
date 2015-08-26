@@ -97,7 +97,12 @@ def about():
     return render_template('about.html',
         upvote_correctness_threshold=upvote_correctness_threshold)
 
-@workflow.route('/contact',methods=["GET", "POST"])
+@workflow.route('/faq')
+def faq():
+    return render_template('faq.html')
+
+
+@workflow.route('/contact', methods=["GET", "POST"])
 def contact():
     website_feedback_form=WebsiteFeedbackForm()
     if website_feedback_form.validate_on_submit():
