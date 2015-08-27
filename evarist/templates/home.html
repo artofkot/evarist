@@ -5,7 +5,6 @@
     <script type='text/javascript' src='static/js/particles.js'></script>
               
 
-
 {% endblock %}
 {% block body %}
 
@@ -64,12 +63,12 @@
         <h2 class="page-header text-center">Курсы</h2>
       </div> -->
       <div class="col-md-4 col-md-offset-2">
-        <div class="panel panel-default transparent-back text-center">
-          <div class="panel-heading transparent-back">
-            <h3>Курс по математическому <br> анализу  57ой школы</h3>
+        <div class="panel panel-default" id='matan-course-panel'>
+          <div class="panel-heading">
+            <h3>Математический анализ.</h3>
           </div>
 
-          <div class="panel-body transparent-back">
+          <div class="panel-body">
               <ol style='list-style-type:none'>
                 {%for problem_set in problem_sets%}
                   <li>
@@ -81,21 +80,50 @@
         </div>
       </div>
       
-      <div class="col-md-4">
-        <div class="list-group">
-          <a href="{{url_for('workflow.problem_set',problem_set_slug=solution_examples_pset['slug'])}}" class="list-group-item transparent-back">
+
+
+      <div class="col-md-3 col-md-offset-1">
+        <div class="panel panel-default" id='useful-links-homepage'>
+          <div class="panel-heading">
+            <h3>Полезные ссылки.</h3>
+          </div>
+
+          <div class="panel-body">
+              <ol style='list-style-type:none'>
+                <li>
+                  <p><a href="{{url_for('workflow.problem_set',problem_set_slug=solution_examples_pset['slug'])}}">
+                  Посмотреть примеры правильных решений
+                  </a></p>
+                </li>
+                <li>
+                  <p><a href="{{url_for('workflow.users')}}">Топ 10 пользователей</a></p>
+                </li>
+                {% if g.user%}
+                <li>
+                  <p><a href="{{url_for('workflow.my_solutions')}}">Ваши решения</a></p>
+                </li>
+                <li>
+                  <p><a href="{{url_for('workflow.check')}}">Cмотреть чужие решения</a></p>
+                </li>
+                {%endif%}
+              </ol>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- <div class="col-md-3">
+        <div class="list-group" id='homepage-dashboard-links'>
+          <a href="{{url_for('workflow.problem_set',problem_set_slug=solution_examples_pset['slug'])}}" class="list-group-item">
             Посмотреть примеры правильных решений
           </a>
           {% if g.user%}
-            <a href="{{url_for('workflow.my_solutions')}}" class="list-group-item transparent-back">Ваши решения</a>
-            <a href="{{url_for('workflow.check')}}" class="list-group-item transparent-back">Cмотреть чужие решения</a>
-            <a href="{{url_for('workflow.users')}}" class="list-group-item transparent-back">Топ 10 пользователей</a>
+            <a href="{{url_for('workflow.my_solutions')}}" class="list-group-item">Ваши решения</a>
+            <a href="{{url_for('workflow.check')}}" class="list-group-item">Cмотреть чужие решения</a>
+            <a href="{{url_for('workflow.users')}}" class="list-group-item">Топ 10 пользователей</a>
           {%endif%}
         </div>
-        
-
-
-      </div>
+      </div> -->
 
 
 
