@@ -12,7 +12,10 @@
       <div style='height:20px'></div>
       
 
-      <h4>{{problem_set['title']}} ( {{problem_set['status']}} mode )</h4>
+      <h4>{{problem_set['title']}} ( {{problem_set['status']}} status )</h4>
+      {% if problem_set.status!='dev' %}
+      <p>Ссылка, работающая не только у администраторов: <br> <a href="http://www.evarist.org/problem_sets/{{problem_set.slug}}">http://www.evarist.org/problem_sets/{{problem_set.slug}}</a></p>
+      {% endif %}
         
 
 

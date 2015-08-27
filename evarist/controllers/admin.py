@@ -163,6 +163,10 @@ def problem_set_edit(problem_set_slug):
 
 
 
+@admin.route('/admin/guide', methods=["GET", "POST"])
+# @admin_required
+def guide():
+    return render_template("admin/guide.html")
 
 
 @admin.route('/admin/users', methods=["GET", "POST"])

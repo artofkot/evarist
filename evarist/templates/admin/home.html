@@ -6,14 +6,14 @@
 
   <div class="row">
     <div class="col-md-6 col-md-offset-3">
-      <a href="{{url_for('admin.users')}}">Users</a>
+      <a href="{{url_for('admin.guide')}}">Guide for content creators</a>
       <br>
       <a href="{{url_for('admin.comments')}}">CRUD comments (solutions, comments to solutions, to problems, feedbacks, ...)</a>
       <br>
 
       <dl>
         <dt>Problem sets:</dt>
-        <dd> <b> production mode </b></dd>
+        <dd> <b> production status </b></dd>
         {%for problem_set in problem_sets_production%}
           <dd>
             <a href="{{url_for('.problem_set_edit',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a> 
@@ -21,7 +21,7 @@
           </dd>
         {% endfor %}
         <hr>
-        <dd> <b>stage mode </b></dd>
+        <dd> <b>stage status </b></dd>
         {%for problem_set in problem_sets_stage%}
           <dd>
             <a href="{{url_for('.problem_set_edit',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a> 
@@ -29,7 +29,7 @@
           </dd>
         {% endfor %}
         <hr>
-        <dd> <b> dev mode </b></dd>
+        <dd> <b> dev status </b></dd>
         {%for problem_set in problem_sets_dev%}
           <dd>
             <a href="{{url_for('.problem_set_edit',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a> 
