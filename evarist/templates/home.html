@@ -98,12 +98,17 @@
                 <li>
                   <p><a href="{{url_for('workflow.users')}}">Топ 10 пользователей</a></p>
                 </li>
+
                 {% if g.user%}
                 <li>
                   <p><a href="{{url_for('workflow.my_solutions')}}">Ваши решения</a></p>
                 </li>
                 <li>
                   <p><a href="{{url_for('workflow.check')}}">Cмотреть чужие решения</a></p>
+                </li>
+                {% else %}
+                <li>
+                  <p><a href="{{url_for('user.login')}}">Зарегистрироваться (чтобы посылать решения)</a></p>
                 </li>
                 {%endif%}
               </ol>

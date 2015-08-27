@@ -77,7 +77,6 @@ def home():
 
 
 @workflow.route('/users', methods=["GET", "POST"])    
-@admin_required
 def users():
     users=User.objects().order_by('-karma')
 
