@@ -19,6 +19,6 @@ how everything works on the website.
 
 
 ------------------------------------------
-*Contacts:*
-* Alexey Levin, alexej.levin@gmail.com
+_Contacts:_
+* Alexey Levin, lvn@bu.edu
 * Artem Kotelskiy, artemk@math.princeton.edu
