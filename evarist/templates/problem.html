@@ -9,29 +9,53 @@
 {% endblock %}
 {% block body %}
 
+
   <div class="row">
-    <div class="col-md-6 col-md-offset-2">
+    <div class="col-md-8 col-md-offset-1">
       <a href="{{url_for('workflow.problem_set',problem_set_slug=problem_set_slug)}}">Обратно к уроку "{{problem.problem_set.title}}"</a>
     </div>
-  </div>
+  </div>  
+
   <div style='height:20px'></div>
+  <hr>
+
+  <div class="row">
+    <div class="col-md-6 col-md-offset-1">
+        {{content_block_macros.content_block(problem, number=problem.number_in_problem_set, type_="problem")}}
+    </div>
+
+    <div class="col-md-3 col-md-offset-1">
+      {% if g.user or problem.general_discussion %}
+        <button class="btn btn-default" type="button" data-toggle="collapse" data-target="#questions" aria-expanded="false" aria-controls="questions">
+          Вопросы по условию
+        </button>
+        <div class="collapse" id="questions">
+          <!-- displaying old comments if they exist -->
+          {% for comment in problem.general_discussion %}
+            {{ comment_macros.comment(comment) }}
+          {% endfor %}
+          
+          <!-- comment form -->
+          {% if g.user %}
+          <p>
+            <form action=" {{url_for('workflow.problem', problem_set_slug=problem_set_slug, prob_id=problem['id'])}}" method="post" >
+              {{ general_comment_form.hidden_tag() }}
+              {{ form_macros.comment_form(name_of_textarea="text",name_of_the_button="Отправить") }}
+            </form>
+          </p>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </div>  
 
   <hr>
 
   <div class="row">
-    <div class="col-md-6 col-md-offset-2">
-        {{content_block_macros.content_block(problem, number=problem.number_in_problem_set, type_="problem")}}
-    </div>
-  </div>  
-
-
-  <div class="row">
-    
-    <div class="col-md-5 col-md-offset-2">
-      {% if g.user %}  
-        
+    {% if g.user %}  
+      <div class="col-md-5 col-md-offset-1">
         <!-- this part is related to solution of logged in user -->
-        {% if not current_user_solution %}
+        {% if not current_user_solutions %}
           <strong class="text-center"> Ваше решение </strong>
           <!-- this is form for writing solution -->
           <form action=" {{url_for('workflow.problem', problem_set_slug=problem_set_slug, prob_id=problem['id'])}}" method="post" enctype="multipart/form-data">
@@ -39,39 +63,58 @@
             {{ form_macros.solution_form(name_of_textarea="solution",name_of_the_button="Отправить") }}
           </form>
 
-        {% elif current_user_solution%}
-          <!-- if solution is already written, it is displayed -->
-          {{solution_macros.solution(solution=current_user_solution, inscription="Ваше решение.")}}     
-          {{solution_macros.display_votes(current_user_solution)}}
-          
-          <!-- edit solution form -->
-          <button class="btn btn-default" type="button" data-toggle="collapse" data-target="#collapsId" aria-expanded="false" aria-controls="collapsId">
-            Исправить решение
+        {% elif current_user_solutions%}
+          <button class="btn btn-default" type="button" data-toggle="collapse" data-target="#solution_form" aria-expanded="false" aria-controls="solution_form">
+            Отправить новое решение
           </button>
-          <div class="collapse" id="collapsId">
-            <form action=" {{url_for('workflow.problem', problem_set_slug=problem_set_slug, prob_id=problem['id'])}}" method="post">
-              {{ edit_solution_form.hidden_tag() }}
-              {{form_macros.edit_solution_form(current_user_solution)}}
+
+          <div class="collapse" id="solution_form">
+
+            <strong class="text-center"> Ваше решение </strong>
+            <!-- this is form for writing solution -->
+            <form action=" {{url_for('workflow.problem', problem_set_slug=problem_set_slug, prob_id=problem['id'])}}" method="post" enctype="multipart/form-data">
+              {{ solution_form.hidden_tag() }}
+              {{ form_macros.solution_form(name_of_textarea="solution",name_of_the_button="Отправить") }}
             </form>
-          </div>
-
-          <div style="height:15px"></div>
-
-          <!-- comment form -->
-          <form action=" {{url_for('workflow.problem', problem_set_slug=problem_set_slug, prob_id=problem['id'], sol_id=current_user_solution['id'])}}" method="post">
-            {{ solution_comment_form.hidden_tag() }}
-            {{ form_macros.comment_form(name_of_textarea="feedback_to_solution",name_of_the_button="Оставить комментарий") }}
-          </form>
+           </div> 
           
-          <!-- displaying existing comments -->
-          {% for comment in current_user_solution['discussion'] | reverse %}
-            {{ comment_macros.comment(comment) }}
+          <br>
+          <br>
+          
+          {% for current_solution in current_user_solutions%}
+            {{solution_macros.solution(solution=current_solution, inscription="Ваше решение.")}}     
+            {{solution_macros.display_votes(current_solution)}}
+            
+            <!-- edit solution form -->
+            <button class="btn btn-default" type="button" data-toggle="collapse" data-target="#solution_edit_{{loop.index}}" aria-expanded="false" aria-controls="solution_edit_{{loop.index}}">
+              Исправить решение
+            </button>
+            <div class="collapse" id="solution_edit_{{loop.index}}">
+              <form action=" {{url_for('workflow.problem', problem_set_slug=problem_set_slug, prob_id=problem['id'], sol_id=current_solution.id)}}" method="post">
+                {{ edit_solution_form.hidden_tag() }}
+                {{form_macros.edit_solution_form(current_solution)}}
+              </form>
+            </div>
+
+            <div style="height:15px"></div>
+
+            <!-- comment form -->
+            <form action=" {{url_for('workflow.problem', problem_set_slug=problem_set_slug, prob_id=problem['id'], sol_id=current_solution['id'])}}" method="post">
+              {{ solution_comment_form.hidden_tag() }}
+              {{ form_macros.comment_form(name_of_textarea="feedback_to_solution",name_of_the_button="Оставить комментарий") }}
+            </form>
+            
+            <!-- displaying existing comments -->
+            {% for comment in current_solution['discussion'] | reverse %}
+              {{ comment_macros.comment(comment) }}
+            {% endfor %}
           {% endfor %}
-        {%endif%}
-        
+        {% endif %}
+      </div>
+      <div class="col-md-5">
         <!-- this part is related to other solutions, that logged in user can see/vote/comment on -->
-        {%if other_solutions%}
-          {%for solution in other_solutions%}
+        {% if other_solutions %}
+          {% for solution in other_solutions %}
 
             {{solution_macros.solution(solution=solution,inscription=gettext('Решение от %(user)s', user = solution['author']))}}       
             
@@ -121,38 +164,15 @@
             </div>
             <hr>
 
-          {%endfor%}
-        {%endif%}
-  
-      {% else %}
+          {% endfor %}
+        {% endif %}
+      </div>
+
+    {% else %}
       <p>
         Чтобы послать решение задачи на проверку, или задать вопрос по условию, <a href="{{url_for('user.login')}}">войдите</a>. 
       </p>
-      {% endif %}
-    </div>
-
-
-    <div class="col-md-3 col-md-offset-2">
-      <strong> Вопросы по условию </strong>
-      
-      <!-- comment form -->
-      {% if g.user %}
-      <p>
-        <form action=" {{url_for('workflow.problem', problem_set_slug=problem_set_slug, prob_id=problem['id'])}}" method="post" >
-          {{ general_comment_form.hidden_tag() }}
-          {{ form_macros.comment_form(name_of_textarea="text",name_of_the_button="Отправить") }}
-        </form>
-      </p>
-      {% endif %}
-
-      <!-- displaying old comments if they exist -->
-      {% for comment in problem.general_discussion | reverse %}
-        {{ comment_macros.comment(comment) }}
-      {% endfor %}
-      
-    </div>
-
-
+    {% endif %}
   </div>  
 
 

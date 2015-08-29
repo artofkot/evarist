@@ -179,13 +179,8 @@ def problem(problem_set_slug,prob_id):
         flash('This problem set is not ready yet.')
         return redirect(url_for('.home'))
 
-    # get the current_user_solution, if its written
-    try: 
-        current_user_solution= next(sol for sol in problem['solutions'] if sol.author.id==getattr(g.user,'id',None))
-    except StopIteration: 
-        current_user_solution={}
-
-
+    # get the current_user_solutions, if its written
+    current_user_solutions=[sol for sol in problem.solutions if sol.author==g.user]
 
     general_comment_form=CommentForm()
     if general_comment_form.validate_on_submit():
@@ -247,12 +242,13 @@ def problem(problem_set_slug,prob_id):
 
     edit_solution_form=EditSolutionForm()
     if edit_solution_form.validate_on_submit():
+        solution=Solution.objects(id=ObjectId(request.args['sol_id'])).first()
         if edit_solution_form.delete_solution.data:
-            current_user_solution.delete()
+            solution.delete()
         else:
-            current_user_solution.text=edit_solution_form.edited_solution.data
-            current_user_solution.date=datetime.datetime.utcnow()
-            current_user_solution.save()
+            solution.text=edit_solution_form.edited_solution.data
+            solution.date=datetime.datetime.utcnow()
+            solution.save()
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem['id']))
@@ -265,7 +261,7 @@ def problem(problem_set_slug,prob_id):
     if g.user:
         other_solutions=solution_filters.get_other_solutions_on_problem_page(user=g.user,
                                                         problem=problem,
-                                                        current_solution=current_user_solution)
+                                                        current_solutions=current_user_solutions)
 
     return render_template('problem.html', 
                             problem_set_slug=problem_set_slug, 
@@ -276,7 +272,7 @@ def problem(problem_set_slug,prob_id):
                             edit_solution_form=edit_solution_form,
                             vote_form=vote_form,
                             other_solutions=other_solutions,
-                            current_user_solution=current_user_solution)
+                            current_user_solutions=current_user_solutions)
 
 
 @workflow.route('/check', methods=["GET", "POST"])

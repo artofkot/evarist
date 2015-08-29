@@ -2,17 +2,16 @@
 from mongoengine_models import *
 import problem_set_filters
 
-def get_other_solutions_on_problem_page(user,current_solution,problem):
+def get_other_solutions_on_problem_page(user,current_solutions,problem):
     other_solutions=[]
     if not (problem in user['problems_can_see_other_solutions']
             or user['rights']['is_moderator'] 
             or user['rights']['is_checker']):
         return other_solutions
 
-    other_solutions=problem['solutions']
+    all_other_solutions=problem['solutions']
 
-    if current_solution in problem['solutions']:
-        other_solutions.remove(current_solution)
+    other_solutions=list(set(all_other_solutions) - set(current_solutions))
     
     other_solutions.sort(key=lambda x: x.date,reverse=True)  
     
