@@ -246,15 +246,18 @@ def problem(problem_set_slug,prob_id):
         if edit_solution_form.delete_solution.data:
             solution.delete()
         else:
-            # file=request.files[edit_solution_form.edit_image.name]
-            # image_url=solution.image_url
-            # if file:
-            #     upload_result = upload(file)
-            #     image_url=upload_result['url'] 
+            file=request.files[edit_solution_form.edit_image.name]
+            if edit_solution_form.use_old_image.data:
+                image_url=solution.image_url
+            else: image_url=None
+            if file:
+                upload_result = upload(file)
+                image_url=upload_result['url'] 
             new_solution=Solution(text=edit_solution_form.edited_solution.data,
                             author=g.user,
                             problem=problem,
-                            problem_set=problem_set)
+                            problem_set=problem_set,
+                            image_url=image_url)
             new_solution.save()
             events.solution_written(new_solution)
 
@@ -367,15 +370,18 @@ def my_solutions():
         if edit_solution_form.delete_solution.data:
             solution.delete()
         else:
-            # file=request.files[edit_solution_form.edit_image.name]
-            # image_url=solution.image_url
-            # if file:
-            #     upload_result = upload(file)
-            #     image_url=upload_result['url'] 
+            file=request.files[edit_solution_form.edit_image.name]
+            if edit_solution_form.use_old_image.data:
+                image_url=solution.image_url
+            else: image_url=None
+            if file:
+                upload_result = upload(file)
+                image_url=upload_result['url'] 
             new_solution=Solution(text=edit_solution_form.edited_solution.data,
                             author=g.user,
                             problem=solution.problem,
-                            problem_set=solution.problem_set)
+                            problem_set=solution.problem_set,
+                            image_url=image_url)
             new_solution.save()
             events.solution_written(new_solution)
 

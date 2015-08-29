@@ -42,8 +42,17 @@ class SolutionForm(Form):
         return result
 
 class EditSolutionForm(Form):
-    edited_solution = TextField('edited_solution', validators=[Required()])
+    use_old_image=BooleanField('use_old_image')
+    edit_image = FileField('edit_image')
+    edited_solution = TextField('edited_solution')
     delete_solution=BooleanField('delete_solution')
+    def validate(self):
+        result=True
+        if not Form.validate(self):
+            return False
+        if not (self.edit_image.data or self.edited_solution.data):
+            return False
+        return result
 
 class SignUpForm(Form):
     email = TextField('email', validators=[Required(), Email()])

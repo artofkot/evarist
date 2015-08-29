@@ -46,7 +46,7 @@
             Исправить решение
           </button>
           <div class="collapse" id="collapse_Id_edit_{{loop.index}}">
-            <form action=" {{url_for('workflow.my_solutions', sol_id=solution.id)}}" method="post">
+            <form action=" {{url_for('workflow.my_solutions', sol_id=solution.id)}}" method="post" enctype="multipart/form-data">
               {{ edit_solution_form.hidden_tag() }}
               {{form_macros.edit_solution_form(solution)}}
             </form>
