@@ -10,7 +10,8 @@ from functools import wraps
 from evarist.forms import (ProblemSetForm, Content_blockForm, 
                         EditContent_blockForm, ProblemSetDelete, 
                         VoteForm, FeedbackToSolutionForm, 
-                        EditCommentForm, CourseForm, AddPsetForm)
+                        EditCommentForm, CourseForm, AddPsetForm,
+                        EditCourseForm)
 from evarist.models.mongoengine_models import *
 from evarist.models import (events,
                             parameters, criteria)
@@ -96,6 +97,22 @@ def home():
             flash('Need a different name and/or slug.')
         return redirect(url_for('admin.home'))
 
+    edit_course_form=EditCourseForm()
+    if edit_course_form.validate_on_submit():
+        course=Course.objects(id=ObjectId( request.args.get('course_id') )).first()
+        if not course: redirect(url_for('admin.home'))
+        course.name=edit_course_form.edit_name.data
+        course.slug=edit_course_form.edit_slug.data
+        try:
+            course.save()
+            flash('Course was edited')
+        except:
+            flash('you must change the slug or name to other values, which do not exist in our database.')
+        return redirect(url_for('admin.home'))
+
+
+
+
     courses=Course.objects()
 
     problem_sets=Problem_set.objects()
@@ -109,6 +126,7 @@ def home():
     return render_template("admin/home.html", 
                             form=form,
                             course_form=course_form,
+                            edit_course_form=edit_course_form,
                             courses=courses,
                             add_pset_form=add_pset_form,
                             free_psets_to_add_to_courses=free_psets_to_add_to_courses, 
@@ -139,8 +157,7 @@ def problem_set_edit(problem_set_slug):
             flash('Problem_set was edited')
         except: 
             flash('you must change the slug or title to other values, which do not exist in our database.')
-            return redirect(url_for('admin.problem_set_edit',
-                                problem_set_slug=problem_set_slug))
+
 
         return redirect(url_for('admin.problem_set_edit',
                                 problem_set_slug=problem_set.slug))

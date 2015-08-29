@@ -23,7 +23,27 @@
         <div class="panel panel-default">
           <div class="panel-heading">
             <h3><a href="{{url_for('workflow.course', course_slug=course.slug)}}">{{course.name}}</a></h3>
+
+            <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#edit_course" aria-expanded="false" aria-controls="edit_course">
+              Edit name and slug
+            </button>
+            <div class="collapse" id="edit_course">
+              <form action="{{url_for('admin.home',course_id=course.id)}}" method="post">
+                <div class="form-group" style='width: 350px'>
+
+                  {{ edit_course_form.hidden_tag() }}
+                  <label for="title">Edit the name: </label>
+                  <input type="text" class="form-control" name="edit_name" value="{{course.name}}">
+                  
+                  <label for="slug">Edit the slug: </label>
+                  <input type="text" class="form-control" name='edit_slug' value="{{course.slug}}">
+
+                </div>
+                <button type="submit" class="btn btn-default">Submit</button>
+              </form> 
+            </div>
           </div>
+        
 
           <div class="panel-body">
               <ol >
