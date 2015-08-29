@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from mongoengine_models import *
-import problem_set_filters
 
 def get_other_solutions_on_problem_page(user,current_solutions,problem):
     other_solutions=[]
@@ -37,8 +36,7 @@ def get_solutions_for_check_page(user):
     not_checked_sols=[]
     checked_sols=[]
     for solution in solutions:
-        slug=solution.problem_set.slug
-        if not slug in problem_set_filters.slugset:
+        if solution.problem_set.status=='dev':
             continue
         if solution.status =='not_checked' or solution.changed_and_not_checked:
             not_checked_sols.append(solution)

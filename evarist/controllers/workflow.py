@@ -8,8 +8,7 @@ from flask import current_app, Flask, Blueprint, request, session, g, redirect, 
 from contextlib import closing
 from flask.ext.mail import Message
 from functools import wraps
-from evarist.models import (problem_set_filters,
-                            solution_filters, events,
+from evarist.models import (solution_filters, events,
                             parameters)
 from evarist.forms import (WebsiteFeedbackForm, CommentForm, 
                             SolutionForm, FeedbackToSolutionForm, 
