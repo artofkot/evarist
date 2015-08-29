@@ -87,7 +87,15 @@ class CancelVoteForm(Form):
 class ProblemSetForm(Form):
     status= TextField('status')
     title = TextField('title', validators=[Required()])
-    slug = TextField('slug', validators=[Required()]) # validators=[Required()]
+    slug = TextField('slug', validators=[Required()])
+
+class CourseForm(Form):
+    name = TextField('name', validators=[Required()])
+    slug = TextField('slug', validators=[Required()]) 
+
+class AddPsetForm(Form):
+    pset_slug=TextField('pset_slug', validators=[Required()])
+    place_of_pset=TextField('place_of_pset', validators=[Required()])
 
 class ProblemSetDelete(Form):
     delete=BooleanField('delete', validators=[Required()])

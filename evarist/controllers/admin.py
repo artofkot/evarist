@@ -7,7 +7,10 @@ from flask import current_app, Flask, Blueprint, request, session, g, redirect, 
     abort, render_template, flash
 from contextlib import closing
 from functools import wraps
-from evarist.forms import ProblemSetForm, Content_blockForm, EditContent_blockForm, ProblemSetDelete, VoteForm, FeedbackToSolutionForm, EditCommentForm
+from evarist.forms import (ProblemSetForm, Content_blockForm, 
+                        EditContent_blockForm, ProblemSetDelete, 
+                        VoteForm, FeedbackToSolutionForm, 
+                        EditCommentForm, CourseForm, AddPsetForm)
 from evarist.models.mongoengine_models import *
 from evarist.models import (events,
                             parameters, criteria)
@@ -50,18 +53,50 @@ def db():
 @admin.route('/admin/', methods=["GET", "POST"])
 @admin_required
 def home():
+    if request.args.get('remove_pset_number'):
+        course=Course.objects(id=ObjectId(request.args['course_id'])).first()
+        course.problem_sets.pop(int(request.args.get('remove_pset_number')))
+        course.save()
 
     form = ProblemSetForm()
     if form.validate_on_submit():
-
         try:
             problem_set=Problem_set(slug=form.slug.data, 
                                  title=form.title.data)
             problem_set.save()
             flash('Probem set added, sir.')
         except: 
-            flash('Need a different title and slug.')
+            flash('Need a different title and/or slug.')
         return redirect(url_for('admin.home'))
+
+    add_pset_form=AddPsetForm()
+    if add_pset_form.validate_on_submit():
+        place_of_pset= int(add_pset_form.place_of_pset.data)
+        problem_set=Problem_set.objects(slug=add_pset_form.pset_slug.data).first()
+        course=Course.objects(id=ObjectId(request.args['course_id'])).first()
+        try:
+            course.problem_sets.insert(place_of_pset,problem_set)
+            course.save()
+            flash('problem_set added to course, sir.')
+        except: 
+            flash('Something went wrong')
+
+        return redirect(url_for('admin.home'))
+        
+
+
+    course_form=CourseForm()
+    if course_form.validate_on_submit():
+        try:
+            course=Course(slug=course_form.slug.data, 
+                        name=course_form.name.data)
+            course.save()
+            flash('Course added, sir.')
+        except: 
+            flash('Need a different name and/or slug.')
+        return redirect(url_for('admin.home'))
+
+    courses=Course.objects()
 
     problem_sets=Problem_set.objects()
 
@@ -69,8 +104,14 @@ def home():
     problem_sets_stage=[pset for pset in problem_sets if pset['status']=='stage']
     problem_sets_production=[pset for pset in problem_sets if pset['status']=='production']
 
+    free_psets_to_add_to_courses=[pset for pset in problem_sets if pset['status']!='dev']
+
     return render_template("admin/home.html", 
-                            form=form, 
+                            form=form,
+                            course_form=course_form,
+                            courses=courses,
+                            add_pset_form=add_pset_form,
+                            free_psets_to_add_to_courses=free_psets_to_add_to_courses, 
                             problem_sets=problem_sets,
                             problem_sets_dev=problem_sets_dev,
                             problem_sets_stage=problem_sets_stage,

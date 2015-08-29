@@ -10,9 +10,86 @@
       <br>
       <a href="{{url_for('admin.comments')}}">CRUD comments (solutions, comments to solutions, to problems, feedbacks, ...)</a>
       <br>
+    </div>
+  </div> 
+  <div class="row">
+    <div class="col-md-5">
+      <h2><b>Courses:</b></h2>
+  
 
+
+      {% for course in courses %}
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3><a href="{{url_for('workflow.course', course_slug=course.slug)}}">{{course.name}}</a></h3>
+          </div>
+
+          <div class="panel-body">
+              <ol >
+                {%for problem_set in course.problem_sets%}
+                  <li>
+                    <p><a href="{{url_for('admin.problem_set_edit',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+                  </li>
+                  <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#remove_pset_{{course.slug}}_{{loop.index}}" aria-expanded="false" aria-controls="remove_pset_{{course.slug}}_{{loop.index}}">
+                    remove upper problem_set
+                  </button>
+                  <div class="collapse" id="remove_pset_{{course.slug}}_{{loop.index}}">
+                    <a class="btn btn-xs btn-default" href="{{url_for('admin.home',course_id=course.id, remove_pset_number=loop.index-1)}}">yes, remove it</a>
+                  </div>
+                {% endfor %}
+              </ol>
+              
+              <hr>
+              <form action=" {{url_for('admin.home', course_id=course.id)}}" method="post">
+                Add a problem_set to the course. (only stage and production statuses)
+                <div class="form-group" style='width: 300px'>
+
+                  {{ add_pset_form.hidden_tag() }}
+                  <select name='pset_slug' class="form-control">
+                    {% for pset in free_psets_to_add_to_courses%} 
+                      <option value='{{pset.slug}}'>{{pset.title}}</option>
+                    {% endfor %}
+                  </select>
+
+                  <p>
+                    Write here the number of content_block after which you want this content_block to pop up:
+                  </p>
+                  <input type="text" class="form-control" name="place_of_pset" value='{{course["problem_sets"] | length}}'>
+
+                </div>
+                <button type="submit" class="btn btn-default">Add problem_set</button>
+              </form>
+          </div>
+        </div>
+
+      {% endfor %}
+      
+      <form action=" {{url_for('admin.home')}}" method="post">
+        <div class="form-group" style='width: 350px'>
+
+          {{ course_form.hidden_tag() }}
+          <label for="name">To create a new course write here the name: </label>
+          <input type="text" class="form-control" name="name">
+          
+          <label for="slug">And put the slug here: </label>
+          <input type="text" class="form-control" name='slug'>
+
+          <!-- <div class="radio">
+            <label ><input type="radio" name='status' value='dev' checked> status of this problem_set will be "dev" </label>
+          </div> -->
+
+        </div>
+        <button type="submit" class="btn btn-default">Отправить</button>
+      </form>
+
+    </div>
+
+
+
+    <div class="col-md-6 col-md-offset-1">
       <dl>
-        <dt>Problem sets:</dt>
+        <h2><dt>Problem sets:</dt></h2>
         <dd> <b> production status </b></dd>
         {%for problem_set in problem_sets_production%}
           <dd>
@@ -37,11 +114,6 @@
           </dd>
         {% endfor %}
       </dl>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-6 col-md-offset-3">
       <form action=" {{url_for('admin.home')}}" method="post">
         <div class="form-group" style='width: 350px'>
 
@@ -60,6 +132,6 @@
         <button type="submit" class="btn btn-default">Отправить</button>
       </form>
     </div>
-  </div> 
+  </div>
 
 {% endblock %}

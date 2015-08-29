@@ -67,10 +67,15 @@ class Content_block(db.Document):
     meta = {'allow_inheritance': True}
     old_id = db.StringField()
 
+#collection of courses
+class Course(db.Document):
+    name=db.StringField(required=True, unique=True, max_length=1024)
+    slug = db.StringField(max_length=128, required=True, unique=True)
+    problem_sets=db.ListField(db.ReferenceField('Problem_set'))
 
 #collection for problem sets
 class Problem_set(db.Document):
-    title = db.StringField(required=True, unique=True, max_length=128)
+    title = db.StringField(required=True, unique=True, max_length=1024)
     slug = db.StringField(max_length=128, required=True, unique=True)
     status = db.StringField(max_length=64, default='dev', choices=('dev', 'stage', 'production'))
     tags= db.ListField(db.StringField(max_length=128))
@@ -138,10 +143,6 @@ class Solution(Comment):
     upvotes=db.IntField(default=0)
     users_upvoted=db.ListField(db.ReferenceField('User'))
     users_downvoted=db.ListField(db.ReferenceField('User'))
-
-    # I made this thing only for editing solutions, which 
-    # has been replaced by writing new solutions. Soon I ll delete it.
-    changed_and_not_checked=db.BooleanField(default=False)
 
 
 # collection for subscribed users

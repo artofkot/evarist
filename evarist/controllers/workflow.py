@@ -129,6 +129,26 @@ def contact():
     return render_template('contact.html',
         website_feedback_form=website_feedback_form)
 
+@workflow.route('/course/<course_slug>/', methods=["GET", "POST"])
+def course(course_slug):
+    # get the problem set
+    
+    course=Course.objects(slug=course_slug).first()
+    if not course: 
+        flash('No such course.')
+        return redirect(url_for('.home'))
+
+
+    # is_moderator=False
+    # if g.user: is_moderator=g.user['rights']['is_moderator']
+    # if (problem_set['status']=='dev') and (not is_moderator):
+    #     flash('This problem set is not ready yet.')
+    #     return redirect(url_for('.home'))
+
+    
+    return render_template('course.html', 
+                            course=course)
+
 @workflow.route('/problem_sets/<problem_set_slug>/', methods=["GET", "POST"])
 def problem_set(problem_set_slug):
     # get the problem set
@@ -263,7 +283,6 @@ def problem(problem_set_slug,prob_id):
 
             # solution.text=edit_solution_form.edited_solution.data
             # solution.date=datetime.datetime.utcnow()
-            # solution.changed_and_not_checked=True
             # solution.save()
 
 
@@ -387,7 +406,6 @@ def my_solutions():
 
             # solution.text=edit_solution_form.edited_solution.data
             # solution.date=datetime.datetime.utcnow()
-            # solution.changed_and_not_checked=True
             # solution.save()
         return redirect(url_for('.my_solutions'))
     # trigger_flash_error(edit_solution_form,'workflow.my_solutions')
