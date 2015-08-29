@@ -139,6 +139,8 @@ class Solution(Comment):
     users_upvoted=db.ListField(db.ReferenceField('User'))
     users_downvoted=db.ListField(db.ReferenceField('User'))
 
+    changed_and_not_checked=db.BooleanField(default=False)
+
 
 # collection for subscribed users
 class Subscribed_user(db.Document):

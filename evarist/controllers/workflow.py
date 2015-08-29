@@ -248,6 +248,7 @@ def problem(problem_set_slug,prob_id):
         else:
             solution.text=edit_solution_form.edited_solution.data
             solution.date=datetime.datetime.utcnow()
+            solution.changed_and_not_checked=True
             solution.save()
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
@@ -352,6 +353,7 @@ def my_solutions():
         else:
             solution.text=edit_solution_form.edited_solution.data
             solution.date=datetime.datetime.utcnow()
+            solution.changed_and_not_checked=True
             solution.save()
         return redirect(url_for('.my_solutions'))
     # trigger_flash_error(edit_solution_form,'workflow.my_solutions')

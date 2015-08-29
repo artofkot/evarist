@@ -72,10 +72,11 @@ def update_status(solution):
     return (old_status,solution)
 
 
-# this event is triggered in update_status
+# this event is triggered in do_events_after_voting
 def change_solution_status(old_status,solution):
     if old_status=='not_checked' and solution.status=='checked_correct':
         solution.author.karma+=parameters.karma_solution_became_right
+        solution.changed_and_not_checked=False
 
     if old_status=='checked_correct' and solution.status=='not_checked':
         solution.author.karma-=parameters.karma_solution_became_right
@@ -84,6 +85,7 @@ def change_solution_status(old_status,solution):
 
     if old_status=='not_checked' and solution.status=='checked_incorrect':
         solution.author.karma+=parameters.karma_solution_became_wrong
+        solution.changed_and_not_checked=False
 
     if old_status=='checked_incorrect' and solution.status=='not_checked':
         solution.author.karma-=parameters.karma_solution_became_wrong
