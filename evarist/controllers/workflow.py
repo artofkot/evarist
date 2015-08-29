@@ -44,35 +44,13 @@ def home():
     #               recipients=["artofkot@gmail.com"])
     # g.mail.send(msg)
 
+    if g.locale == 'ru': matan_course=Course.objects(slug='matan').first()
+    else: matan_course=Course.objects(slug='analysis').first()
     
-    # this is how we manually choose which problem_sets to display on homepage
-    rus_slugset=problem_set_filters.rus_slugset
-    eng_slugset=problem_set_filters.eng_slugset
-    slugset=problem_set_filters.slugset
-
-    if g.locale == 'ru': homepage_slugset=rus_slugset
-    else: homepage_slugset=eng_slugset
-    
-    # get all problem_sets
-    psets=Problem_set.objects()
-
-    # choose those problem_sets, which slug is in homepage_slugset
-    # check if all chosen slugs matched to some problem_sets, and if not - write which ones are wrong
-    problem_sets=[]
-    for slug in homepage_slugset:
-        try:
-            pset= next(pset for pset in psets if pset['slug']==slug)
-            problem_sets.append(pset)
-        except StopIteration:
-            if not current_app.debug: g.mail.send(Message(body='slug ' + slug + ' was not found on the homepage',
-                                                subject='Catched error on Evarist (production)!',
-                                                recipients=current_app.config['ADMINS']))
-            else: flash('Error: slug ' + slug + ' was not found!')
-
-    solution_examples_pset=Problem_set.objects(slug=problem_set_filters.solution_examples_slug).first()
+    solution_examples_pset=Problem_set.objects(slug='solution_examples').first()
 
     return render_template('home.html',
-                        problem_sets=problem_sets,
+                        matan_course=matan_course,
                         solution_examples_pset=solution_examples_pset)
 
 

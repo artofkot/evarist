@@ -24,10 +24,10 @@
           <div class="panel-heading">
             <h3><a href="{{url_for('workflow.course', course_slug=course.slug)}}">{{course.name}}</a></h3>
 
-            <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#edit_course" aria-expanded="false" aria-controls="edit_course">
+            <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#edit_course_{{loop.index}}" aria-expanded="false" aria-controls="edit_course_{{loop.index}}">
               Edit name and slug
             </button>
-            <div class="collapse" id="edit_course">
+            <div class="collapse" id="edit_course_{{loop.index}}">
               <form action="{{url_for('admin.home',course_id=course.id)}}" method="post">
                 <div class="form-group" style='width: 350px'>
 
@@ -73,7 +73,7 @@
                   </select>
 
                   <p>
-                    Write here the number of content_block after which you want this content_block to pop up:
+                    Write here the number of problem_set after which you want this problem_set to pop up:
                   </p>
                   <input type="text" class="form-control" name="place_of_pset" value='{{course["problem_sets"] | length}}'>
 
