@@ -22,17 +22,8 @@
   <div class="row">
     <div class="col-md-6 col-md-offset-1">
       {{content_block_macros.content_block(problem, number=problem.number_in_problem_set, type_="problem")}}
-      
-    {% if g.user %}
-      {% if not current_user_solutions %}
-        <strong class="text-center"> Ваше решение </strong>
-        <!-- this is form for writing solution -->
-        <form action=" {{url_for('workflow.problem', problem_set_slug=problem_set_slug, prob_id=problem['id'])}}" method="post" enctype="multipart/form-data">
-          {{ solution_form.hidden_tag() }}
-          {{ form_macros.solution_form(name_of_textarea="solution",name_of_the_button="Отправить") }}
-        </form>
 
-      {% elif current_user_solutions%}
+      {% if g.user and current_user_solutions%}
         <button class="btn btn-default" type="button" data-toggle="collapse" data-target="#solution_form" aria-expanded="false" aria-controls="solution_form">
           Отправить новое решение
         </button>
@@ -47,7 +38,6 @@
           </form>
         </div> 
       {% endif %}
-    {% endif %}
     
     </div>
 
@@ -81,7 +71,15 @@
   <div class="row">
     {% if g.user %}  
       <div class="col-md-5 col-md-offset-1">
-        {% if current_user_solutions%}
+        {% if not current_user_solutions %}
+          <h3> <b> Ваше решение</b> </h3>
+          <!-- this is form for writing solution -->
+          <form action=" {{url_for('workflow.problem', problem_set_slug=problem_set_slug, prob_id=problem['id'])}}" method="post" enctype="multipart/form-data">
+            {{ solution_form.hidden_tag() }}
+            {{ form_macros.solution_form(name_of_textarea="solution",name_of_the_button="Отправить") }}
+          </form>
+
+        {% elif current_user_solutions%}
           <h3>Ваши решения:</h3>
           {% for current_solution in current_user_solutions%}
 
