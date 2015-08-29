@@ -51,7 +51,7 @@
 
             <!-- vote form -->
             <div class="col-md-4 col-md-offset-2">
-            {%if g.user not in (  solution['users_upvoted']|list + solution['users_downvoted_']|list )%}
+            {%if g.user not in (  solution['users_upvoted']|list + solution['users_downvoted']|list )%}
               <form action="{{request.path}}?sol_id={{solution['id']}}" method="post">
                 {{ vote_form.hidden_tag() }}
                 {{ form_macros.vote_for_solution_form() }}

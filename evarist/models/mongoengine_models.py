@@ -139,6 +139,8 @@ class Solution(Comment):
     users_upvoted=db.ListField(db.ReferenceField('User'))
     users_downvoted=db.ListField(db.ReferenceField('User'))
 
+    # I made this thing only for editing solutions, which 
+    # has been replaced by writing new solutions. Soon I ll delete it.
     changed_and_not_checked=db.BooleanField(default=False)
 
 

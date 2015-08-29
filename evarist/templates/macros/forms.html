@@ -1,9 +1,26 @@
+{% macro solution_form(name_of_textarea, name_of_the_button) -%}
+  <div class="form-group" >
+    <!-- <label for="feedback_to_solution">  <strong> Комментировать: </strong> </label> -->
+    <textarea class="form-control" rows="8"  name='{{name_of_textarea}}'></textarea>
+    <input type="file" name="image">
+  </div>
+  <button type="submit" class="btn btn-default"><!-- Отправить -->{{name_of_the_button}}</button>
+{%- endmacro %}
+
 {% macro edit_solution_form(solution) -%}
   <div class="form-group">
+    <em>Обратите внимание на то, что исправленное решение - это еще одно новое решение, и существующее решение не удаляется.</em>
+    <br>
     <label for="edit_text">Исправьте решение здесь: </label>
     <textarea class="form-control" rows="8"  name='edited_solution'>{{solution.text}}  
     </textarea>
-    
+    <input type="file" name="edit_image">
+    <div class="checkbox">
+      <label>
+        <input type="checkbox" name='use_old_image'> использовать ту же картинку
+      </label>
+    </div>
+
     <div class="checkbox" style='background-color:red'>
       <label>
         <input type="checkbox" name='delete_solution'>удалить это решение, навсегда
@@ -51,12 +68,4 @@
   <button type="submit" class="btn btn-default"><!-- Отправить -->{{name_of_the_button}}</button>
 {%- endmacro %}
 
-{% macro solution_form(name_of_textarea, name_of_the_button) -%}
-  <div class="form-group" >
-    <!-- <label for="feedback_to_solution">  <strong> Комментировать: </strong> </label> -->
-    <textarea class="form-control" rows="8"  name='{{name_of_textarea}}'></textarea>
-    <input type="file" name="image">
-  </div>
-  <button type="submit" class="btn btn-default"><!-- Отправить -->{{name_of_the_button}}</button>
-{%- endmacro %}
 
