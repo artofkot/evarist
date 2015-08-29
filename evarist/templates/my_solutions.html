@@ -14,7 +14,7 @@
       <hr>
     </div>
   </div>
-  
+
   <div class="row">
     <div class="col-md-8 col-md-offset-2">
       <p>Здесь вы можете смотреть, исправлять и комментировать  ваши решения.</p>
@@ -27,6 +27,7 @@
     <div class="col-md-6 col-md-offset-0">
       <h3>Непроверенные задачи:</h3>
       {%for solution in not_checked_solutions%}
+
           <!-- solutions text, and the name of problem set -->
           <div>
             <a href="/problem_sets/{{solution.problem_set['slug']}}">{{solution.problem_set['title']|safe}}</a>.

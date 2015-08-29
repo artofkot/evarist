@@ -246,10 +246,26 @@ def problem(problem_set_slug,prob_id):
         if edit_solution_form.delete_solution.data:
             solution.delete()
         else:
-            solution.text=edit_solution_form.edited_solution.data
-            solution.date=datetime.datetime.utcnow()
-            solution.changed_and_not_checked=True
-            solution.save()
+            # file=request.files[edit_solution_form.edit_image.name]
+            # image_url=solution.image_url
+            # if file:
+            #     upload_result = upload(file)
+            #     image_url=upload_result['url'] 
+            new_solution=Solution(text=edit_solution_form.edited_solution.data,
+                            author=g.user,
+                            problem=problem,
+                            problem_set=problem_set)
+            new_solution.save()
+            events.solution_written(new_solution)
+
+            # solution.text=edit_solution_form.edited_solution.data
+            # solution.date=datetime.datetime.utcnow()
+            # solution.changed_and_not_checked=True
+            # solution.save()
+
+
+
+
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem['id']))
@@ -351,10 +367,22 @@ def my_solutions():
         if edit_solution_form.delete_solution.data:
             solution.delete()
         else:
-            solution.text=edit_solution_form.edited_solution.data
-            solution.date=datetime.datetime.utcnow()
-            solution.changed_and_not_checked=True
-            solution.save()
+            # file=request.files[edit_solution_form.edit_image.name]
+            # image_url=solution.image_url
+            # if file:
+            #     upload_result = upload(file)
+            #     image_url=upload_result['url'] 
+            new_solution=Solution(text=edit_solution_form.edited_solution.data,
+                            author=g.user,
+                            problem=solution.problem,
+                            problem_set=solution.problem_set)
+            new_solution.save()
+            events.solution_written(new_solution)
+
+            # solution.text=edit_solution_form.edited_solution.data
+            # solution.date=datetime.datetime.utcnow()
+            # solution.changed_and_not_checked=True
+            # solution.save()
         return redirect(url_for('.my_solutions'))
     # trigger_flash_error(edit_solution_form,'workflow.my_solutions')
 

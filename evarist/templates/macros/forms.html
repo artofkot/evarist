@@ -1,9 +1,10 @@
 {% macro edit_solution_form(solution) -%}
   <div class="form-group">
+    <em>Обратите внимание на то, что исправленное решение - это еще одно новое решение, и существующее решение не удаляется.</em>
     <label for="edit_text">Исправьте решение здесь: </label>
     <textarea class="form-control" rows="8"  name='edited_solution'>{{solution.text}}  
     </textarea>
-    
+
     <div class="checkbox" style='background-color:red'>
       <label>
         <input type="checkbox" name='delete_solution'>удалить это решение, навсегда

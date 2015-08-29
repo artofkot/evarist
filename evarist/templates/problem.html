@@ -33,13 +33,13 @@
         </form>
 
       {% elif current_user_solutions%}
-        <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#solution_form" aria-expanded="false" aria-controls="solution_form">
+        <button class="btn btn-default" type="button" data-toggle="collapse" data-target="#solution_form" aria-expanded="false" aria-controls="solution_form">
           Отправить новое решение
         </button>
 
         <div class="collapse" id="solution_form">
 
-          <strong class="text-center"> Ваше решение </strong>
+          <strong class="text-center"> Написать решение: </strong>
           <!-- this is form for writing solution -->
           <form action=" {{url_for('workflow.problem', problem_set_slug=problem_set_slug, prob_id=problem['id'])}}" method="post" enctype="multipart/form-data">
             {{ solution_form.hidden_tag() }}
