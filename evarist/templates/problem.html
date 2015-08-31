@@ -5,7 +5,8 @@
 
 {% extends "layout.html" %}
 {% block head %}
-   <title></title>
+  <title>Задача {{problem.number_in_problem_set}} 
+  ({{problem.problem_set.title}})</title>
 {% endblock %}
 {% block body %}
 
@@ -173,7 +174,7 @@
 
     {% else %}
       <p>
-        Чтобы послать решение задачи на проверку, или задать вопрос по условию, <a href="{{url_for('user.login')}}">войдите</a>. 
+        Чтобы послать решение задачи на проверку, или задать вопрос по условию, <a href="{{url_for('user.login')}}">войдите</a> на сайт под своим аккаунтом.
       </p>
     {% endif %}
   </div>  

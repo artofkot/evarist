@@ -1,16 +1,18 @@
 {% extends "layout.html" %}
-  {% block head %}
-    <script src="https://apis.google.com/js/client:platform.js" async defer></script>
-    <link href="/static/login.css" rel="stylesheet">
-  {% endblock %}
+{% block head %}
+  <script src="https://apis.google.com/js/client:platform.js" async defer></script>
+  <link href="/static/login.css" rel="stylesheet">
+  <title>Login</title>
+{% endblock %}
 {% block body %}
   <!-- {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %} -->
   
   <div class="row">
   <div class="col-md-12">
 
+
     <div class='googleLogin'>
-      
+      <!-- <h2 class="form-signin-heading">Log in with google account.</h2> -->
       <!-- <div style='height:100px'></div> -->
       <div id='signinButton'>
         <span class="g-signin"
@@ -70,15 +72,14 @@
       <form class="form-signin" action="{{ url_for('user.login') }}" role="form" method=post>
         {{ signin_form.hidden_tag() }}
         <dl>
-            <h2 class="form-signin-heading">or log in with email.</h2>
             <label for="inputLogin" class="sr-only">Email</label>
             <input id="inputLogin" class="form-control" type=text placeholder="email" autofocus required name='email'>
             <label for="last" class="sr-only">Password</label>
             <input id="last" class="form-control" type=password placeholder="Password" required name='password'>
-            <button class="btn btn-lg btn-primary btn-block" type="submit" value='Login'>Login</button>
-            
+            <button class="btn btn-lg btn-primary btn-block" type="submit" value='Login'>Войти</button>
+
             <div style='height:50px'></div>
-            <a href="{{ url_for('user.signup') }}" class="btn btn-lg btn-default btn-block" role="button">Sign up with email</a>
+            <a href="{{ url_for('user.signup') }}" class="btn btn-lg btn-default btn-block" role="button">Зарегистрироваться</a>
 
             <!-- <div class="checkbox">
               <label>

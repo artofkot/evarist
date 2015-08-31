@@ -155,6 +155,10 @@ class Subscribed_user(db.Document):
 # "deleting rules" see here:
 # http://docs.mongoengine.org/guide/defining-documents.html#dealing-with-deletion-of-referred-documents
 # and here (API page) http://docs.mongoengine.org/en/latest/apireference.html#mongoengine.fields.ReferenceField
+
+# these deleting rules dont quite work, 
+# because the reference is to problems,
+# and people delete usually solutions
 Content_block.register_delete_rule(User,'problems_solved', PULL)
 Content_block.register_delete_rule(User,'problems_can_vote', PULL)
 Content_block.register_delete_rule(User,'problems_solution_written',PULL)

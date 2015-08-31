@@ -2,13 +2,21 @@
 
 {% extends "layout.html" %}
 {% block head %}
-   <title></title>
+   <title>
+    {% if content_block.type_=='problem' %} Задача
+    {% elif content_block.type_=='definition' %} 
+    ∆ Определение
+    {% else %}
+    General_content_block
+    {%endif%}
+    {{content_block.number_in_problem_set}}
+   </title>
 {% endblock %}
 {% block body %}
 
   <div class="row">
     <div class="col-md-6 col-md-offset-2">
-      {{content_block_macros.content_block(content_block, type_=content_block.type_)}}
+      {{content_block_macros.content_block(content_block, number= content_block.number_in_problem_set, type_=content_block.type_)}}
     </div>
   </div>
 
