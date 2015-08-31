@@ -10,10 +10,9 @@
 
   <div class="row">
     <div class="col-md-12">
-      <form class="form-signin" action="{{ url_for('user.signup') }}" role="form" method=post>
+      <form class="form-signin" id='sign-up-form' action="{{ url_for('user.signup') }}" role="form" method=post>
         {{ signup_form.hidden_tag() }}
         <dl>
-            <h2 class="form-signin-heading">Registration.</h2>
             <label for="inputEmailPassword" class="sr-only">email</label>
             <input id="inputEmailPassword" class="form-control" type=text placeholder="Email" required name='email'>
             <label for="inputLogin" class="sr-only">Username</label>
@@ -23,7 +22,7 @@
             <label for="last" class="sr-only">confirm the password</label>
             <input id="last" class="form-control" type=password placeholder="Confirm the password" required name='confirm_password'>
             
-            <button class="btn btn-lg btn-primary btn-block" type="submit" value='signup'>Sign up</button>
+            <button class="btn btn-lg btn-primary btn-block" type="submit" value='signup'>Зарегистрироваться</button>
         </dl>
       </form>
     </div>

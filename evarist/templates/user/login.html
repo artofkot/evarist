@@ -8,78 +8,76 @@
   <!-- {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %} -->
   
   <div class="row">
-  <div class="col-md-12">
+    <div class="col-md-4 col-md-offset-4">
+      <form class="form-signin well" role="form">
 
-
-    <div class='googleLogin'>
-      <!-- <h2 class="form-signin-heading">Log in with google account.</h2> -->
-      <!-- <div style='height:100px'></div> -->
-      <div id='signinButton'>
-        <span class="g-signin"
-          data-scope="openid email"
-          data-clientid="{{client_id_yep}}"
-          data-redirecturi="postmessage"
-          data-accesstype="offline"
-          data-cookiepolicy="single_host_origin"
-          data-callback="signInCallback"
-          data-approvalprompt="auto"> 
-        </span>
-      </div>
-      <div id='result'></div>
-      <script>
-      function signInCallback(authResult) { 
-        if (authResult['code']){
-          //hide the sign-in button
-          $('#signinButton').attr('style','display:none');
-          //passing to server 1-time code google gave to user
-          $.ajax({
-            type: "POST",
-            url: '/user/gconnect?state={{session["state"]}}',
-            processData: false,
-            data: authResult['code'],
-            contentType: 'application/octet-stream; charset=utf-8',
-            success: function(result) {
-                // Handle or verify the server response if necessary.
-                if (result) {
-                  $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
-                 setTimeout(function() {
-                  window.location.href = "/home";
-                 }, 2000);
-                } else if (authResult['error']) {
-                  console.log('There was an error: ' + authResult['error']);
-                } else {
-                  $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+        <p>Самый простой способ зайти на сайт (не надо запоминать пароль) &#8211; использовать свой google аккаунт:</p>
+        <div class='googleLogin'>
+          
+          
+          
+          <!-- <h2 class="form-signin-heading">Log in with google account.</h2> -->
+          <!-- <div style='height:100px'></div> -->
+          <div id='signinButton'>
+            <span class="g-signin"
+              data-scope="openid email"
+              data-clientid="{{client_id_yep}}"
+              data-redirecturi="postmessage"
+              data-accesstype="offline"
+              data-cookiepolicy="single_host_origin"
+              data-callback="signInCallback"
+              data-approvalprompt="auto"> 
+            </span>
+          </div>
+          <div id='result'></div>
+          <script>
+          function signInCallback(authResult) { 
+            if (authResult['code']){
+              //hide the sign-in button
+              $('#signinButton').attr('style','display:none');
+              //passing to server 1-time code google gave to user
+              $.ajax({
+                type: "POST",
+                url: '/user/gconnect?state={{session["state"]}}',
+                processData: false,
+                data: authResult['code'],
+                contentType: 'application/octet-stream; charset=utf-8',
+                success: function(result) {
+                    // Handle or verify the server response if necessary.
+                    if (result) {
+                      $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
+                     setTimeout(function() {
+                      window.location.href = "/home";
+                     }, 2000);
+                    } else if (authResult['error']) {
+                      console.log('There was an error: ' + authResult['error']);
+                    } else {
+                      $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+                    }
                 }
+              });
             }
-          });
-        }
-      }
-      </script>      
-    </div>
+          }
+          </script>      
+        </div>
+        
+        
+      </form>
+
     
 
-  </div>
-  </div>
-
-
-
-
-  <div class="row">
-    <div class="col-md-12">
-      
-
-
-      <form class="form-signin" action="{{ url_for('user.login') }}" role="form" method=post>
+      <form class="form-signin well" action="{{ url_for('user.login') }}" role="form" method=post>
         {{ signin_form.hidden_tag() }}
+        <p>Для тех, кто предпочитает классический способ аутентификации на сайте:</p>
         <dl>
             <label for="inputLogin" class="sr-only">Email</label>
-            <input id="inputLogin" class="form-control" type=text placeholder="email" autofocus required name='email'>
+            <input id="inputLogin" class="form-control" type=text placeholder="Email" autofocus required name='email'>
             <label for="last" class="sr-only">Password</label>
             <input id="last" class="form-control" type=password placeholder="Password" required name='password'>
             <button class="btn btn-lg btn-primary btn-block" type="submit" value='Login'>Войти</button>
 
-            <div style='height:50px'></div>
-            <a href="{{ url_for('user.signup') }}" class="btn btn-lg btn-default btn-block" role="button">Зарегистрироваться</a>
+            <div style='height:20px'></div>
+            <!-- <a href="{{ url_for('user.signup') }}" class="btn btn-lg btn-default btn-block" role="button">Зарегистрироваться</a> -->
 
             <!-- <div class="checkbox">
               <label>
@@ -87,11 +85,15 @@
               </label>
             </div> -->
         </dl>
-      </form>
-    
 
+        <a href="{{ url_for('user.signup') }}" class="btn btn-lg btn-default btn-block" role="button">Зарегистрироваться</a>
+        
+      </form>
     </div>
+
   </div>
+
+
 
 
   <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
