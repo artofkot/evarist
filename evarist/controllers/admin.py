@@ -230,7 +230,8 @@ def guide():
 @admin.route('/admin/users', methods=["GET", "POST"])
 @admin_required
 def users():
-    users=User.objects()
+    users=User.objects().order_by('date')
+    users=[]
     return render_template("admin/users.html", 
                             users=users)
 

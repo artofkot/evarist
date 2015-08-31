@@ -6,15 +6,17 @@
   <div class="row">
     <div class="col-md-6 col-md-offset-3">
       <h1>These are our users:</h1>
+      <ol>
       {% for user in users | reverse %}
-        <div>
-          <p>username: </p>
-          <p>email: </p>
-          <p>rights: </p>
-        </div>
-        <br>
-        <br>
+        <li>
+          <p>username: {{user.username}} <br>
+          email: {{user.email}} <br>
+          admin: {{user.rights.is_moderator}}, checker: {{user.rights.is_checker}}
+          </p>
+        </li>
+        
       {% endfor %}
+      </ol>
     </div>
   </div>
 

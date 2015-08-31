@@ -38,7 +38,7 @@ def get_solutions_for_check_page(user):
     for solution in solutions:
         if solution.problem_set.status=='dev':
             continue
-        if solution.status =='not_checked' or solution.changed_and_not_checked:
+        if solution.status =='not_checked':
             not_checked_sols.append(solution)
         else:
             checked_sols.append(solution)
