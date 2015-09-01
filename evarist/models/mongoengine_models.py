@@ -81,6 +81,8 @@ class Problem_set(db.Document):
     tags= db.ListField(db.StringField(max_length=128))
     content_blocks = db.ListField(db.ReferenceField('Content_block'))
 
+    course=db.ReferenceField('Course')
+
     def assign_numbers_to_content_blocks(self):
         definition_counter=0
         problem_counter=0
@@ -168,6 +170,9 @@ Content_block.register_delete_rule(Solution,'problem', NULLIFY)
 
 Problem_set.register_delete_rule(Content_block,'problem_set',NULLIFY)
 Problem_set.register_delete_rule(Solution,'problem_set',NULLIFY)
+Problem_set.register_delete_rule(Course,'problem_sets',PULL)
+
+Course.register_delete_rule(Problem_set,'course',NULLIFY)
 
 User.register_delete_rule(Content_block,'author',NULLIFY)
 User.register_delete_rule(Comment,'author',NULLIFY)

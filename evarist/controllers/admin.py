@@ -41,6 +41,12 @@ def admin_required(f):
 def db():
     if current_app.debug==False: return redirect(url_for('workflow.home'))
 
+    # for course in Course.objects():
+    #     for pset in course.problem_sets:
+    #         pset.course=course
+    #         pset.save()
+
+
     count1=0
     count2=0
     count3=0
@@ -56,8 +62,12 @@ def db():
 def home():
     if request.args.get('remove_pset_number'):
         course=Course.objects(id=ObjectId(request.args['course_id'])).first()
+        pset=course.problem_sets[int(request.args.get('remove_pset_number'))]
+        pset.course=None
+        pset.save()
         course.problem_sets.pop(int(request.args.get('remove_pset_number')))
         course.save()
+
 
     form = ProblemSetForm()
     if form.validate_on_submit():
@@ -78,6 +88,8 @@ def home():
         try:
             course.problem_sets.insert(place_of_pset,problem_set)
             course.save()
+            problem_set.course=course
+            problem_set.save()
             flash('problem_set added to course, sir.')
         except: 
             flash('Something went wrong')

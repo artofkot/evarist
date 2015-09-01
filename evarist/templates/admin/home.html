@@ -22,7 +22,7 @@
 
         <div class="panel panel-default">
           <div class="panel-heading">
-            <h3><a href="{{url_for('workflow.course', course_slug=course.slug)}}">{{course.name}}</a></h3>
+            <h3><a href="{{url_for('workflow.course', course_slug=course.slug) }}">{{course.name}}</a></h3>
 
             <button class="btn btn-xs btn-default" type="button" data-toggle="collapse" data-target="#edit_course_{{loop.index}}" aria-expanded="false" aria-controls="edit_course_{{loop.index}}">
               Edit name and slug

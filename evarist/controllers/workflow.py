@@ -81,7 +81,7 @@ def faq():
     return render_template('faq.html')
 
 @workflow.route('/blog')
-@admin_required
+# @admin_required
 def blog():
     return render_template('blog.html')
 
