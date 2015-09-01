@@ -77,6 +77,10 @@ def about():
 def faq():
     return render_template('faq.html')
 
+@workflow.route('/blog')
+def blog():
+    return render_template('blog.html')
+
 
 @workflow.route('/contact', methods=["GET", "POST"])
 def contact():
