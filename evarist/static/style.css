@@ -129,7 +129,7 @@ a:visited {
   z-index: 1;
 }
 
-#matan-course-panel {
+.panel-course {
   border:none;
   background-color: transparent;
 }

@@ -45,10 +45,13 @@ def home():
 
     if g.locale == 'ru': matan_course=Course.objects(slug='matan').first()
     else: matan_course=Course.objects(slug='analysis').first()
+
+    cosmology_course=Course.objects(slug='cosmology').first()
     
     solution_examples_pset=Problem_set.objects(slug='solution_examples').first()
 
     return render_template('home.html',
+                        cosmology_course=cosmology_course,
                         matan_course=matan_course,
                         solution_examples_pset=solution_examples_pset)
 
@@ -78,6 +81,7 @@ def faq():
     return render_template('faq.html')
 
 @workflow.route('/blog')
+@admin_required
 def blog():
     return render_template('blog.html')
 
