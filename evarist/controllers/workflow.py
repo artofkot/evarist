@@ -134,6 +134,18 @@ def course(course_slug):
     return render_template('course.html', 
                             course=course)
 
+@workflow.route('/course/cosmology/', methods=["GET", "POST"])
+def cosmology():
+    # get the problem set
+    
+    cosm_course=Course.objects(slug='cosmology').first()
+    if not cosm_course: 
+        flash('No such course.')
+        return redirect(url_for('.home'))
+    
+    return render_template('cosmology.html',
+                            cosm_course=cosm_course)
+
 @workflow.route('/problem_sets/<problem_set_slug>/', methods=["GET", "POST"])
 def problem_set(problem_set_slug):
     # get the problem set

@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block head %}
+   <title>{{cosm_course['name']}}</title>
+{% endblock %}
+{% block body %}
+
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <a href="{{url_for('workflow.home')}}">К главной странице</a>
+    </div>
+  </div>
+
+  <!-- <div style='height:20px'></div> -->
+
+  <hr>
+
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2 problem_set">
+      <div class="panel panel-default" id='matan-course-panel'>
+        <div class="panel-heading">
+          <h3>{{cosm_course.name}}</h3>
+        </div>
+
+        <div class="panel-body">
+          <p>Лекция 0. Прелюдия.</p>
+          <ul style='list-style-type:none'>
+            {%for problem_set in cosm_course.problem_sets[0:4]%}
+              <li>
+                <p>
+                0.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
