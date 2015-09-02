@@ -89,10 +89,12 @@
           </div>
 
           <div class="panel-body">
+              <p>Лекция 0. Прелюдия.</p>
               <ol style='list-style-type:none'>
-                {%for problem_set in cosmology_course.problem_sets%}
+                {%for problem_set in cosmology_course.problem_sets[0:4]%}
                   <li>
-                    <p><a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+                    <p>
+                    0.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
                   </li>
                 {% endfor %}
               </ol>
