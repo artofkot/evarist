@@ -243,7 +243,7 @@ def guide():
 @admin_required
 def users():
     users=User.objects().order_by('date')
-    users=[]
+    # users=[]
     return render_template("admin/users.html", 
                             users=users)
 

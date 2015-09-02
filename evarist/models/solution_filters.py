@@ -55,10 +55,10 @@ def get_solutions_for_my_solutions_page(user):
     checked_incorrect=[]
     checked_correct=[]
     for solution in solutions:
-        if solution.status=='not_checked' or solution.changed_and_not_checked:
+        if solution.status=='not_checked':
             not_checked_sols.append(solution)
         else:
-            if solution.status=='checked_incorrect' and not solution.changed_and_not_checked:
+            if solution.status=='checked_incorrect':
                 checked_incorrect.append(solution)
             else:
                 checked_correct.append(solution)
