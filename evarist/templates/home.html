@@ -85,7 +85,7 @@
       <div class="col-md-3">
         <div class="panel panel-default panel-course" id='cosmology-course-panel'>
           <div class="panel-heading">
-            <h3>{{cosmology_course.name}}.</h3>
+            <h3><a href="/course/{{cosmology_course.slug}}">{{cosmology_course.name}}</a>.</h3>
           </div>
 
           <div class="panel-body">
@@ -98,6 +98,15 @@
                   </li>
                 {% endfor %}
               </ol>
+              <p>Лекция 1.</p>
+              <ol style='list-style-type:none'>
+                {%for problem_set in cosmology_course.problem_sets[4:]%}
+                  <li>
+                    <p>
+                    1.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+                  </li>
+                {% endfor %}
+              </ul>
           </div>
         </div>
       </div>
