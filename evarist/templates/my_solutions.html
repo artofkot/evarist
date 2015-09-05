@@ -71,7 +71,7 @@
               спрятать комментарии
             </button>
             <div class="collapse in" aria-expanded="true" id="collapse_Id_{{loop.index}}">
-              {% for comment in solution['discussion'] | reverse %}
+              {% for comment in solution['discussion']  %}
                 {{ comment_macros.comment(comment) }}
               {% endfor %}
             </div>
@@ -128,7 +128,7 @@
               спрятать комментарии
             </button>
             <div class="collapse in" aria-expanded="true" id="collapse_Idd_{{loop.index}}">
-              {% for comment in solution['discussion'] | reverse %}
+              {% for comment in solution['discussion']  %}
                 {{ comment_macros.comment(comment) }}
               {% endfor %}
             </div>
