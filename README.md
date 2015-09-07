@@ -8,13 +8,9 @@ how everything works on the website.
 
 ###For contributers.
 
-1. [Issue tracker](https://github.com/artofkot/evarist/issues) is our todo list for code.
-2. Here is a list of other things community members can help us with:
-    * (most importantly!) If you want to help us launch our community, and you 
-    know math enough so that you can check solutions on our website, please register and write us an email,
-    we will make you a checker, and you will be able to check solutions, and thus help students learn math.
-    * You can help us with translation of problem sets from russian to english. 
-    Please, also contact us.
+1. We are looking for people to start off the community! If you want to help us and you know math enough so that you can check solutions on our website - that is awesome. Just register on evarist.org and email us, we will make you a checker, and you will be able to check solutions, and thus help students learn math.
+2. You also can help us with translation of problem sets from russian to english. Email us in this case, please.
+3. [Issue tracker](https://github.com/artofkot/evarist/issues) is our todo list for code. Just fork, work on an issue, and then pull-request us ([docs on the process](https://help.github.com/articles/using-pull-requests/)). Email me (artofkot@gmail.com), and I will give you the keys for the app, if needed.
 
 
 

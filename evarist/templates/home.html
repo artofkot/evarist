@@ -34,40 +34,45 @@
 
   <hr>
 
-  <!-- <div class="row">
-    <div class="col-md-5 col-md-offset-2">
-      <p class="lead">
-        <h3> Курс по математическому анализу 57-ой школы.</h3>
-        <ol style='list-style-type:none'>
-          {%for problem_set in problem_sets%}
-            <li>
-              <p><a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
-            </li>
-          {% endfor %}
-        </ol>
-      </p>
-    </div>
-    <div class="col-md-3">
-      <div style='height:45px'></div>
-      <p><a href="{{url_for('workflow.problem_set', problem_set_slug=solution_examples_pset['slug'])}}">
-        Посмотреть примеры правильных решений
-      </a></p>
-      {% if g.user%}
-        <p><a href="{{url_for('workflow.my_solutions')}}">Ваши решения</a></p>
-        <p><a href="{{url_for('workflow.check')}}">Cмотреть чужие решения</a></p>
-        <p><a href="{{url_for('workflow.users')}}">Топ 10 пользователей</a></p>
-      {%endif%}
-    </div>
-  </div> -->
-
   <div class="row">
       <!-- <div class="col-lg-12">
         <h2 class="page-header text-center">Курсы</h2>
       </div> -->
-      <div class="col-md-4 col-md-offset-1">
+
+      <!-- Полезные ссылки как class="well": -->
+      <!-- <div class="col-md-3 col-md-offset-0">
+        <div class="well" id='hompage_usefull_links'>
+          <p>Полезные ссылки:</p>
+          <ol style='list-style-type:none'>
+            <li>
+              <h5><a href="{{url_for('workflow.problem_set',problem_set_slug=solution_examples_pset['slug'])}}">
+              Посмотреть примеры правильных решений
+              </a></h5>
+            </li>
+            <li>
+              <h5><a href="{{url_for('workflow.users')}}">Топ 10 пользователей</a></h5>
+            </li>
+
+            {% if g.user%}
+            <li>
+              <h5><a href="{{url_for('workflow.my_solutions')}}">Мои решения</a></h5>
+            </li>
+            <li>
+              <h5><a href="{{url_for('workflow.check')}}">Cмотреть чужие решения</a></h5>
+            </li>
+            {% else %}
+            <li>
+              <h5><a href="{{url_for('user.login')}}">Зарегистрироваться (чтобы посылать решения)</a></h5>
+            </li>
+            {%endif%}
+          </ol>
+        </div>
+      </div>   -->
+      
+      <div class="col-md-4 col-md-offset-2">
         <div class="panel panel-default panel-course" id='matan-course-panel'>
           <div class="panel-heading">
-            <h3>{{matan_course.name}}.</h3>
+            <h3><a href="{{url_for('workflow.course', course_slug=matan_course.slug)}}">{{matan_course.name}}.</a></h3>
           </div>
 
           <div class="panel-body">
@@ -111,9 +116,38 @@
         </div>
       </div>
       
-
-
+      <!-- Полезные ссылки как class="well": -->
       <div class="col-md-3 col-md-offset-0">
+        <div class="well" id='hompage_usefull_links'>
+          <p>Полезные ссылки:</p>
+          <ol style='list-style-type:none'>
+            <li>
+              <h5><a href="{{url_for('workflow.problem_set',problem_set_slug=solution_examples_pset['slug'])}}">
+              Посмотреть примеры правильных решений
+              </a></h5>
+            </li>
+            <li>
+              <h5><a href="{{url_for('workflow.users')}}">Топ 10 пользователей</a></h5>
+            </li>
+
+            {% if g.user%}
+            <li>
+              <h5><a href="{{url_for('workflow.my_solutions')}}">Мои решения</a></h5>
+            </li>
+            <li>
+              <h5><a href="{{url_for('workflow.check')}}">Cмотреть чужие решения</a></h5>
+            </li>
+            {% else %}
+            <li>
+              <h5><a href="{{url_for('user.login')}}">Зарегистрироваться (чтобы посылать решения)</a></h5>
+            </li>
+            {%endif%}
+          </ol>
+        </div>
+      </div>  
+
+      <!-- Полезные ссылки как курс: -->
+      <!-- <div class="col-md-3 col-md-offset-0">
         <div class="panel panel-default" id='useful-links-homepage'>
           <div class="panel-heading">
             <h3>Полезные ссылки.</h3>
@@ -145,7 +179,7 @@
               </ol>
           </div>
         </div>
-      </div>
+      </div> -->
 
 
       <!-- <div class="col-md-3">
