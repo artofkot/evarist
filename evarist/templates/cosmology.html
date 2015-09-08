@@ -36,7 +36,7 @@
             {%for problem_set in cosm_course.problem_sets[4:]%}
               <li>
                 <p>
-                0.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+                1.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
               </li>
             {% endfor %}
           </ul>
