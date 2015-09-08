@@ -35,41 +35,9 @@
   <hr>
 
   <div class="row">
-      <!-- <div class="col-lg-12">
-        <h2 class="page-header text-center">Курсы</h2>
-      </div> -->
-
-      <!-- Полезные ссылки как class="well": -->
-      <!-- <div class="col-md-3 col-md-offset-0">
-        <div class="well" id='hompage_usefull_links'>
-          <p>Полезные ссылки:</p>
-          <ol style='list-style-type:none'>
-            <li>
-              <h5><a href="{{url_for('workflow.problem_set',problem_set_slug=solution_examples_pset['slug'])}}">
-              Посмотреть примеры правильных решений
-              </a></h5>
-            </li>
-            <li>
-              <h5><a href="{{url_for('workflow.users')}}">Топ 10 пользователей</a></h5>
-            </li>
-
-            {% if g.user%}
-            <li>
-              <h5><a href="{{url_for('workflow.my_solutions')}}">Мои решения</a></h5>
-            </li>
-            <li>
-              <h5><a href="{{url_for('workflow.check')}}">Cмотреть чужие решения</a></h5>
-            </li>
-            {% else %}
-            <li>
-              <h5><a href="{{url_for('user.login')}}">Зарегистрироваться (чтобы посылать решения)</a></h5>
-            </li>
-            {%endif%}
-          </ol>
-        </div>
-      </div>   -->
       
-      <div class="col-md-4 col-md-offset-2">
+      <div class="col-md-4 col-md-offset-1">
+        <!-- matan course -->
         <div class="panel panel-default panel-course" id='matan-course-panel'>
           <div class="panel-heading">
             <h3><a href="{{url_for('workflow.course', course_slug=matan_course.slug)}}">{{matan_course.name}}.</a></h3>
@@ -85,9 +53,11 @@
               </ol>
           </div>
         </div>
+      
       </div>
 
-      <div class="col-md-3">
+      <div class='col-md-3'> 
+        <!-- cosmology course -->
         <div class="panel panel-default panel-course" id='cosmology-course-panel'>
           <div class="panel-heading">
             <h3><a href="/course/{{cosmology_course.slug}}">{{cosmology_course.name}}</a>.</h3>
@@ -115,12 +85,15 @@
           </div>
         </div>
       </div>
-      
-      <!-- Полезные ссылки как class="well": -->
-      <div class="col-md-3 col-md-offset-0">
-        <div class="well" id='hompage_usefull_links'>
+
+      <!-- полезные ссылки как простой div -->
+      <!-- <div class="col-md-3 col-md-offset-0">
+        <div class="well" id='hompage_usefull_links2'>
           <p>Полезные ссылки:</p>
           <ol style='list-style-type:none'>
+            <li>
+              <h5><a href="http://www.evarist.org/blog">Блогпост о запуске проекта</a></h5>
+            </li>
             <li>
               <h5><a href="{{url_for('workflow.problem_set',problem_set_slug=solution_examples_pset['slug'])}}">
               Посмотреть примеры правильных решений
@@ -129,13 +102,12 @@
             <li>
               <h5><a href="{{url_for('workflow.users')}}">Топ 10 пользователей</a></h5>
             </li>
-
             {% if g.user%}
             <li>
               <h5><a href="{{url_for('workflow.my_solutions')}}">Мои решения</a></h5>
             </li>
             <li>
-              <h5><a href="{{url_for('workflow.check')}}">Cмотреть чужие решения</a></h5>
+              <h5><a href="{{url_for('workflow.check')}}">Cмотреть и проверять чужие решения</a></h5>
             </li>
             {% else %}
             <li>
@@ -144,10 +116,10 @@
             {%endif%}
           </ol>
         </div>
-      </div>  
+      </div> -->
 
-      <!-- Полезные ссылки как курс: -->
-      <!-- <div class="col-md-3 col-md-offset-0">
+      <!-- Полезные ссылки как панель: -->
+      <div class="col-md-3 col-md-offset-0">
         <div class="panel panel-default" id='useful-links-homepage'>
           <div class="panel-heading">
             <h3>Полезные ссылки.</h3>
@@ -155,6 +127,9 @@
 
           <div class="panel-body">
               <ol style='list-style-type:none'>
+                <li>
+                  <p><a href="http://www.evarist.org/blog">Блогпост о запуске проекта</a></p>
+                </li>
                 <li>
                   <p><a href="{{url_for('workflow.problem_set',problem_set_slug=solution_examples_pset['slug'])}}">
                   Посмотреть примеры правильных решений
@@ -179,24 +154,7 @@
               </ol>
           </div>
         </div>
-      </div> -->
-
-
-      <!-- <div class="col-md-3">
-        <div class="list-group" id='homepage-dashboard-links'>
-          <a href="{{url_for('workflow.problem_set',problem_set_slug=solution_examples_pset['slug'])}}" class="list-group-item">
-            Посмотреть примеры правильных решений
-          </a>
-          {% if g.user%}
-            <a href="{{url_for('workflow.my_solutions')}}" class="list-group-item">Ваши решения</a>
-            <a href="{{url_for('workflow.check')}}" class="list-group-item">Cмотреть чужие решения</a>
-            <a href="{{url_for('workflow.users')}}" class="list-group-item">Топ 10 пользователей</a>
-          {%endif%}
-        </div>
-      </div> -->
-
-
-
+      </div>
 
   </div>
 {% endblock %}
