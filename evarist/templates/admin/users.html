@@ -5,10 +5,10 @@
 {% block body %}
 
   <div class="row">
-    <div class="col-md-6 col-md-offset-3">
-      <h1>These are our users:</h1>
+    <div class="col-md-4">
+      <h1>Students:</h1>
       <ol>
-      {% for user in users | reverse %}
+      {% for user in students %}
         <li>
           <p>username: {{user.username}} <br>
           email: {{user.email}} <br>
@@ -19,6 +19,35 @@
       {% endfor %}
       </ol>
     </div>
+    <div class="col-md-4">
+      <h1>Checkers:</h1>
+      <ol>
+      {% for user in checkers %}
+        <li>
+          <p>username: {{user.username}} <br>
+          email: {{user.email}} <br>
+          admin: {{user.rights.is_moderator}}, checker: {{user.rights.is_checker}}
+          </p>
+        </li>
+        
+      {% endfor %}
+      </ol>
+    </div>
+    <div class="col-md-4">
+      <h1>Moderators:</h1>
+      <ol>
+      {% for user in moderators %}
+        <li>
+          <p>username: {{user.username}} <br>
+          email: {{user.email}} <br>
+          admin: {{user.rights.is_moderator}}, checker: {{user.rights.is_checker}}
+          </p>
+        </li>
+        
+      {% endfor %}
+      </ol>
+    </div>
+
   </div>
 
 {% endblock %}

@@ -35,11 +35,26 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+def debug_mode_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        
+        if current_app.debug==False: 
+            flash('debug mode is needed, sorry')
+            return redirect(url_for('workflow.home'))
+
+        return f(*args, **kwargs)
+    return decorated_function
+    
+
+
 
 @admin.route('/admin/db', methods=["GET", "POST"])
 @admin_required
+@debug_mode_required
 def db():
-    if current_app.debug==False: return redirect(url_for('workflow.home'))
+    if current_app.debug==False: 
+        return redirect(url_for('workflow.home'))
 
     # for course in Course.objects():
     #     for pset in course.problem_sets:
@@ -241,11 +256,21 @@ def guide():
 
 @admin.route('/admin/users', methods=["GET", "POST"])
 @admin_required
+@debug_mode_required
 def users():
-    users=User.objects().order_by('date')
+    
+    users=User.objects(rights__is_checker=True).order_by('-date')
+    moderators=User.objects(rights__is_moderator=True).order_by('-date')
+    checkers=User.objects(rights__is_checker=True).order_by('-date')
+    rights={'is_moderator':False,
+            'is_checker':False}
+    students=User.objects(rights=rights).order_by('-date')
     # users=[]
     return render_template("admin/users.html", 
-                            users=users)
+                            users=users,
+                            moderators=moderators,
+                            checkers=checkers,
+                            students=students)
 
 #CRUD comments
 @admin.route('/admin/comments/', methods=["GET", "POST"])
