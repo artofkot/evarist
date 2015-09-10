@@ -81,6 +81,16 @@
                     1.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
                   </li>
                 {% endfor %}
+                  <li>
+                    <p>
+                    1.3.1. <a href="http://www.evarist.org/admin/krasnoe-smeshenie-prob/">Красное смещение: задачи</a></p>
+                  </li>
+                {%for problem_set in cosmology_course.problem_sets[8:]%}
+                  <li>
+                    <p>
+                    1.{{loop.index + 4}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+                  </li>
+                {% endfor %}
               </ul>
           </div>
         </div>
