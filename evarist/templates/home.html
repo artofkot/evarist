@@ -75,7 +75,7 @@
               </ol>
               <p>Лекция 1.</p>
               <ol style='list-style-type:none'>
-                {%for problem_set in cosmology_course.problem_sets[4:]%}
+                {%for problem_set in cosmology_course.problem_sets[4:7]%}
                   <li>
                     <p>
                     1.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
