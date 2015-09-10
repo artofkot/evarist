@@ -88,7 +88,7 @@
                 {%for problem_set in cosmology_course.problem_sets[8:]%}
                   <li>
                     <p>
-                    1.{{loop.index + 5}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+                    1.{{loop.index + 3}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
                   </li>
                 {% endfor %}
               </ul>
