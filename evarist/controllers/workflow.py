@@ -207,6 +207,12 @@ def problem(problem_set_slug,prob_id):
         comment.save()
         problem.general_discussion.append(comment)
         problem.save()
+
+        g.mail.send(Message(body= problem_set.title + '. Problem ' + str(problem.number_in_problem_set) + '\n' + comment.text,
+                            sender=comment.author.email,
+                            subject='Вопрос по условию',
+                            recipients=current_app.config['ADMINS']))
+
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem['id']))
