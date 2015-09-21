@@ -43,10 +43,19 @@
                 <p>
                 1.3.1. <a href="http://www.evarist.org/problem_sets/krasnoe-smeshenie-prob/">Красное смещение: задачи</a></p>
               </li>
-            {%for problem_set in cosm_course.problem_sets[8:]%}
+            {%for problem_set in cosm_course.problem_sets[8:10]%}
               <li>
                 <p>
                 1.{{loop.index + 3}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+              </li>
+            {% endfor %}
+          </ul>
+          <p>Лекция 2.</p>
+          <ul style='list-style-type:none'>
+            {%for problem_set in cosm_course.problem_sets[10:]%}
+              <li>
+                <p>
+                2.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
               </li>
             {% endfor %}
           </ul>
