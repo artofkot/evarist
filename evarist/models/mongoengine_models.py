@@ -27,7 +27,7 @@ class User(db.Document):
     meta = {'allow_inheritance': True}
 
 class GplusUser(User):
-    provider= db.StringField(default='gplus')
+    provider= db.StringField(default='gplus', max_length=64)
     gplus_id=db.StringField(unique=True, sparse=True)
     gplus_picture=db.StringField()
     gplus_email=db.StringField()
