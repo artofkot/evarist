@@ -92,14 +92,14 @@
                 {% endfor %}
               </ul>
               <p>Лекция 2.</p>
-              <ul style='list-style-type:none'>
+              <ol style='list-style-type:none'>
                 {%for problem_set in cosmology_course.problem_sets[10:]%}
                   <li>
                     <p>
                     2.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
                   </li>
                 {% endfor %}
-              </ul>
+              </ol>
           </div>
         </div>
       </div>
