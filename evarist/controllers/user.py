@@ -158,7 +158,7 @@ def gconnect():
 
 
     # Validate state token
-    if request.args.get('state') != session['state']:
+    if request.args.get('state') != session.get('state'):
         response = make_response(json.dumps('Invalid state parameter.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
