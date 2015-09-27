@@ -13,7 +13,7 @@ from evarist.models import (solution_filters, events,
 from evarist.forms import (WebsiteFeedbackForm, CommentForm, 
                             SolutionForm, FeedbackToSolutionForm, 
                             EditSolutionForm, VoteForm, 
-                            trigger_flash_error, CancelVoteForm)
+                            trigger_flash_error)
 from evarist.models.mongoengine_models import *
 from evarist.controllers.admin import admin_required
 
@@ -333,22 +333,6 @@ def check():
 
         return redirect(url_for('.check'))
 
-    cancel_vote_form=CancelVoteForm()
-    if cancel_vote_form.validate_on_submit() and cancel_vote_form.cancel.data:
-        solution=Solution.objects(id=ObjectId(request.args['sol_id'])).first()
-        if g.user['rights']['is_checker']: vote_weight=2
-        else: vote_weight=1
-        
-        if g.user in solution.users_downvoted:
-            solution.users_downvoted.remove(g.user)
-            solution.downvotes-=vote_weight
-        elif g.user in solution.users_upvoted:
-            solution.users_upvoted.remove(g.user)
-            solution.upvotes-=vote_weight
-
-        solution.save()
-        events.do_events_after_voting(solution)
-        return redirect(url_for('.check'))
         
 
     solution_comment_form=FeedbackToSolutionForm()
@@ -369,8 +353,7 @@ def check():
                             not_checked_solutions=not_checked_sols,
                             checked_solutions=checked_sols,
                             vote_form=vote_form,
-                            solution_comment_form=solution_comment_form,
-                            cancel_vote_form=cancel_vote_form)
+                            solution_comment_form=solution_comment_form)
 
 @workflow.route('/my_solutions', methods=["GET", "POST"])
 @login_required
