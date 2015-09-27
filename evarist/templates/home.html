@@ -93,10 +93,19 @@
               </ol>
               <p>Лекция 2.</p>
               <ol style='list-style-type:none'>
-                {%for problem_set in cosmo_course.problem_sets[10:]%}
+                {%for problem_set in cosmo_course.problem_sets[10:16]%}
                   <li>
                     <p>
                     2.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+                  </li>
+                {% endfor %}
+              </ol>
+              <p>Лекция 3.</p>
+              <ol style='list-style-type:none'>
+                {%for problem_set in cosmo_course.problem_sets[16:]%}
+                  <li>
+                    <p>
+                    3.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
                   </li>
                 {% endfor %}
               </ol>
