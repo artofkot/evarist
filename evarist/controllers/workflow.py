@@ -46,12 +46,12 @@ def home():
     if g.locale == 'ru': matan_course=Course.objects(slug='matan').first()
     else: matan_course=Course.objects(slug='analysis').first()
 
-    cosmology_course=Course.objects(slug='cosmology').first()
+    cosmo_course_home=Course.objects(slug='cosmology').first()
     
     solution_examples_pset=Problem_set.objects(slug='solution_examples').first()
 
     return render_template('home.html',
-                        cosmology_course=cosmology_course,
+                        cosmo_course=cosmo_course_home,
                         matan_course=matan_course,
                         solution_examples_pset=solution_examples_pset)
 
@@ -138,13 +138,13 @@ def course(course_slug):
 def cosmology():
     # get the problem set
     
-    cosm_course=Course.objects(slug='cosmology').first()
-    if not cosm_course: 
+    cosmo_course=Course.objects(slug='cosmology').first()
+    if not cosmo_course: 
         flash('No such course.')
         return redirect(url_for('.home'))
     
     return render_template('cosmology.html',
-                            cosm_course=cosm_course)
+                            cosmo_course=cosmo_course)
 
 @workflow.route('/problem_sets/<problem_set_slug>/', methods=["GET", "POST"])
 def problem_set(problem_set_slug):

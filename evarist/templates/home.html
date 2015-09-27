@@ -59,13 +59,13 @@
         <!-- cosmology course -->
         <div class="panel panel-default panel-course" id='cosmology-course-panel'>
           <div class="panel-heading">
-            <h3><a href="/course/{{cosmology_course.slug}}">{{cosmology_course.name}}</a>.</h3>
+            <h3><a href="/course/{{cosmolog_course.slug}}">{{cosmo_course.name}}</a>.</h3>
           </div>
 
           <div class="panel-body">
               <p>Лекция 0. Прелюдия.</p>
               <ol style='list-style-type:none'>
-                {%for problem_set in cosmology_course.problem_sets[0:4]%}
+                {%for problem_set in cosmo_course.problem_sets[0:4]%}
                   <li>
                     <p>
                     0.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
@@ -74,7 +74,7 @@
               </ol>
               <p>Лекция 1.</p>
               <ol style='list-style-type:none'>
-                {%for problem_set in cosmology_course.problem_sets[4:7]%}
+                {%for problem_set in cosmo_course.problem_sets[4:7]%}
                   <li>
                     <p>
                     1.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
@@ -84,7 +84,7 @@
                     <p>
                     1.3.1. <a href="http://www.evarist.org/problem_sets/krasnoe-smeshenie-prob/">Красное смещение: задачи</a></p>
                   </li>
-                {%for problem_set in cosmology_course.problem_sets[8:10]%}
+                {%for problem_set in cosmo_course.problem_sets[8:10]%}
                   <li>
                     <p>
                     1.{{loop.index + 3}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
@@ -93,7 +93,7 @@
               </ol>
               <p>Лекция 2.</p>
               <ol style='list-style-type:none'>
-                {%for problem_set in cosmology_course.problem_sets[10:]%}
+                {%for problem_set in cosmo_course.problem_sets[10:]%}
                   <li>
                     <p>
                     2.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
