@@ -90,9 +90,11 @@ class CourseForm(Form):
     name = TextField('name', validators=[Required()])
     slug = TextField('slug', validators=[Required()])
 
+
 class EditCourseForm(Form):
     edit_name = TextField('edit_name', validators=[Required()])
     edit_slug = TextField('edit_slug', validators=[Required()])
+    delete_course=BooleanField('delete_course')
 
 class AddPsetForm(Form):
     pset_slug=TextField('pset_slug', validators=[Required()])

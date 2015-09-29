@@ -128,6 +128,9 @@ def home():
     if edit_course_form.validate_on_submit():
         course=Course.objects(id=ObjectId( request.args.get('course_id') )).first()
         if not course: redirect(url_for('admin.home'))
+        if edit_course_form.delete_course.data:
+            course.delete()
+            redirect(url_for('admin.home'))
         course.name=edit_course_form.edit_name.data
         course.slug=edit_course_form.edit_slug.data
         try:
