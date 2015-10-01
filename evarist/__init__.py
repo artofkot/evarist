@@ -10,7 +10,7 @@ from controllers.workflow import workflow
 from controllers.admin import admin
 import logging
 
-from evarist.models.mongoengine_models import db, User
+from evarist.models.mongoengine_models import User
 
 # creating an app
 app = Flask(__name__)
@@ -22,13 +22,13 @@ app.register_blueprint(workflow)
 app.register_blueprint(admin)
 
 #connecting to database, Mongoengine
-db.init_app(app)
-
+from mongoengine import connect
+connect(host=app.config['MONGO_URI'])
 
 # connecting to mongodb via pymongo
-client = pymongo.MongoClient(app.config['MONGO_URI'])
-settings=pymongo.uri_parser.parse_uri(app.config['MONGO_URI'])
-dbpymongo = client[settings['database']]
+# client = pymongo.MongoClient(app.config['MONGO_URI'])
+# settings=pymongo.uri_parser.parse_uri(app.config['MONGO_URI'])
+# dbpymongo = client[settings['database']]
 
 # for translation
 babel = Babel(app)
@@ -74,7 +74,7 @@ def before_request():
     g.start=time.time()
 
     # passing pymongo database in each request
-    g.db=dbpymongo
+    # g.db=dbpymongo
 
     #connection in order to send emails
     g.mail=mail
