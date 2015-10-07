@@ -77,6 +77,15 @@
               </li>
             {% endfor %}
           </ul>
+          <p>Лекция 5.</p>
+          <ul style='list-style-type:none'>
+            {%for problem_set in cosmo_course.problem_sets[25:]%}
+              <li>
+                <p>
+                5.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+              </li>
+            {% endfor %}
+          </ul>
         </div>
       </div>
     </div>
