@@ -3,16 +3,21 @@
    <title>{{problem_set['title']}}</title>
 {% endblock %}
 {% block body %}
-
+  
   <div class="row">
     <div class="col-md-8 col-md-offset-2">
-      <a href="{{url_for('workflow.course', course_slug=problem_set.course.slug)}}">К странице курса</a>
+      {% if problem_set.course%}
+        <a href="{{url_for('workflow.course', course_slug=problem_set.course.slug)}}">К странице курса</a>
+      {% else %}
+        <a href="{{url_for('workflow.home')}}">К главной странице</a>
+      {% endif %}
     </div>
   </div>
 
   <!-- <div style='height:20px'></div> -->
 
   <hr>
+
 
   <div class="row">
     <div class="col-md-8 col-md-offset-2 problem_set">
