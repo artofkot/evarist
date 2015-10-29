@@ -14,6 +14,13 @@ div.comment {
   padding: 5px;
 }
 
+p.anchor {
+    display: block;
+    position: relative;
+    top: -1000px;
+    visibility: hidden;
+}
+
 .box-sh {
     -moz-box-shadow:     0 0 50px rgba(255,255,255,1);
     -webkit-box-shadow:  0 0 50px rgba(255,255,255,1);
