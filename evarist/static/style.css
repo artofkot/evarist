@@ -14,10 +14,10 @@ div.comment {
   padding: 5px;
 }
 
-p.anchor {
+.my_anchor {
     display: block;
     position: relative;
-    top: -1000px;
+    top: -50px;
     visibility: hidden;
 }
 
