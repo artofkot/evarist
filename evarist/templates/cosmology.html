@@ -115,10 +115,28 @@
           </ul>
           <p><a class="my_anchor" id="lect9"></a>Лекция 9. Неоднородности плотности. Ньютонов подход.</p>
           <ul style='list-style-type:none'>
-            {%for problem_set in cosmo_course.problem_sets[39:]%}
+            {%for problem_set in cosmo_course.problem_sets[39:44]%}
               <li>
                 <p>
                 9.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+              </li>
+            {% endfor %}
+          </ul>
+          <p><a class="my_anchor" id="lect10"></a>Лекция 10. Темная материя: предварительные соображения.</p>
+          <ul style='list-style-type:none'>
+            {%for problem_set in cosmo_course.problem_sets[44:47]%}
+              <li>
+                <p>
+                10.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+              </li>
+            {% endfor %}
+          </ul>
+          <p><a class="my_anchor" id="lect11"></a>Лекция 11.</p>
+          <ul style='list-style-type:none'>
+            {%for problem_set in cosmo_course.problem_sets[47:]%}
+              <li>
+                <p>
+                11.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
               </li>
             {% endfor %}
           </ul>
