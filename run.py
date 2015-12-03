@@ -14,7 +14,7 @@ app.config['DEBUG_TB_PANELS'] = (
     'flask.ext.debugtoolbar.panels.template.TemplateDebugPanel',
     'flask.ext.debugtoolbar.panels.logger.LoggingPanel',
     # 'flask_debugtoolbar.panels.profiler.ProfilerDebugPanel',
-    'flask.ext.mongoengine.panels.MongoDebugPanel',
+    # 'flask.ext.mongoengine.panels.MongoDebugPanel',
     'flask_debugtoolbar.panels.route_list.RouteListDebugPanel'
     
 )
