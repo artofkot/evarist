@@ -22,7 +22,7 @@
         </div>
 
         <div class="panel-body">
-          <p>Лекция 0. Прелюдия.</p>
+          <p><a class="my_anchor" id="lect0"></a>Лекция 0. Прелюдия.</p>
           <ul style='list-style-type:none'>
             {%for problem_set in cosmo_course.problem_sets[0:4]%}
               <li>
@@ -31,7 +31,7 @@
               </li>
             {% endfor %}
           </ul>
-          <p>Лекция 1.</p>
+          <p><a class="my_anchor" id="lect1"></a>Лекция 1. Расширяющаяся Вселенная. Кинематика.</p>
           <ul style='list-style-type:none'>
             {%for problem_set in cosmo_course.problem_sets[4:7]%}
               <li>
@@ -50,7 +50,7 @@
               </li>
             {% endfor %}
           </ul>
-          <p>Лекция 2.</p>
+          <p><a class="my_anchor" id="lect2"></a>Лекция 2. Расширяющаяся Вселенная. Динамика.</p>
           <ul style='list-style-type:none'>
             {%for problem_set in cosmo_course.problem_sets[10:16]%}
               <li>
@@ -59,7 +59,7 @@
               </li>
             {% endfor %}
           </ul>
-          <p>Лекция 3.</p>
+          <p><a class="my_anchor" id="lect3"></a>Лекция 3. Стандартная космологическая модель.</p>
           <ul style='list-style-type:none'>
             {%for problem_set in cosmo_course.problem_sets[16:20]%}
               <li>
@@ -68,21 +68,75 @@
               </li>
             {% endfor %}
           </ul>
-          <p>Лекция 4.</p>
+          <p><a class="my_anchor" id="lect4"></a>Лекция 4. Стандартная космологическая модель. Продолжение.</p>
           <ul style='list-style-type:none'>
-            {%for problem_set in cosmo_course.problem_sets[20:25]%}
+            {%for problem_set in cosmo_course.problem_sets[20:24]%}
               <li>
                 <p>
                 4.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
               </li>
             {% endfor %}
           </ul>
-          <p>Лекция 5.</p>
+          <p><a class="my_anchor" id="lect5"></a>Лекция 5. Рекомбинация.</p>
           <ul style='list-style-type:none'>
-            {%for problem_set in cosmo_course.problem_sets[25:]%}
+            {%for problem_set in cosmo_course.problem_sets[24:28]%}
               <li>
                 <p>
                 5.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+              </li>
+            {% endfor %}
+          </ul>
+          <p><a class="my_anchor" id="lect6"></a>Лекция 6. Рекомбинация. Продолжение.</p>
+          <ul style='list-style-type:none'>
+            {%for problem_set in cosmo_course.problem_sets[28:31]%}
+              <li>
+                <p>
+                6.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+              </li>
+            {% endfor %}
+          </ul>
+          <p><a class="my_anchor" id="lect7"></a>Лекция 7. Нейтрино во Вселенной.</p>
+          <ul style='list-style-type:none'>
+            {%for problem_set in cosmo_course.problem_sets[31:34]%}
+              <li>
+                <p>
+                7.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+              </li>
+            {% endfor %}
+          </ul>
+          <p><a class="my_anchor" id="lect8"></a>Лекция 8. Первичный нуклеосинтез.</p>
+          <ul style='list-style-type:none'>
+            {%for problem_set in cosmo_course.problem_sets[34:39]%}
+              <li>
+                <p>
+                8.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+              </li>
+            {% endfor %}
+          </ul>
+          <p><a class="my_anchor" id="lect9"></a>Лекция 9. Неоднородности плотности. Ньютонов подход.</p>
+          <ul style='list-style-type:none'>
+            {%for problem_set in cosmo_course.problem_sets[39:44]%}
+              <li>
+                <p>
+                9.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+              </li>
+            {% endfor %}
+          </ul>
+          <p><a class="my_anchor" id="lect10"></a>Лекция 10. Темная материя: предварительные соображения.</p>
+          <ul style='list-style-type:none'>
+            {%for problem_set in cosmo_course.problem_sets[44:47]%}
+              <li>
+                <p>
+                10.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+              </li>
+            {% endfor %}
+          </ul>
+          <p><a class="my_anchor" id="lect11"></a>Лекция 11.</p>
+          <ul style='list-style-type:none'>
+            {%for problem_set in cosmo_course.problem_sets[47:]%}
+              <li>
+                <p>
+                11.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
               </li>
             {% endfor %}
           </ul>

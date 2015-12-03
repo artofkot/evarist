@@ -63,70 +63,18 @@
           </div>
 
           <div class="panel-body">
-              <p>Лекция 0. Прелюдия.</p>
-              <ol style='list-style-type:none'>
-                {%for problem_set in cosmo_course.problem_sets[0:4]%}
-                  <li>
-                    <p>
-                    0.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
-                  </li>
-                {% endfor %}
-              </ol>
-              <p>Лекция 1.</p>
-              <ol style='list-style-type:none'>
-                {%for problem_set in cosmo_course.problem_sets[4:7]%}
-                  <li>
-                    <p>
-                    1.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
-                  </li>
-                {% endfor %}
-                  <li>
-                    <p>
-                    1.3.1. <a href="http://www.evarist.org/problem_sets/krasnoe-smeshenie-prob/">Красное смещение: задачи</a></p>
-                  </li>
-                {%for problem_set in cosmo_course.problem_sets[8:10]%}
-                  <li>
-                    <p>
-                    1.{{loop.index + 3}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
-                  </li>
-                {% endfor %}
-              </ol>
-              <p>Лекция 2.</p>
-              <ol style='list-style-type:none'>
-                {%for problem_set in cosmo_course.problem_sets[10:16]%}
-                  <li>
-                    <p>
-                    2.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
-                  </li>
-                {% endfor %}
-              </ol>
-              <p>Лекция 3.</p>
-              <ol style='list-style-type:none'>
-                {%for problem_set in cosmo_course.problem_sets[16:20]%}
-                  <li>
-                    <p>
-                    3.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
-                  </li>
-                {% endfor %}
-              </ol>
-              <p>Лекция 4.</p>
-              <ol style='list-style-type:none'>
-                {%for problem_set in cosmo_course.problem_sets[20:25]%}
-                  <li>
-                    <p>
-                    4.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
-                  </li>
-                {% endfor %}
-              </ol>
-              <p>Лекция 5.</p>
-              <ol style='list-style-type:none'>
-                {%for problem_set in cosmo_course.problem_sets[25:]%}
-                  <li>
-                    <p>
-                    5.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
-                  </li>
-                {% endfor %}
-              </ol>
+              <p><a href="/course/cosmology/#lect0">Лекция 0. Прелюдия.</a> </p>
+              <p><a href="/course/cosmology/#lect1">Лекция 1. Расширяющаяся Вселенная. Кинематика.</a></p>
+              <p><a href="/course/cosmology/#lect2">Лекция 2. Расширяющаяся Вселенная. Динамика.</a></p>
+              <p><a href="/course/cosmology/#lect3">Лекция 3. Стандартная космологическая модель.</a></p>
+              <p><a href="/course/cosmology/#lect4">Лекция 4. Стандартная космологическая модель. Продолжение.</a></p>
+              <p><a href="/course/cosmology/#lect5">Лекция 5. Рекомбинация.</a></p>
+              <p><a href="/course/cosmology/#lect6">Лекция 6. Рекомбинация. Продолжение.</a></p>
+              <p><a href="/course/cosmology/#lect7">Лекция 7. Нейтрино во Вселенной.</a></p>
+              <p><a href="/course/cosmology/#lect8">Лекция 8. Первичный нуклеосинтез.</a></p>
+              <p><a href="/course/cosmology/#lect9">Лекция 9. Неоднородности плотности. Ньютонов подход.</a></p>
+              <p><a href="/course/cosmology/#lect10">Лекция 10. Неоднородности плотности. Ньютонов подход.</a></p>
+              <p><a href="/course/cosmology/#lect11">Лекция 11. Неоднородности плотности. Ньютонов подход.</a></p>
           </div>
         </div>
       </div>
