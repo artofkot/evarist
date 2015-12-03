@@ -1,22 +1,24 @@
 # -*- coding: utf-8 -*-
-from mongoengine import *
-import datetime
+from flask.ext.mongoengine import MongoEngine
+db = MongoEngine()
 
+import datetime
+from mongoengine import *
 
 #collection for registered users
-class Rights(EmbeddedDocument):
-    is_moderator=BooleanField(default=False)
-    is_checker =BooleanField(default=False)
+class Rights(db.EmbeddedDocument):
+    is_moderator=db.BooleanField(default=False)
+    is_checker =db.BooleanField(default=False)
 
-class User(Document):
-    date = DateTimeField(default=datetime.datetime.now)
-    karma= IntField(default=1)
-    rights = EmbeddedDocumentField('Rights', default=Rights())
+class User(db.Document):
+    date = db.DateTimeField(default=datetime.datetime.now)
+    karma= db.IntField(default=1)
+    rights = db.EmbeddedDocumentField('Rights', default=Rights())
 
-    problems_solution_written=ListField(ReferenceField('Content_block'))
-    problems_solved=ListField(ReferenceField('Content_block'))
-    problems_can_see_other_solutions=ListField(ReferenceField('Content_block'))
-    problems_can_vote=ListField(ReferenceField('Content_block'))
+    problems_solution_written=db.ListField(db.ReferenceField('Content_block'))
+    problems_solved=db.ListField(db.ReferenceField('Content_block'))
+    problems_can_see_other_solutions=db.ListField(db.ReferenceField('Content_block'))
+    problems_can_vote=db.ListField(db.ReferenceField('Content_block'))
 
     def __unicode__(self):
         return self.username + '•'.decode('utf-8') + str(self.karma)
@@ -25,61 +27,61 @@ class User(Document):
     meta = {'allow_inheritance': True}
 
 class GplusUser(User):
-    provider= StringField(default='gplus', max_length=64)
-    gplus_id=StringField(unique=True, sparse=True)
-    gplus_picture=StringField()
-    gplus_email=StringField()
-    gplus_name=StringField()
+    provider= db.StringField(default='gplus', max_length=64)
+    gplus_id=db.StringField(unique=True, sparse=True)
+    gplus_picture=db.StringField()
+    gplus_email=db.StringField()
+    gplus_name=db.StringField()
 
     # default=gplus_name,
-    username = StringField()
+    username = db.StringField()
     # default=gplus_email,
-    email = StringField(required=True)
+    email = db.StringField(required=True)
 
 
 class EmailUser(User):
-    provider= StringField(default='email')
-    username = StringField(required=True, max_length=256)
-    email = StringField(required=True, unique_with='provider', max_length=256)
-    pw_hash = StringField()
-    old_pw_hash = StringField()
-    confirmed= BooleanField(default=False)
+    provider= db.StringField(default='email')
+    username = db.StringField(required=True, max_length=256)
+    email = db.StringField(required=True, unique_with='provider', max_length=256)
+    pw_hash = db.StringField()
+    old_pw_hash = db.StringField()
+    confirmed= db.BooleanField(default=False)
 
     
 
 
 #collection for content blocks
-class Content_block(Document):
-    text = StringField()
-    date = DateTimeField(default=datetime.datetime.now)
-    tags= ListField(StringField(max_length=128))
+class Content_block(db.Document):
+    text = db.StringField()
+    date = db.DateTimeField(default=datetime.datetime.now)
+    tags= db.ListField(db.StringField(max_length=128))
     
-    problem_set= ReferenceField('Problem_set')
-    author= ReferenceField('User')
-    general_discussion=ListField(ReferenceField('Comment'))
-    number_in_problem_set=IntField()
+    problem_set= db.ReferenceField('Problem_set')
+    author= db.ReferenceField('User')
+    general_discussion=db.ListField(db.ReferenceField('Comment'))
+    number_in_problem_set=db.IntField()
 
-    type_ = StringField(max_length=64, default='problem', choices=('problem', 'definition', 'general_content_block'))
-    solutions=ListField(ReferenceField('Solution'))
+    type_ = db.StringField(max_length=64, default='problem', choices=('problem', 'definition', 'general_content_block'))
+    solutions=db.ListField(db.ReferenceField('Solution'))
 
     meta = {'allow_inheritance': True}
-    old_id = StringField()
+    old_id = db.StringField()
 
 #collection of courses
-class Course(Document):
-    name=StringField(required=True, unique=True, max_length=1024)
-    slug = StringField(max_length=128, required=True, unique=True)
-    problem_sets=ListField(ReferenceField('Problem_set'))
+class Course(db.Document):
+    name=db.StringField(required=True, unique=True, max_length=1024)
+    slug = db.StringField(max_length=128, required=True, unique=True)
+    problem_sets=db.ListField(db.ReferenceField('Problem_set'))
 
 #collection for problem sets
-class Problem_set(Document):
-    title = StringField(required=True, unique=True, max_length=1024)
-    slug = StringField(max_length=128, required=True, unique=True)
-    status = StringField(max_length=64, default='dev', choices=('dev', 'stage', 'production'))
-    tags= ListField(StringField(max_length=128))
-    content_blocks = ListField(ReferenceField('Content_block'))
+class Problem_set(db.Document):
+    title = db.StringField(required=True, unique=True, max_length=1024)
+    slug = db.StringField(max_length=128, required=True, unique=True)
+    status = db.StringField(max_length=64, default='dev', choices=('dev', 'stage', 'production'))
+    tags= db.ListField(db.StringField(max_length=128))
+    content_blocks = db.ListField(db.ReferenceField('Content_block'))
 
-    course=ReferenceField('Course')
+    course=db.ReferenceField('Course')
 
     def assign_numbers_to_content_blocks(self):
         definition_counter=0
@@ -101,10 +103,10 @@ class Problem_set(Document):
 
 
 #collection for comments
-class Comment(Document):
-    text = StringField(required=True)
-    date = DateTimeField(default=datetime.datetime.now)
-    author= ReferenceField('User')
+class Comment(db.Document):
+    text = db.StringField(required=True)
+    date = db.DateTimeField(default=datetime.datetime.now)
+    author= db.ReferenceField('User')
 
     def save(self, *args, **kwargs):
         super(Comment, self).save(*args, **kwargs)
@@ -112,43 +114,43 @@ class Comment(Document):
     meta = {'allow_inheritance': True}
 
 class CommentToSolution(Comment):    
-    parent_solution = ReferenceField('Solution')
-    type_ = StringField(max_length=64, default='comment_to_solution', choices=('comment_to_solution', 'comment_to_content_block', 'feedback'))
+    parent_solution = db.ReferenceField('Solution')
+    type_ = db.StringField(max_length=64, default='comment_to_solution', choices=('comment_to_solution', 'comment_to_content_block', 'feedback'))
 
 class CommentToContent_block(Comment): 
-    parent_content_block = ReferenceField('Content_block')
-    type_ = StringField(max_length=64, default='comment_to_content_block', choices=('comment_to_solution', 'comment_to_content_block', 'feedback'))
+    parent_content_block = db.ReferenceField('Content_block')
+    type_ = db.StringField(max_length=64, default='comment_to_content_block', choices=('comment_to_solution', 'comment_to_content_block', 'feedback'))
 
 
 # mb change this to email to mandrill!
 class CommentFeedback(Comment):
-    author_email=StringField()
-    where_feedback = StringField()
-    type_ = StringField(max_length=64, default='feedback', choices=('comment_to_solution', 'comment_to_content_block', 'feedback'))
+    author_email=db.StringField()
+    where_feedback = db.StringField()
+    type_ = db.StringField(max_length=64, default='feedback', choices=('comment_to_solution', 'comment_to_content_block', 'feedback'))
 
 
 #collection for solutions
 class Solution(Comment):
-    text = StringField(required=False)
-    answer = StringField()
-    image_url = StringField()
-    language = StringField(max_length=256, default='rus')
-    status = StringField(max_length=64, default='not_checked', choices=('checked_correct', 'checked_incorrect', 'not_checked'))
+    text = db.StringField(required=False)
+    answer = db.StringField()
+    image_url = db.StringField()
+    language = db.StringField(max_length=256, default='rus')
+    status = db.StringField(max_length=64, default='not_checked', choices=('checked_correct', 'checked_incorrect', 'not_checked'))
 
-    problem = ReferenceField('Content_block')
-    problem_set = ReferenceField('Problem_set')
-    discussion=ListField(ReferenceField('Comment'))
+    problem = db.ReferenceField('Content_block')
+    problem_set = db.ReferenceField('Problem_set')
+    discussion=db.ListField(db.ReferenceField('Comment'))
 
-    downvotes=IntField(default=0)
-    upvotes=IntField(default=0)
-    users_upvoted=ListField(ReferenceField('User'))
-    users_downvoted=ListField(ReferenceField('User'))
+    downvotes=db.IntField(default=0)
+    upvotes=db.IntField(default=0)
+    users_upvoted=db.ListField(db.ReferenceField('User'))
+    users_downvoted=db.ListField(db.ReferenceField('User'))
 
 
 # collection for subscribed users
-class Subscribed_user(Document):
-    email = StringField(required=True, unique=True, max_length=256)
-    date = DateTimeField(default=datetime.datetime.now) 
+class Subscribed_user(db.Document):
+    email = db.StringField(required=True, unique=True, max_length=256)
+    date = db.DateTimeField(default=datetime.datetime.now) 
 
 
 
@@ -186,12 +188,3 @@ Content_block.register_delete_rule(CommentToContent_block,'parent_content_block'
 
 Comment.register_delete_rule(Content_block,'general_discussion',PULL)
 Comment.register_delete_rule(Solution,'discussion',PULL)
-
-
-
-
-
-
-
-
-
