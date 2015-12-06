@@ -4,6 +4,8 @@ div.solution {
   border-color: #A9A7A7; 
   /*border-radius: 10px; */  /*i really dont like it...*/
   padding: 5px;
+  width:80%;
+  float: right;
 }
 
 div.comment {
@@ -13,6 +15,50 @@ div.comment {
   /*border-radius: 5px; */
   padding: 5px;
 }
+
+.votes{
+  width:20%;
+  clear: left;
+  text-align: center;
+  padding: 10px 0;
+}
+
+.votes label{
+  display: block;
+  cursor: pointer;
+  width:100%;
+  height:15px;
+}
+
+.votes label.upvote:before{
+  content: '\25b2';
+  font-size: 2em;
+  color: grey;
+  display: block;
+}
+
+.votes label.downvote:before{
+  content: '\25bc';
+  font-size: 2em;
+  color: grey;
+  display: block;
+}
+
+.votes input[type="radio"]{
+  opacity: 0;
+  width: 20px;
+  height:20px;
+  background: grey;
+}
+
+.votes .btn{
+  margin-top: 10px;
+  padding: 1px 2px;
+}
+
+.clear{clear:both}
+
+.comment-form{margin-top: 10px;}
 
 .my_anchor {
     display: block;

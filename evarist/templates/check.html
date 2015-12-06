@@ -44,26 +44,24 @@
 
 
           <!-- votes + form for voting-->
-          <div class='row'>
-            <!-- votes -->
-            <div class="col-md-4 col-md-offset-1">
-              {{solution_macros.display_votes(solution)}}
+            <div class='votes'>
+              <!-- votes -->
+                {{solution_macros.display_votes(solution)}}
+
+              <!-- vote form -->
+              <div class="col-md-4 col-md-offset-2">
+              {%if g.user not in (  solution['users_upvoted']|list + solution['users_downvoted']|list )%}
+                <form action="{{request.path}}?sol_id={{solution['id']}}" method="post">
+                  {{ vote_form.hidden_tag() }}
+                  <!--{*{ form_macros.vote_for_solution_form() }*}-->
+                </form>
+              {%else%}
+                <p><strong style='color:green'> Вы уже проголосовали.</strong></p>
+              {%endif%}
+              </div>
             </div>
 
-            <!-- vote form -->
-            <div class="col-md-4 col-md-offset-2">
-            {%if g.user not in (  solution['users_upvoted']|list + solution['users_downvoted']|list )%}
-              <form action="{{request.path}}?sol_id={{solution['id']}}" method="post">
-                {{ vote_form.hidden_tag() }}
-                {{ form_macros.vote_for_solution_form() }}
-              </form>
-            {%else%}
-              <p><strong style='color:green'> Вы уже проголосовали.</strong></p>
-            {%endif%}
-            </div>
-          </div>
-          
-          <div style='height:14px'></div>
+            <div style='height:14px' class="clear"></div>
 
           <!-- comment form -->
           <form action=" {{url_for('.check', sol_id=solution['id'])}}" method="post">
@@ -108,26 +106,24 @@
           {{solution_macros.solution(solution=solution,inscription=gettext('Решение от <strong>%(author)s</strong>', author = solution['author']))}}
 
           <!-- votes + form for voting-->
-          <div class='row'>
-            <!-- votes -->
-            <div class="col-md-4 col-md-offset-1">
-              {{solution_macros.display_votes(solution)}}
+            <div class='votes'>
+              <!-- votes -->
+                {{solution_macros.display_votes(solution)}}
+
+              <!-- vote form -->
+              <div class="col-md-4 col-md-offset-2">
+              {%if g.user not in (  solution['users_upvoted']|list + solution['users_downvoted']|list )%}
+                <form action="{{request.path}}?sol_id={{solution['id']}}" method="post">
+                  {{ vote_form.hidden_tag() }}
+                  <!--{*{ form_macros.vote_for_solution_form() }*}-->
+                </form>
+              {%else%}
+                <p><strong style='color:green'> Вы уже проголосовали.</strong></p>
+              {%endif%}
+              </div>
             </div>
 
-            <!-- vote form -->
-            <div class="col-md-4 col-md-offset-2">
-            {%if g.user not in (  solution['users_upvoted']|list + solution['users_downvoted']|list )%}
-              <form action="{{request.path}}?sol_id={{solution['id']}}" method="post">
-                {{ vote_form.hidden_tag() }}
-                {{ form_macros.vote_for_solution_form() }}
-              </form>
-            {%else%}
-              <p><strong style='color:green'> Вы уже проголосовали.</strong></p>
-            {%endif%}
-            </div>
-          </div>
-          
-          <div style='height:14px'></div>
+            <div style='height:14px' class="clear"></div>
 
           <!-- comment form -->
           <form action=" {{url_for('.check', sol_id=solution['id'])}}" method="post">

@@ -22,7 +22,11 @@
 
 {% macro display_votes(solution) -%}
 
-<p>{{solution.upvotes}} верно </p>
-<p>{{solution.downvotes}} неверно</p>
+<label class="upvote"><input type="radio" name="vote" value="upvote"></label>
+<p class="upvotes_sum">{{solution.upvotes}}</p>
+<p class="votes_separator">-</p>
+<p class="downvotes_sum">{{solution.downvotes}}</p>
+<label class="downvote"><input type="radio" name="vote" value="downvote"></label>
+<button type="submit" class="btn btn-xs btn-default">Проголосовать</button>
 
 {%- endmacro %}

@@ -123,18 +123,16 @@
             {{solution_macros.solution(solution=solution,inscription=gettext('Решение от %(user)s', user = solution['author']))}}       
             
             <!-- votes + form for voting-->
-            <div class='row'>
+            <div class='votes'>
               <!-- votes -->
-              <div class="col-md-4 col-md-offset-1">
                 {{solution_macros.display_votes(solution)}}
-              </div>
 
               <!-- vote form -->
               <div class="col-md-4 col-md-offset-2">
               {%if g.user not in (  solution['users_upvoted']|list + solution['users_downvoted']|list )%}
                 <form action="{{request.path}}?sol_id={{solution['id']}}" method="post">
                   {{ vote_form.hidden_tag() }}
-                  {{ form_macros.vote_for_solution_form() }}
+                  <!--{*{ form_macros.vote_for_solution_form() }*}-->
                 </form>
               {%else%}
                 <p><strong style='color:green'> Вы уже проголосовали.</strong></p>
@@ -142,10 +140,10 @@
               </div>
             </div>
 
-            <div style='height:14px'></div>
+            <div style='height:14px' class="clear"></div>
 
             <!-- comment form -->
-            <form action="{{url_for('workflow.problem', problem_set_slug=problem_set_slug, prob_id=problem['id'], sol_id=solution['id'])}}" method="post">
+            <form action="{{url_for('workflow.problem', problem_set_slug=problem_set_slug, prob_id=problem['id'], sol_id=solution['id'])}}" method="post" class="comment-form">
               {{ solution_comment_form.hidden_tag() }}
               {{ form_macros.comment_form(name_of_textarea="feedback_to_solution",name_of_the_button="Оставить комментарий") }}
             </form>

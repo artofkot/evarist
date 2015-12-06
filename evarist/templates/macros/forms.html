@@ -31,7 +31,11 @@
 {%- endmacro %}
 
 {% macro vote_for_solution_form() -%}
-  <div class="form-group" >
+  <div class="vote-actions">
+    <input type="radio" name="vote" value="upvote" class="upvote">
+    <input type="radio" name="vote" value="downvote" class="downvote">
+  </div>
+  <!--<div class="form-group" >
     <div class="radio">
       <label>
         <input type="radio" name="vote" value="upvote" >
@@ -44,7 +48,7 @@
         неверно
       </label>
     </div>
-  </div>
+  </div>-->
   <button type="submit" class="btn btn-xs btn-default">Проголосовать</button>
 {%- endmacro %}
 
