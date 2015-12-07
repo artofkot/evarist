@@ -3,9 +3,7 @@ import os, json
 
 APPLICATION_NAME = "Evarist"
 
-#for pymongo
 MONGO_URI=os.environ.get("MONGO_URI")
-# MONGO_URI='mongodb://contributer:ohiwd83rnoqeiF@ds051883.mongolab.com:51883/evarist-clone'
 
 #for mongoengine
 MONGODB_SETTINGS={'host': MONGO_URI}

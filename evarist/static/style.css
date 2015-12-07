@@ -1,3 +1,7 @@
+.content_block{
+  white-space: pre-wrap;
+}
+
 div.solution {
   white-space: pre-wrap;
   border:solid 1px;

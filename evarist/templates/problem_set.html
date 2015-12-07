@@ -32,7 +32,7 @@
           <a class="def_prob_as_link" href="{{ url_for('workflow.content_block', problem_set_slug=problem_set['slug'], type_=content_block.type_, __id=content_block.id ) }}">
             ∆ Определение {{content_block.number_in_problem_set}}.</a>
           {%endif%}
-          {{content_block['text']|safe}}
+          <span class="content_block">{{content_block['text']|safe}}</span>
           
           {% if content_block.type_=='problem' %}
             <a class="btn btn-s btn-default pull-right" href="{{ url_for('workflow.problem', problem_set_slug=problem_set['slug'], prob_id=content_block.id ) }}" >Отправить решение</a>
