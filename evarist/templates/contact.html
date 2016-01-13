@@ -25,23 +25,28 @@
       </p>
 
       <hr>
+      {% if g.user %}
+        <p><b>Вопросы и пожелания пишите сюда, будем очень рады.</b></p>
 
-      <p><b>Вопросы и пожелания пишите сюда, будем очень рады.</b></p>
+        <form action="{{url_for('workflow.contact')}}" method="post">
+          <div class="form-group" >
+            {{ website_feedback_form.hidden_tag() }}
 
-      <form action="{{url_for('workflow.contact')}}" method="post">
-        <div class="form-group" >
-          {{ website_feedback_form.hidden_tag() }}
+            <textarea class="form-control" rows="5"  name='feedback'></textarea>
+            
+            {% if not g.user%}
+              {{website_feedback_form.email.label('Ваш e-mail')}}
+              {{website_feedback_form.email(class='form-control')}}
+            {%endif%}
 
-          <textarea class="form-control" rows="5"  name='feedback'></textarea>
-          
-          {% if not g.user%}
-            {{website_feedback_form.email.label('Ваш e-mail')}}
-            {{website_feedback_form.email(class='form-control')}}
-          {%endif%}
-
-        </div>
-        <button type="submit" class="btn btn-default">Отправить</button>
-      </form>
+          </div>
+          <button type="submit" class="btn btn-default">Отправить</button>
+        </form>
+      {% else %}
+        <p>
+          <a href="{{url_for('user.login')}}">Войдите</a> на сайт чтобы послать нам сообщение.
+        </p>
+      {% endif %}
     </div>
   </div>
 {% endblock %}
