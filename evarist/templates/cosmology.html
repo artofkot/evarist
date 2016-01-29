@@ -131,12 +131,30 @@
               </li>
             {% endfor %}
           </ul>
-          <p><a class="my_anchor" id="lect11"></a>Лекция 11.</p>
+          <p><a class="my_anchor" id="lect11"></a>Лекция 11. Слабовзаимодействующие массивные частицы, WIMPs.</p>
           <ul style='list-style-type:none'>
-            {%for problem_set in cosmo_course.problem_sets[47:]%}
+            {%for problem_set in cosmo_course.problem_sets[47:50]%}
               <li>
                 <p>
                 11.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+              </li>
+            {% endfor %}
+          </ul>
+          <p><a class="my_anchor" id="lect12"></a>Лекция 12. Стерильные нейтрино как теплая темная материя.</p>
+          <ul style='list-style-type:none'>
+            {%for problem_set in cosmo_course.problem_sets[50:52]%}
+              <li>
+                <p>
+                12.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+              </li>
+            {% endfor %}
+          </ul>
+          <p><a class="my_anchor" id="lect13"></a>Лекция 13. Аксион как частица темной материи.</p>
+          <ul style='list-style-type:none'>
+            {%for problem_set in cosmo_course.problem_sets[52:57]%}
+              <li>
+                <p>
+                13.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
               </li>
             {% endfor %}
           </ul>
@@ -144,5 +162,6 @@
       </div>
     </div>
   </div>
+
 
 {% endblock %}
