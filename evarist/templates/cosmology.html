@@ -151,10 +151,19 @@
           </ul>
           <p><a class="my_anchor" id="lect13"></a>Лекция 13. Аксион как частица темной материи.</p>
           <ul style='list-style-type:none'>
-            {%for problem_set in cosmo_course.problem_sets[52:57]%}
+            {%for problem_set in cosmo_course.problem_sets[52:61]%}
               <li>
                 <p>
                 13.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+              </li>
+            {% endfor %}
+          </ul>
+          <p><a class="my_anchor" id="lect14"></a>Лекция 14. Космологические фазовые переходы.</p>
+          <ul style='list-style-type:none'>
+            {%for problem_set in cosmo_course.problem_sets[61:]%}
+              <li>
+                <p>
+                14.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
               </li>
             {% endfor %}
           </ul>
