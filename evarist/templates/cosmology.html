@@ -169,10 +169,19 @@
           </ul>
           <p><a class="my_anchor" id="lect15"></a>Лекция 15. Космологические фазовые переходы. Продолжение.</p>
           <ul style='list-style-type:none'>
-            {%for problem_set in cosmo_course.problem_sets[61:]%}
+            {%for problem_set in cosmo_course.problem_sets[61:65]%}
               <li>
                 <p>
                 15.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+              </li>
+            {% endfor %}
+          </ul>
+          <p><a class="my_anchor" id="lect16"></a>Лекция 16. Квантовая теория поля при конечной температуре.</p>
+          <ul style='list-style-type:none'>
+            {%for problem_set in cosmo_course.problem_sets[65:69]%}
+              <li>
+                <p>
+                16.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
               </li>
             {% endfor %}
           </ul>
