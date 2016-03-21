@@ -185,6 +185,15 @@
               </li>
             {% endfor %}
           </ul>
+          <p><a class="my_anchor" id="lect17"></a>Лекция 17. Монополи т'Хоофта-Полякова, механизм Киббла.</p>
+          <ul style='list-style-type:none'>
+            {%for problem_set in cosmo_course.problem_sets[69:]%}
+              <li>
+                <p>
+                17.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+              </li>
+            {% endfor %}
+          </ul>
         </div>
       </div>
     </div>
