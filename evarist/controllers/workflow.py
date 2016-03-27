@@ -39,8 +39,8 @@ def login_required(f):
 def home():
 
     # this is example code for sending emails
-    msg = Message("Hello",recipients=["artofkot@gmail.com"])
-    g.mail.send(msg)
+    # msg = Message("Hello",recipients=["artofkot@gmail.com"])
+    # g.mail.send(msg)
     
 
 
