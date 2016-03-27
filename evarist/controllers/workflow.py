@@ -41,8 +41,6 @@ def home():
     # this is example code for sending emails
     # msg = Message("Hello",recipients=["artofkot@gmail.com"])
     # g.mail.send(msg)
-    
-
 
     if g.locale == 'ru': matan_course=Course.objects(slug='matan').first()
     else: matan_course=Course.objects(slug='analysis').first()
@@ -360,6 +358,7 @@ def check():
 @login_required
 def my_solutions():
     (not_checked_sols,checked_sols)=solution_filters.get_solutions_for_my_solutions_page(g.user)
+
     solution_comment_form=FeedbackToSolutionForm()
     if solution_comment_form.validate_on_submit():
         parent_solution=Solution.objects(id=ObjectId(request.args['sol_id'])).first()

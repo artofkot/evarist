@@ -23,7 +23,7 @@ def get_solutions_for_check_page(user):
     solutions=[]
     if user['rights']['is_moderator'] or user['rights']['is_checker']:
         # (sort from newest to oldest)
-        solutions=Solution.objects(author__ne=user).order_by('-date')
+        solutions=Solution.objects.order_by('-date')
 
     else:
         for problem in user['problems_can_see_other_solutions']:
