@@ -47,11 +47,11 @@ app.logger.setLevel(logging.ERROR)
 if not app.debug:
     import logging
     from logging.handlers import SMTPHandler
-    mail_handler = SMTPHandler(mailhost=('smtp.mandrillapp.com',587),
-                            fromaddr=app.config['MANDRILL_USERNAME'],
+    mail_handler = SMTPHandler(mailhost=('smtp.sendgrid.net',587),
+                            fromaddr=app.config['SENDGRID_USERNAME'],
                             toaddrs=app.config['ADMINS'],
                             subject='Error on Evarist (production)!',
-                            credentials=(app.config['MANDRILL_USERNAME'],app.config['MANDRILL_APIKEY']),
+                            credentials=(app.config['SENDGRID_USERNAME'],app.config['SENDGRID_APIKEY']),
                             secure=None)
     mail_handler.setLevel(logging.ERROR)
     app.logger.addHandler(mail_handler)

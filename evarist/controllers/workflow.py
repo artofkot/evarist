@@ -37,11 +37,12 @@ def login_required(f):
 
 @workflow.route('/', methods=["GET", "POST"])
 def home():
+
     # this is example code for sending emails
-    #
-    # msg = Message("Hello",
-    #               recipients=["artofkot@gmail.com"])
-    # g.mail.send(msg)
+    msg = Message("Hello",recipients=["artofkot@gmail.com"])
+    g.mail.send(msg)
+    
+
 
     if g.locale == 'ru': matan_course=Course.objects(slug='matan').first()
     else: matan_course=Course.objects(slug='analysis').first()

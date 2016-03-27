@@ -22,20 +22,20 @@ CLIENT_ID = CLIENT_SECRETS_JSON['web']['client_id']
 BABEL_DEFAULT_LOCALE='ru'
 BABEL_DEFAULT_TIMEZONE='UTC+0300'
 
-# getting MANDRILL (email provider) username and password 
+# getting SENDGRID (email provider) username and password 
 # could be the case that its better to use gmail account
-MANDRILL_APIKEY=os.environ.get("MANDRILL_APIKEY")
-MANDRILL_USERNAME=os.environ.get("MANDRILL_USERNAME")
+SENDGRID_APIKEY=os.environ.get("SENDGRID_APIKEY")
+SENDGRID_USERNAME=os.environ.get("SENDGRID_USERNAME")
 
 # config for flask-mail
-MAIL_SERVER='smtp.mandrillapp.com'#default ‘localhost’
+MAIL_SERVER='smtp.sendgrid.net'#default ‘localhost’
 MAIL_PORT = 587
 # MAIL_USE_TLS = default False
 # MAIL_USE_SSL = default False
 # MAIL_DEBUG = default app.debug
-MAIL_USERNAME = MANDRILL_USERNAME
-MAIL_PASSWORD = MANDRILL_APIKEY
-MAIL_DEFAULT_SENDER = ('Evarist',MANDRILL_USERNAME)
+MAIL_USERNAME = SENDGRID_USERNAME
+MAIL_PASSWORD = SENDGRID_APIKEY
+MAIL_DEFAULT_SENDER = ('Evarist',SENDGRID_USERNAME)
 
 ADMINS = ['artofkot@gmail.com','alexej.levin@gmail.com']
 
