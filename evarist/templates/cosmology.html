@@ -131,12 +131,66 @@
               </li>
             {% endfor %}
           </ul>
-          <p><a class="my_anchor" id="lect11"></a>Лекция 11.</p>
+          <p><a class="my_anchor" id="lect11"></a>Лекция 11. Слабовзаимодействующие массивные частицы, WIMPs.</p>
           <ul style='list-style-type:none'>
-            {%for problem_set in cosmo_course.problem_sets[47:]%}
+            {%for problem_set in cosmo_course.problem_sets[47:50]%}
               <li>
                 <p>
                 11.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+              </li>
+            {% endfor %}
+          </ul>
+          <p><a class="my_anchor" id="lect12"></a>Лекция 12. Стерильные нейтрино как теплая темная материя.</p>
+          <ul style='list-style-type:none'>
+            {%for problem_set in cosmo_course.problem_sets[50:52]%}
+              <li>
+                <p>
+                12.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+              </li>
+            {% endfor %}
+          </ul>
+          <p><a class="my_anchor" id="lect13"></a>Лекция 13. Аксион как частица темной материи.</p>
+          <ul style='list-style-type:none'>
+            {%for problem_set in cosmo_course.problem_sets[52:58]%}
+              <li>
+                <p>
+                13.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+              </li>
+            {% endfor %}
+          </ul>
+          <p><a class="my_anchor" id="lect14"></a>Лекция 14. Космологические фазовые переходы.</p>
+          <ul style='list-style-type:none'>
+            {%for problem_set in cosmo_course.problem_sets[58:61]%}
+              <li>
+                <p>
+                14.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+              </li>
+            {% endfor %}
+          </ul>
+          <p><a class="my_anchor" id="lect15"></a>Лекция 15. Космологические фазовые переходы. Продолжение.</p>
+          <ul style='list-style-type:none'>
+            {%for problem_set in cosmo_course.problem_sets[61:65]%}
+              <li>
+                <p>
+                15.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+              </li>
+            {% endfor %}
+          </ul>
+          <p><a class="my_anchor" id="lect16"></a>Лекция 16. Квантовая теория поля при конечной температуре.</p>
+          <ul style='list-style-type:none'>
+            {%for problem_set in cosmo_course.problem_sets[65:69]%}
+              <li>
+                <p>
+                16.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+              </li>
+            {% endfor %}
+          </ul>
+          <p><a class="my_anchor" id="lect17"></a>Лекция 17. Монополи т'Хоофта-Полякова, механизм Киббла.</p>
+          <ul style='list-style-type:none'>
+            {%for problem_set in cosmo_course.problem_sets[69:]%}
+              <li>
+                <p>
+                17.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
               </li>
             {% endfor %}
           </ul>
@@ -144,5 +198,6 @@
       </div>
     </div>
   </div>
+
 
 {% endblock %}
