@@ -391,6 +391,7 @@ def my_solutions():
                             image_url=image_url)
             new_solution.save()
             events.solution_written(new_solution)
+            g.mail.send(Message("Someone posted solution on evarist!",recipients=["artofkot@gmail.com"]))
 
             # solution.text=edit_solution_form.edited_solution.data
             # solution.date=datetime.datetime.utcnow()
