@@ -257,6 +257,7 @@ def problem(problem_set_slug,prob_id):
                         image_url=image_url)
         solution.save()
         events.solution_written(solution)
+        g.mail.send(Message("Someone posted solution on evarist!",recipients=["artofkot@gmail.com"]))
         
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
@@ -282,6 +283,7 @@ def problem(problem_set_slug,prob_id):
                             image_url=image_url)
             new_solution.save()
             events.solution_written(new_solution)
+            g.mail.send(Message("Someone posted solution on evarist!",recipients=["artofkot@gmail.com"]))
 
             # solution.text=edit_solution_form.edited_solution.data
             # solution.date=datetime.datetime.utcnow()
