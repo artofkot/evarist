@@ -187,10 +187,19 @@
           </ul>
           <p><a class="my_anchor" id="lect17"></a>Лекция 17. Топологические дефекты во Вселенной.</p>
           <ul style='list-style-type:none'>
-            {%for problem_set in cosmo_course.problem_sets[69:]%}
+            {%for problem_set in cosmo_course.problem_sets[69:74]%}
               <li>
                 <p>
                 17.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
+              </li>
+            {% endfor %}
+          </ul>
+          <p><a class="my_anchor" id="lect18"></a>Лекция 18. Барионная асимметрия Вселенной.</p>
+          <ul style='list-style-type:none'>
+            {%for problem_set in cosmo_course.problem_sets[74:]%}
+              <li>
+                <p>
+                18.{{loop.index}}. <a href="{{url_for('.problem_set',problem_set_slug=problem_set['slug'])}}">{{problem_set['title']}}</a></p>
               </li>
             {% endfor %}
           </ul>
