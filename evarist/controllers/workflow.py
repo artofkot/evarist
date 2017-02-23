@@ -207,7 +207,9 @@ def problem(problem_set_slug,prob_id):
         problem.general_discussion.append(comment)
         problem.save()
 
-        g.mail.send(Message(body= problem_set.title + '. Problem ' + str(problem.number_in_problem_set) + '\n' + comment.text,
+        g.mail.send(Message(body= 'http://www.evarist.org/'+url_for('.problem', 
+                                problem_set_slug=problem_set_slug,
+                                prob_id=problem['id']) + '\r\n\r\n' + problem_set.title + '. Problem ' + str(problem.number_in_problem_set) + '.' + problem.text + '\r\n\r\n'+ 'The question: '+ comment.text,
                             sender=comment.author.email,
                             subject='Вопрос по условию',
                             recipients=current_app.config['ADMINS']))
@@ -257,8 +259,12 @@ def problem(problem_set_slug,prob_id):
                         image_url=image_url)
         solution.save()
         events.solution_written(solution)
-        g.mail.send(Message("Someone posted solution on evarist!",recipients=["artofkot@gmail.com"]))
-        
+        g.mail.send(Message(body='http://www.evarist.org/'+url_for('.problem', 
+                                problem_set_slug=problem_set_slug,
+                                prob_id=problem['id']),
+                            subject="Someone posted a solution on evarist",
+                            recipients=current_app.config['ADMINS']))
+
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem['id']))
@@ -283,8 +289,12 @@ def problem(problem_set_slug,prob_id):
                             image_url=image_url)
             new_solution.save()
             events.solution_written(new_solution)
-            g.mail.send(Message("Someone posted solution on evarist!",recipients=["artofkot@gmail.com"]))
-
+            g.mail.send(Message(body='http://www.evarist.org/'+url_for('.problem', 
+                                problem_set_slug=problem_set_slug,
+                                prob_id=problem['id']),
+                            subject="Someone posted a solution on evarist",
+                            recipients=current_app.config['ADMINS']))
+                            #['artofkot@gmail.com']
             # solution.text=edit_solution_form.edited_solution.data
             # solution.date=datetime.datetime.utcnow()
             # solution.save()
@@ -391,7 +401,11 @@ def my_solutions():
                             image_url=image_url)
             new_solution.save()
             events.solution_written(new_solution)
-            g.mail.send(Message("Someone posted solution on evarist!",recipients=["artofkot@gmail.com"]))
+            g.mail.send(Message(body='http://www.evarist.org/'+url_for('.problem', 
+                                problem_set_slug=solution.problem_set.slug,
+                                prob_id=solution.problem['id']),
+                            subject="Someone posted a solution on evarist",
+                            recipients=current_app.config['ADMINS']))
 
             # solution.text=edit_solution_form.edited_solution.data
             # solution.date=datetime.datetime.utcnow()
