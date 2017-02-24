@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from bson.objectid import ObjectId
-import os, time, datetime, urllib, urllib2
+import os, time, datetime, urllib, urllib2, random
 from flask import current_app, Flask, Blueprint, request, session, g, redirect, url_for, \
     abort, render_template, flash
 from contextlib import closing
@@ -182,7 +182,7 @@ def problem(problem_set_slug,prob_id):
         flash('No such problem set.')
         return redirect(url_for('.home'))
 
-    # get the problem_set
+    # get the problem
     problem=Content_block.objects(id=ObjectId(prob_id)).first()
     if not problem: 
         flash('No such problem.')
@@ -213,6 +213,20 @@ def problem(problem_set_slug,prob_id):
                             sender=comment.author.email,
                             subject='Вопрос по условию',
                             recipients=current_app.config['ADMINS']))
+
+        userss=User.objects()
+        email_list=[]
+        for user in userss:
+            if user['rights']['is_checker']: 
+                email_list.append(user.email)
+            else:
+                if solution.problem in user['problems_can_see_other_solutions'] and (not user['rights']['is_moderator']):
+                    email_list.append(user.email)
+        to_send=random.sample(set(email_list), 2)
+        print to_send
+        g.mail.send(Message(body='Было бы круто, если бы вы проверили решение на evarist.org, которое недавно запостили. Внизу ссылка, решение будет слева вверху (если его еще не проверили):' + '\r\n\r\n http://www.evarist.org/check' + '\r\n\r\n Спасибо! Кстати, вы получили это письмо потому что вы либо один из проверяющих на этом сайте, либо вы уже когда-то решили эту задачу.',
+                        subject="Помощь в проверке задач на сайте evarist.org",
+                        recipients=to_send))
 
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
@@ -265,6 +279,20 @@ def problem(problem_set_slug,prob_id):
                             subject="Someone posted a solution on evarist",
                             recipients=current_app.config['ADMINS']))
 
+        userss=User.objects()
+        email_list=[]
+        for user in userss:
+            if user['rights']['is_checker']: 
+                email_list.append(user.email)
+            else:
+                if solution.problem in user['problems_can_see_other_solutions'] and (not user['rights']['is_moderator']):
+                    email_list.append(user.email)
+        to_send=random.sample(set(email_list), 2)
+        print to_send
+        g.mail.send(Message(body='Было бы круто, если бы вы проверили решение на evarist.org, которое недавно запостили. Внизу ссылка, решение будет слева вверху (если его еще не проверили):' + '\r\n\r\n http://www.evarist.org/check' + '\r\n\r\n Спасибо! Кстати, вы получили это письмо потому что вы либо один из проверяющих на этом сайте, либо вы уже когда-то решили эту задачу.',
+                        subject="Помощь в проверке задач на сайте evarist.org",
+                        recipients=to_send))
+
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
                                 prob_id=problem['id']))
@@ -294,13 +322,28 @@ def problem(problem_set_slug,prob_id):
                                 prob_id=problem['id']),
                             subject="Someone posted a solution on evarist",
                             recipients=current_app.config['ADMINS']))
-                            #['artofkot@gmail.com']
+
+            # roughly checkers are:
+            # checkers=[ADMINS, 'yuraust@gmail.com','volkova.v.e@gmail.com','aasuleimanova@gmail.com','independsharik@yandex.ru','kadeel@gmail.com']
+            # plus we add those who solved this problem already, but we don't include moderators
+            userss=User.objects()
+            email_list=[]
+            for user in userss:
+                if user['rights']['is_checker']: 
+                    email_list.append(user.email)
+                else:
+                    if problem in user['problems_can_see_other_solutions'] and (not user['rights']['is_moderator']):
+                        email_list.append(user.email)
+            to_send=random.sample(set(email_list), 2)
+            print to_send
+            g.mail.send(Message(body='Было бы круто, если бы вы проверили решение на evarist.org, которое недавно запостили. Внизу ссылка, решение будет слева вверху (если его еще не проверили):' + '\r\n\r\n http://www.evarist.org/check' + '\r\n\r\n Спасибо! Кстати, вы получили это письмо потому что вы либо один из проверяющих на этом сайте, либо вы уже когда-то решили эту задачу.',
+                            subject="Помощь в проверке задач на сайте evarist.org",
+                            recipients=to_send))
+
+                            
             # solution.text=edit_solution_form.edited_solution.data
             # solution.date=datetime.datetime.utcnow()
             # solution.save()
-
-
-
 
         return redirect(url_for('.problem', 
                                 problem_set_slug=problem_set_slug,
@@ -406,6 +449,23 @@ def my_solutions():
                                 prob_id=solution.problem['id']),
                             subject="Someone posted a solution on evarist",
                             recipients=current_app.config['ADMINS']))
+
+            # roughly checkers are:
+            # checkers=[ADMINS, 'yuraust@gmail.com','volkova.v.e@gmail.com','aasuleimanova@gmail.com','independsharik@yandex.ru','kadeel@gmail.com']
+            # plus we add those who solved this problem already, but we don't include moderators
+            userss=User.objects()
+            email_list=[]
+            for user in userss:
+                if user['rights']['is_checker']: 
+                    email_list.append(user.email)
+                else:
+                    if solution.problem in user['problems_can_see_other_solutions'] and (not user['rights']['is_moderator']):
+                        email_list.append(user.email)
+            to_send=random.sample(set(email_list), 2)
+            print to_send
+            g.mail.send(Message(body='Было бы круто, если бы вы проверили решение на evarist.org, которое недавно запостили. Внизу ссылка, решение будет слева вверху (если его еще не проверили):' + '\r\n\r\n http://www.evarist.org/check' + '\r\n\r\n Спасибо! Кстати, вы получили это письмо потому что вы либо один из проверяющих на этом сайте, либо вы уже когда-то решили эту задачу.',
+                            subject="Помощь в проверке задач на сайте evarist.org",
+                            recipients=to_send))
 
             # solution.text=edit_solution_form.edited_solution.data
             # solution.date=datetime.datetime.utcnow()
