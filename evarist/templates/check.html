@@ -129,11 +129,7 @@
           
           <div style='height:14px'></div>
 
-          <!-- comment form -->
-          <form action=" {{url_for('.check', sol_id=solution['id'])}}" method="post">
-            {{ solution_comment_form.hidden_tag() }}
-            {{ form_macros.comment_form(name_of_textarea="feedback_to_solution", name_of_the_button="Оставить комментарий") }}
-          </form>
+          <a href="/problem_sets/{{solution.problem_set['slug']}}/problem/{{solution.problem.id}}" class="btn btn-default" role="button">Оставить комментарий (на странице задачи)</a>
 
           <div style='height:5px'></div>
 

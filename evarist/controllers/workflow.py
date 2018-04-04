@@ -275,8 +275,7 @@ def problem(problem_set_slug,prob_id):
                     if solution.problem in user['problems_can_see_other_solutions'] and (not user['rights']['is_moderator']):
                         email_list.append(user.email)
             to_send=random.sample(set(email_list), 2)
-            print to_send
-            g.mail.send(Message(body='Было бы круто, если бы вы проверили решение на evarist.org, которое недавно запостили. Внизу ссылка, решение будет слева вверху (если его еще не проверили):' + '\r\n\r\n http://www.evarist.org/check' + '\r\n\r\n Спасибо! Кстати, вы получили это письмо потому что вы либо один из проверяющих на этом сайте, либо вы уже когда-то решили эту задачу.',
+            g.mail.send(Message(body='Было бы круто, если бы вы проверили решение на evarist.org, которое недавно запостили. Внизу ссылка, решение будет слева вверху (если его еще не проверили):' + '\r\n\r\n http://www.evarist.org/check' + '\r\n\r\n Спасибо! Кстати, вы получили это письмо потому что вы либо один из проверяющих на этом сайте, либо вы уже когда-то решили эту задачу. Если вы не хотите больше получать подобные письма, напишите мне на artofkot@gmail.com об этом.',
                             subject="Помощь в проверке задач на сайте evarist.org",
                             recipients=to_send))
 
@@ -324,8 +323,7 @@ def problem(problem_set_slug,prob_id):
                         if problem in user['problems_can_see_other_solutions'] and (not user['rights']['is_moderator']):
                             email_list.append(user.email)
                 to_send=random.sample(set(email_list), 2)
-                print to_send
-                g.mail.send(Message(body='Было бы круто, если бы вы проверили решение на evarist.org, которое недавно запостили. Внизу ссылка, решение будет слева вверху (если его еще не проверили):' + '\r\n\r\n http://www.evarist.org/check' + '\r\n\r\n Спасибо! Кстати, вы получили это письмо потому что вы либо один из проверяющих на этом сайте, либо вы уже когда-то решили эту задачу.',
+                g.mail.send(Message(body='Было бы круто, если бы вы проверили решение на evarist.org, которое недавно запостили. Внизу ссылка, решение будет слева вверху (если его еще не проверили):' + '\r\n\r\n http://www.evarist.org/check' + '\r\n\r\n Спасибо! Кстати, вы получили это письмо потому что вы либо один из проверяющих на этом сайте, либо вы уже когда-то решили эту задачу. Если вы не хотите больше получать подобные письма, напишите мне на artofkot@gmail.com об этом.',
                                 subject="Помощь в проверке задач на сайте evarist.org",
                                 recipients=to_send))
 
@@ -452,7 +450,7 @@ def my_solutions():
                         if solution.problem in user['problems_can_see_other_solutions'] and (not user['rights']['is_moderator']):
                             email_list.append(user.email)
                 to_send=random.sample(set(email_list), 2)
-                g.mail.send(Message(body='Было бы круто, если бы вы проверили решение на evarist.org, которое недавно запостили. Внизу ссылка, решение будет слева вверху (если его еще не проверили):' + '\r\n\r\n http://www.evarist.org/check' + '\r\n\r\n Спасибо! Кстати, вы получили это письмо потому что вы либо один из проверяющих на этом сайте, либо вы уже когда-то решили эту задачу.',
+                g.mail.send(Message(body='Было бы круто, если бы вы проверили решение на evarist.org, которое недавно запостили. Внизу ссылка, решение будет слева вверху (если его еще не проверили):' + '\r\n\r\n http://www.evarist.org/check' + '\r\n\r\n Спасибо! Кстати, вы получили это письмо потому что вы либо один из проверяющих на этом сайте, либо вы уже когда-то решили эту задачу. Если вы не хотите больше получать подобные письма, напишите мне на artofkot@gmail.com об этом.',
                                 subject="Помощь в проверке задач на сайте evarist.org",
                                 recipients=to_send))
 
