@@ -252,7 +252,6 @@ def problem(problem_set_slug,prob_id):
     solution_form=SolutionForm()
     if solution_form.validate_on_submit():
         file=request.files.get(solution_form.image.name,None)
-        print 'YES'
         image_url=None
         if file:
             upload_result = upload(file)
