@@ -301,6 +301,7 @@ def problem(problem_set_slug,prob_id):
     edit_solution_form=EditSolutionForm()
     if edit_solution_form.validate_on_submit():
         solution=Solution.objects(id=ObjectId(request.args['sol_id'])).first()
+        status_of_older_solution=solution.status
         if edit_solution_form.delete_solution.data:
             solution.delete()
         else: 
@@ -319,7 +320,7 @@ def problem(problem_set_slug,prob_id):
             new_solution.save()
             events.solution_written(new_solution)
 
-            if current_app.debug==False and (not problem_set_slug=="sets"):
+            if current_app.debug==False and (not problem_set_slug=="sets") and (status_of_older_solution!='not_checked'):
                 g.mail.send(Message(body='http://www.evarist.org/'+url_for('.problem', 
                                     problem_set_slug=problem_set_slug,
                                     prob_id=problem['id']),
@@ -438,6 +439,7 @@ def my_solutions():
     edit_solution_form=EditSolutionForm()
     if edit_solution_form.validate_on_submit():
         solution=Solution.objects(id=ObjectId(request.args['sol_id'])).first()
+        status_of_older_solution=solution.status
         if edit_solution_form.delete_solution.data:
             solution.delete()
         else:
@@ -455,7 +457,7 @@ def my_solutions():
                             image_url=image_url)
             new_solution.save()
             events.solution_written(new_solution)
-            if current_app.debug==False and (not solution.problem_set.slug=="sets"):
+            if current_app.debug==False and (not solution.problem_set.slug=="sets") and (status_of_older_solution!='not_checked'):
                 g.mail.send(Message(body='http://www.evarist.org/'+url_for('.problem', 
                                     problem_set_slug=solution.problem_set.slug,
                                     prob_id=solution.problem['id']),
