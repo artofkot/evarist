@@ -183,7 +183,6 @@ def content_block(problem_set_slug,type_,__id):
 
 @workflow.route('/problem_sets/<problem_set_slug>/problem/<prob_id>/', methods=["GET", "POST"])
 def problem(problem_set_slug,prob_id):
-
     # get the problem_set
     problem_set=Problem_set.objects(slug=problem_set_slug).first()
     if not problem_set: 
@@ -252,7 +251,8 @@ def problem(problem_set_slug,prob_id):
 
     solution_form=SolutionForm()
     if solution_form.validate_on_submit():
-        file=request.files[solution_form.image.name]
+        file=request.files.get(solution_form.image.name,None)
+        print 'YES'
         image_url=None
         if file:
             upload_result = upload(file)
@@ -304,8 +304,8 @@ def problem(problem_set_slug,prob_id):
         solution=Solution.objects(id=ObjectId(request.args['sol_id'])).first()
         if edit_solution_form.delete_solution.data:
             solution.delete()
-        else:
-            file=request.files[edit_solution_form.edit_image.name]
+        else: 
+            file=request.files.get(edit_solution_form.edit_image.name,None)
             if edit_solution_form.use_old_image.data:
                 image_url=solution.image_url
             else: image_url=None
@@ -442,7 +442,7 @@ def my_solutions():
         if edit_solution_form.delete_solution.data:
             solution.delete()
         else:
-            file=request.files[edit_solution_form.edit_image.name]
+            file=request.files.get(edit_solution_form.edit_image.name,None)
             if edit_solution_form.use_old_image.data:
                 image_url=solution.image_url
             else: image_url=None
