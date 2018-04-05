@@ -2,9 +2,9 @@
 from bson.objectid import ObjectId
 import os, sys, pymongo, re, time
 from flask import Flask, request, session, g, redirect, url_for
-from flask.ext.babel import Babel
-from flask.ext.bcrypt import Bcrypt
-from flask.ext.mail import Mail
+from flask_babel import Babel
+from flask_bcrypt import Bcrypt
+from flask_mail import Mail
 from controllers.user import user
 from controllers.workflow import workflow
 from controllers.admin import admin

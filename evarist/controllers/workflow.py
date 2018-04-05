@@ -6,7 +6,7 @@ import os, time, datetime, urllib, urllib2, random
 from flask import current_app, Flask, Blueprint, request, session, g, redirect, url_for, \
     abort, render_template, flash
 from contextlib import closing
-from flask.ext.mail import Message
+from flask_mail import Message
 from functools import wraps
 from evarist.models import (solution_filters, events,
                             parameters)
@@ -19,10 +19,18 @@ from evarist.controllers.admin import admin_required
 
 from cloudinary.uploader import upload
 from cloudinary.utils import cloudinary_url
+import time, sendgrid
 
 workflow = Blueprint('workflow', __name__,
                         template_folder='templates')
 
+
+def connect_to_sendgrid(current_app):
+    sg = sendgrid.SendGridAPIClient(apikey=current_app.config['SENDGRID_APIKEY'])
+    d=time.strftime("%Y-%m-%d")
+    params = {'aggregated_by': 'day', 'limit': 1, 'start_date': d, 'end_date': d, 'offset': 1}
+    response = sg.client.stats.get(query_params=params)
+    # print response
 
 def login_required(f):
     @wraps(f)
@@ -37,7 +45,6 @@ def login_required(f):
 
 @workflow.route('/', methods=["GET", "POST"])
 def home():
-
     # this is example code for sending emails
     # msg = Message("Hello",recipients=["artofkot@gmail.com"])
     # g.mail.send(msg)
@@ -269,13 +276,22 @@ def problem(problem_set_slug,prob_id):
             userss=User.objects()
             email_list=[]
             for user in userss:
+                if user.date_last_email_sent.strftime("%Y-%m-%d")==datetime.datetime.now().strftime("%Y-%m-%d"):
+                    continue
                 if user['rights']['is_checker']: 
                     email_list.append(user.email)
                 else:
                     if solution.problem in user['problems_can_see_other_solutions'] and (not user['rights']['is_moderator']):
                         email_list.append(user.email)
-            to_send=random.sample(set(email_list), 2)
-            g.mail.send(Message(body='Было бы круто, если бы вы проверили решение на evarist.org, которое недавно запостили. Внизу ссылка, решение будет слева вверху (если его еще не проверили):' + '\r\n\r\n http://www.evarist.org/check' + '\r\n\r\n Спасибо! Кстати, вы получили это письмо потому что вы либо один из проверяющих на этом сайте, либо вы уже когда-то решили эту задачу. Если вы не хотите больше получать подобные письма, напишите мне на artofkot@gmail.com об этом.',
+            if email_list:
+                if len(email_list)>1:
+                    to_send=random.sample(set(email_list), 2)
+                else: to_send=email_list
+                for em in to_send:
+                    userr=User.objects(email=em).first()
+                    userr.date_last_email_sent=datetime.datetime.now()
+                    userr.save()
+                g.mail.send(Message(body='Было бы круто, если бы вы проверили решение на evarist.org, которое недавно запостили. Внизу ссылка, решение будет слева вверху (если его еще не проверили):' + '\r\n\r\n http://www.evarist.org/check' + '\r\n\r\n Спасибо! Кстати, вы получили это письмо потому что вы либо один из проверяющих на этом сайте, либо вы уже когда-то решили эту задачу. Если вы не хотите больше получать подобные письма, напишите на artofkot@gmail.com об этом.',
                             subject="Помощь в проверке задач на сайте evarist.org",
                             recipients=to_send))
 
@@ -317,13 +333,22 @@ def problem(problem_set_slug,prob_id):
                 userss=User.objects()
                 email_list=[]
                 for user in userss:
+                    if user.date_last_email_sent.strftime("%Y-%m-%d")==datetime.datetime.now().strftime("%Y-%m-%d"):
+                        continue
                     if user['rights']['is_checker']: 
                         email_list.append(user.email)
                     else:
                         if problem in user['problems_can_see_other_solutions'] and (not user['rights']['is_moderator']):
                             email_list.append(user.email)
-                to_send=random.sample(set(email_list), 2)
-                g.mail.send(Message(body='Было бы круто, если бы вы проверили решение на evarist.org, которое недавно запостили. Внизу ссылка, решение будет слева вверху (если его еще не проверили):' + '\r\n\r\n http://www.evarist.org/check' + '\r\n\r\n Спасибо! Кстати, вы получили это письмо потому что вы либо один из проверяющих на этом сайте, либо вы уже когда-то решили эту задачу. Если вы не хотите больше получать подобные письма, напишите мне на artofkot@gmail.com об этом.',
+                if email_list:
+                    if len(email_list)>1:
+                        to_send=random.sample(set(email_list), 2)
+                    else: to_send=email_list
+                    for em in to_send:
+                        userr=User.objects(email=em).first()
+                        userr.date_last_email_sent=datetime.datetime.now()
+                        userr.save()
+                    g.mail.send(Message(body='Было бы круто, если бы вы проверили решение на evarist.org, которое недавно запостили. Внизу ссылка, решение будет слева вверху (если его еще не проверили):' + '\r\n\r\n http://www.evarist.org/check' + '\r\n\r\n Спасибо! Кстати, вы получили это письмо потому что вы либо один из проверяющих на этом сайте, либо вы уже когда-то решили эту задачу. Если вы не хотите больше получать подобные письма, напишите на artofkot@gmail.com об этом.',
                                 subject="Помощь в проверке задач на сайте evarist.org",
                                 recipients=to_send))
 
@@ -444,13 +469,22 @@ def my_solutions():
                 userss=User.objects()
                 email_list=[]
                 for user in userss:
+                    if user.date_last_email_sent.strftime("%Y-%m-%d")==datetime.datetime.now().strftime("%Y-%m-%d"):
+                        continue
                     if user['rights']['is_checker']: 
                         email_list.append(user.email)
                     else:
                         if solution.problem in user['problems_can_see_other_solutions'] and (not user['rights']['is_moderator']):
                             email_list.append(user.email)
-                to_send=random.sample(set(email_list), 2)
-                g.mail.send(Message(body='Было бы круто, если бы вы проверили решение на evarist.org, которое недавно запостили. Внизу ссылка, решение будет слева вверху (если его еще не проверили):' + '\r\n\r\n http://www.evarist.org/check' + '\r\n\r\n Спасибо! Кстати, вы получили это письмо потому что вы либо один из проверяющих на этом сайте, либо вы уже когда-то решили эту задачу. Если вы не хотите больше получать подобные письма, напишите мне на artofkot@gmail.com об этом.',
+                if email_list:
+                    if len(email_list)>1:
+                        to_send=random.sample(set(email_list), 2)
+                    else: to_send=email_list
+                    for em in to_send:
+                        userr=User.objects(email=em).first()
+                        userr.date_last_email_sent=datetime.datetime.now()
+                        userr.save()
+                    g.mail.send(Message(body='Было бы круто, если бы вы проверили решение на evarist.org, которое недавно запостили. Внизу ссылка, решение будет слева вверху (если его еще не проверили):' + '\r\n\r\n http://www.evarist.org/check' + '\r\n\r\n Спасибо! Кстати, вы получили это письмо потому что вы либо один из проверяющих на этом сайте, либо вы уже когда-то решили эту задачу. Если вы не хотите больше получать подобные письма, напишите на artofkot@gmail.com об этом.',
                                 subject="Помощь в проверке задач на сайте evarist.org",
                                 recipients=to_send))
 

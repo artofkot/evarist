@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask.ext.mongoengine import MongoEngine
+from flask_mongoengine import MongoEngine
 db = MongoEngine()
 
 import datetime
@@ -11,7 +11,9 @@ class Rights(db.EmbeddedDocument):
     is_checker =db.BooleanField(default=False)
 
 class User(db.Document):
-    date = db.DateTimeField(default=datetime.datetime.now)
+    date = db.DateTimeField(default=datetime.datetime.now())
+    date_last_email_sent=db.DateTimeField(default=datetime.datetime.now())
+
     karma= db.IntField(default=1)
     rights = db.EmbeddedDocumentField('Rights', default=Rights())
 
@@ -19,6 +21,7 @@ class User(db.Document):
     problems_solved=db.ListField(db.ReferenceField('Content_block'))
     problems_can_see_other_solutions=db.ListField(db.ReferenceField('Content_block'))
     problems_can_vote=db.ListField(db.ReferenceField('Content_block'))
+
 
     def __unicode__(self):
         return self.username + '•'.decode('utf-8') + str(self.karma)

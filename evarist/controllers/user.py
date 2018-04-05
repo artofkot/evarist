@@ -8,7 +8,7 @@ from flask import current_app, Flask, Blueprint, request, session, g, redirect, 
 from contextlib import closing
 from jinja2 import TemplateNotFound
 from evarist.forms import SignUpForm, SignInForm, trigger_flash_error
-from flask.ext.mail import Message
+from flask_mail import Message
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 from oauth2client.client import AccessTokenCredentials
