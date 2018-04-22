@@ -37,7 +37,7 @@ MAIL_USERNAME = SENDGRID_USERNAME
 MAIL_PASSWORD = SENDGRID_APIKEY
 MAIL_DEFAULT_SENDER = ('Evarist',SENDGRID_USERNAME)
 
-ADMINS = ['artofkot@gmail.com','alexej.levin@gmail.com']
+ADMINS = ['artofkot@gmail.com'] # 'alexej.levin@gmail.com']
 
 # for picture upload
 CLOUDINARY_URL=os.environ.get("CLOUDINARY_URL")

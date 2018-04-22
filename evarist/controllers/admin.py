@@ -262,7 +262,7 @@ def guide():
 @debug_mode_required
 def users():
     
-    users=User.objects(rights__is_checker=True).order_by('-date')
+    users=User.objects().order_by('-date')
     moderators=User.objects(rights__is_moderator=True).order_by('-date')
     checkers=User.objects(rights__is_checker=True).order_by('-date')
     rights={'is_moderator':False,
