@@ -4,7 +4,7 @@ from mongoengine_models import *
 import criteria
 
 # THRESHOLDS
-upvote_correctness_threshold=2
+upvote_correctness_threshold=1
 downvote_correctness_threshold=2
 
 #ACTIVE EVENTS parameters
