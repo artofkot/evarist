@@ -14,6 +14,8 @@
 
         <p>Самый простой способ зайти на сайт (не надо запоминать пароль) &#8211; использовать свой google аккаунт:</p>
         <div class='googleLogin'>
+            
+            <!-- new code that still doesn't work -->
             <div id="my-signin2"></div>
             <script>
               function onSuccess(googleUser) {
@@ -35,9 +37,10 @@
               }
             </script>
 
-            <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+            <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer>
+            </script>
           
-          
+          <!-- old code -->
           <!-- <h2 class="form-signin-heading">Log in with google account.</h2> -->
           <!-- <div style='height:100px'></div> -->
           <!-- <div id='signinButton'>
@@ -82,8 +85,7 @@
           }
           </script>   -->    
         </div>
-        
-        
+      
       </form>
 
     
