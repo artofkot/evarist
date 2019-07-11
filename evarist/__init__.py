@@ -13,7 +13,8 @@ import logging
 from evarist.models.mongoengine_models import db, User
 
 # creating an app
-app = Flask(__name__)
+app = Flask(__name__) 
+
 
 # adding different parts of app
 app.config.from_object('config')
