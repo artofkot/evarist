@@ -162,6 +162,9 @@ def problem_set(problem_set_slug):
         flash('No such problem set.')
         return redirect(url_for('.home'))
 
+    if "eng" in problem_set.tags: 
+        engtag="eng"
+    else: engtag="ru"
 
     is_moderator=False
     if g.user: is_moderator=g.user['rights']['is_moderator']
@@ -171,7 +174,8 @@ def problem_set(problem_set_slug):
 
     
     return render_template('problem_set.html', 
-                            problem_set=problem_set)
+                            problem_set=problem_set,
+                            engtag=engtag)
 
 @workflow.route('/problem_sets/<problem_set_slug>/<type_>/<__id>/', methods=["GET", "POST"])
 def content_block(problem_set_slug,type_,__id):
