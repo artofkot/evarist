@@ -45,7 +45,14 @@
           <span class="content_block">{{content_block['text']|safe}}</span>
           
           {% if content_block.type_=='problem' %}
-            <a class="btn btn-s btn-default pull-right" href="{{ url_for('workflow.problem', problem_set_slug=problem_set['slug'], prob_id=content_block.id ) }}" >Отправить решение</a>
+            <a class="btn btn-s btn-default pull-right" href="{{ url_for('workflow.problem', problem_set_slug=problem_set['slug'], prob_id=content_block.id ) }}" >
+            
+            {% if engtag=='eng' %}
+                Send a solution
+            {% else %}
+                Отправить решение
+            {%endif%}
+            </a>
           {%endif%}
           </p>
           <br>
