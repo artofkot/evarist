@@ -3,7 +3,7 @@ import os, json
 
 APPLICATION_NAME = "Evarist"
 
-MONGO_URI=os.environ.get("MONGO_URI")
+MONGO_URI=os.environ.get("MONGO_URI") 
 
 #for mongoengine
 MONGODB_SETTINGS={'host': MONGO_URI}
