@@ -18,7 +18,7 @@ Flask-PyMongo==2.3.0
 funcsigs==1.0.2
 gnureadline==6.3.8
 gunicorn==19.7.1
-httplib2==0.18.0
+httplib2==0.19.0
 idna==2.6
 itsdangerous==0.24
 Jinja2==2.10
